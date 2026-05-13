@@ -1,9 +1,11 @@
 import Link from 'next/link'
-import { LayoutDashboard, Palette, FileText, Star, Settings } from 'lucide-react'
+import { LayoutDashboard, Palette, FileText, Star, Settings, Users, MessageSquare } from 'lucide-react'
 
 const adminNav = [
   { href: '/admin/articles', label: '아티클 관리', icon: <FileText className="w-4 h-4" /> },
   { href: '/admin/reviews', label: '리뷰 관리', icon: <Star className="w-4 h-4" /> },
+  { href: '/admin/users', label: '회원 관리', icon: <Users className="w-4 h-4" /> },
+  { href: '/admin/inquiries', label: '문의 관리', icon: <MessageSquare className="w-4 h-4" /> },
   { href: '/admin/design', label: '디자인 설정', icon: <Palette className="w-4 h-4" /> },
 ]
 

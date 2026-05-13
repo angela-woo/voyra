@@ -1,23 +1,31 @@
 'use client'
 
 import { useState } from 'react'
-import { Mail, Loader2, CheckCircle } from 'lucide-react'
+import { Mail, Loader2, CheckCircle, Send } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function ContactPage() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' })
+  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' })
   const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
+
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setForm(prev => ({ ...prev, [k]: e.target.value }))
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    // In production, connect to an email service or Supabase function
-    await new Promise(r => setTimeout(r, 1000))
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
+    })
     setLoading(false)
+    if (!res.ok) { toast.error('전송에 실패했습니다. 다시 시도해주세요.'); return }
     setDone(true)
-    toast.success('문의가 접수되었습니다.')
   }
+
+  const inputCls = "w-full border border-gray-200 rounded-[var(--radius)] px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--primary)]"
 
   return (
     <div className="max-w-xl mx-auto px-4 py-16">
@@ -35,42 +43,31 @@ export default function ContactPage() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="bg-white rounded-[var(--radius)] border border-gray-100 p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">이름</label>
-            <input
-              value={form.name}
-              onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
-              required
-              className="w-full border border-gray-200 rounded-[var(--radius)] px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--primary)]"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">이름 *</label>
+              <input value={form.name} onChange={set('name')} required placeholder="홍길동" className={inputCls} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">이메일 *</label>
+              <input type="email" value={form.email} onChange={set('email')} required placeholder="you@example.com" className={inputCls} />
+            </div>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">이메일</label>
-            <input
-              type="email"
-              value={form.email}
-              onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-              required
-              className="w-full border border-gray-200 rounded-[var(--radius)] px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--primary)]"
-            />
+            <label className="block text-sm font-medium mb-1">제목 *</label>
+            <input value={form.subject} onChange={set('subject')} required placeholder="문의 제목을 입력하세요" className={inputCls} />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">문의 내용</label>
-            <textarea
-              value={form.message}
-              onChange={e => setForm(p => ({ ...p, message: e.target.value }))}
-              required
-              rows={6}
-              className="w-full border border-gray-200 rounded-[var(--radius)] px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--primary)] resize-none"
-            />
+            <label className="block text-sm font-medium mb-1">문의 내용 *</label>
+            <textarea value={form.message} onChange={set('message')} required rows={6} placeholder="문의 내용을 자세히 작성해주세요." className={inputCls + ' resize-none'} />
           </div>
           <button
             type="submit"
             disabled={loading}
             className="w-full py-2.5 bg-[var(--primary)] text-white font-semibold rounded-[var(--radius)] hover:bg-[var(--primary-hover)] disabled:opacity-60 flex items-center justify-center gap-2 transition-colors"
           >
-            {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            보내기
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            문의 보내기
           </button>
         </form>
       )}
