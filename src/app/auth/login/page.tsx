@@ -42,7 +42,12 @@ function LoginForm() {
         />
       </div>
       <div>
-        <label className="block text-sm font-medium mb-1">비밀번호</label>
+        <div className="flex items-center justify-between mb-1">
+          <label className="block text-sm font-medium">비밀번호</label>
+          <Link href="/auth/forgot-password" className="text-xs text-gray-400 hover:text-[var(--primary)]">
+            비밀번호를 잊으셨나요?
+          </Link>
+        </div>
         <input
           type="password"
           value={password}
