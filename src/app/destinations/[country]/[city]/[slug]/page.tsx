@@ -3,7 +3,7 @@ import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { fetchUnsplashPhoto, toEnglishCity } from '@/lib/unsplash'
+import { fetchUnsplashPhoto, fetchUnsplashPhotos, toEnglishCity } from '@/lib/unsplash'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
 import { MapPin, Clock, DollarSign, Thermometer, Info, ExternalLink, ChevronRight } from 'lucide-react'
 import type { Metadata } from 'next'
@@ -130,11 +130,15 @@ export default async function TravelPlanPage({ params }: PageProps) {
     .eq('id', plan.id)
     .then(() => {})
 
-  const heroImage = plan.cover_image_url
-    ?? (await fetchUnsplashPhoto(`${toEnglishCity(plan.city)} travel`))?.url
-    ?? null
-
   const cityEn = toEnglishCity(plan.city)
+
+  const [heroImage, hotelImages, tourImages] = await Promise.all([
+    plan.cover_image_url
+      ? Promise.resolve(plan.cover_image_url)
+      : fetchUnsplashPhoto(`${cityEn} travel`).then(p => p?.url ?? null),
+    fetchUnsplashPhotos(`${cityEn} hotel`, 4),
+    fetchUnsplashPhotos(`${cityEn} tour activity`, 4),
+  ])
 
   return (
     <div className="min-h-screen">
@@ -255,8 +259,14 @@ export default async function TravelPlanPage({ params }: PageProps) {
                       rel="noopener noreferrer sponsored"
                       className="w-48 shrink-0 bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
                     >
-                      <div className="h-28 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
-                        <span className="text-3xl">🏨</span>
+                      <div className="h-28 relative bg-gradient-to-br from-blue-100 to-indigo-100 overflow-hidden">
+                        {hotelImages[i] ? (
+                          <Image src={hotelImages[i].url} alt={hotel.name} fill className="object-cover" sizes="192px" />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-3xl">🏨</span>
+                          </div>
+                        )}
                       </div>
                       <div className="p-3">
                         <p className="text-xs font-semibold text-gray-700 mb-1 line-clamp-2">{hotel.name}</p>
@@ -396,8 +406,14 @@ export default async function TravelPlanPage({ params }: PageProps) {
                       rel="noopener noreferrer sponsored"
                       className="w-48 shrink-0 bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
                     >
-                      <div className="h-28 bg-gradient-to-br from-orange-100 to-red-100 flex items-center justify-center">
-                        <span className="text-3xl">🎯</span>
+                      <div className="h-28 relative bg-gradient-to-br from-orange-100 to-red-100 overflow-hidden">
+                        {tourImages[i] ? (
+                          <Image src={tourImages[i].url} alt={tour.name} fill className="object-cover" sizes="192px" />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-3xl">🎯</span>
+                          </div>
+                        )}
                       </div>
                       <div className="p-3">
                         <p className="text-xs font-semibold text-gray-700 mb-1 line-clamp-2">{tour.name}</p>

@@ -35,6 +35,29 @@ const CATEGORY_FALLBACK: Record<string, string> = {
   cafe: 'coffee cafe interior',
 }
 
+export async function fetchUnsplashPhotos(query: string, count: number): Promise<UnsplashPhoto[]> {
+  const key = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY
+  if (!key) return []
+  try {
+    const res = await fetch(
+      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=${count}&orientation=landscape`,
+      {
+        headers: { Authorization: `Client-ID ${key}` },
+        next: { revalidate: 86400 },
+      },
+    )
+    if (!res.ok) return []
+    const data = await res.json()
+    return (data.results ?? []).map((photo: { urls: { regular: string }; user: { name: string; links: { html: string } } }) => ({
+      url: photo.urls.regular,
+      authorName: photo.user.name,
+      authorUrl: `${photo.user.links.html}?utm_source=voyra&utm_medium=referral`,
+    }))
+  } catch {
+    return []
+  }
+}
+
 export async function fetchUnsplashPhoto(query: string): Promise<UnsplashPhoto | null> {
   const key = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY
   if (!key) return null
