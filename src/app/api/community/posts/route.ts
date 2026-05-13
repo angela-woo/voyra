@@ -17,10 +17,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: '제목과 내용을 입력해주세요.' }, { status: 400 })
   }
 
-  // category 체크 제약 우회 — Supabase에서 constraint 수정 후 category 복원 가능
   const { data, error } = await adminSupabase
     .from('community_posts')
-    .insert({ title: title.trim(), content: content.trim(), category: null, user_id: user.id })
+    .insert({ title: title.trim(), content: content.trim(), category: category || null, user_id: user.id })
     .select('id')
     .single()
 
