@@ -1,101 +1,141 @@
-import Image from "next/image";
+import { createClient } from '@/lib/supabase/server'
+import ArticleCard from '@/components/article/ArticleCard'
+import NewsletterSignup from '@/components/widgets/NewsletterSignup'
+import { MapPin, Compass, BookOpen } from 'lucide-react'
 
-export default function Home() {
+export const dynamic = 'force-dynamic'
+
+async function getArticles() {
+  try {
+    const supabase = await createClient()
+    const { data } = await supabase
+      .from('articles')
+      .select('id, slug, title, meta_description, city, country, category, created_at')
+      .eq('published', true)
+      .order('created_at', { ascending: false })
+      .limit(50)
+    return data ?? []
+  } catch {
+    return []
+  }
+}
+
+async function getFeatured() {
+  try {
+    const supabase = await createClient()
+    const { data } = await supabase
+      .from('articles')
+      .select('id, slug, title, meta_description, city, country, category, created_at')
+      .eq('published', true)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+    return data
+  } catch {
+    return null
+  }
+}
+
+export default async function HomePage() {
+  const [articles, featured] = await Promise.all([getArticles(), getFeatured()])
+  const nonFeatured = featured ? articles.filter((a: { id: string }) => a.id !== featured.id) : articles
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen">
+      {/* Hero */}
+      <section className="relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white py-24 px-4 overflow-hidden">
+        <div className="relative max-w-4xl mx-auto text-center">
+          <div className="flex justify-center mb-4">
+            <span className="flex items-center gap-2 bg-white/20 backdrop-blur-sm text-sm px-4 py-1.5 rounded-full">
+              <Compass className="w-4 h-4" />
+              AI 기반 여행 가이드
+            </span>
+          </div>
+          <h1 className="text-4xl md:text-6xl font-bold mb-4 leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+            세상 모든 여행지를<br />
+            <span className="text-yellow-300">Voyra</span>와 함께
+          </h1>
+          <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
+            AI가 큐레이션한 여행 가이드로 최고의 여행 경험을 만들어보세요.
+            숨겨진 명소부터 현지 맛집까지 모두 담았습니다.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <a href="#articles" className="px-6 py-3 bg-white text-blue-700 font-semibold rounded-[var(--radius)] hover:bg-blue-50 transition-colors">
+              가이드 보기
+            </a>
+            <a href="/community" className="px-6 py-3 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-[var(--radius)] hover:bg-white/30 transition-colors">
+              커뮤니티
+            </a>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </section>
+
+      {/* Stats */}
+      <section className="bg-[var(--bg-secondary)] border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 py-6 grid grid-cols-3 gap-4 text-center">
+          {[
+            { icon: <BookOpen className="w-5 h-5" />, value: '200+', label: '여행 가이드' },
+            { icon: <MapPin className="w-5 h-5" />, value: '50+', label: '도시' },
+            { icon: <Compass className="w-5 h-5" />, value: '10K+', label: '여행자' },
+          ].map(stat => (
+            <div key={stat.label} className="flex flex-col items-center gap-1">
+              <div className="text-[var(--primary)]">{stat.icon}</div>
+              <div className="font-bold text-xl text-gray-800">{stat.value}</div>
+              <div className="text-xs text-gray-500">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Featured Article */}
+      {featured && (
+        <section className="max-w-6xl mx-auto px-4 py-12">
+          <h2 className="text-2xl font-bold mb-6" style={{ fontFamily: 'var(--font-heading)' }}>
+            추천 가이드
+          </h2>
+          <a href={`/article/${featured.slug}`} className="group block relative rounded-[var(--radius)] overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-700 text-white min-h-[320px]">
+            <div className="absolute inset-0 flex flex-col justify-end p-8">
+              {(featured.city || featured.country) && (
+                <span className="inline-block bg-white/20 text-white text-xs px-3 py-1 rounded-full mb-3 w-fit">
+                  {[featured.city, featured.country].filter(Boolean).join(', ')}
+                </span>
+              )}
+              <h3 className="text-2xl md:text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
+                {featured.title}
+              </h3>
+              {featured.meta_description && (
+                <p className="text-sm text-blue-100 line-clamp-2">{featured.meta_description}</p>
+              )}
+            </div>
+          </a>
+        </section>
+      )}
+
+      {/* Article Grid */}
+      <section id="articles" className="max-w-6xl mx-auto px-4 pb-16">
+        <h2 className="text-2xl font-bold mb-6" style={{ fontFamily: 'var(--font-heading)' }}>
+          최신 여행 가이드
+        </h2>
+        {nonFeatured.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            {nonFeatured.map((article: any) => (
+              <ArticleCard key={article.id} article={article} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-16 text-gray-400">
+            <BookOpen className="w-12 h-12 mx-auto mb-3 opacity-40" />
+            <p>아직 게시된 가이드가 없습니다.</p>
+            <p className="text-sm mt-1">관리자 페이지에서 콘텐츠를 생성해보세요.</p>
+          </div>
+        )}
+      </section>
+
+      {/* Newsletter */}
+      <section className="max-w-2xl mx-auto px-4 pb-16">
+        <NewsletterSignup />
+      </section>
     </div>
-  );
+  )
 }
