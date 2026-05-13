@@ -64,8 +64,8 @@ const TRAVEL_TYPE_LABELS: Record<string, string> = {
 export default async function HomePage() {
   const [articles, featured, travelPlans] = await Promise.all([getArticles(), getFeatured(), getTravelPlans()])
   const allNonFeatured = featured ? articles.filter((a: { id: string }) => a.id !== featured.id) : articles
-  const nonFeatured = allNonFeatured.slice(0, 10)
-  const hasMoreArticles = allNonFeatured.length > 10
+  const nonFeatured = allNonFeatured.slice(0, 9)
+  const hasMoreArticles = allNonFeatured.length > 9
 
   const featuredImage = featured?.city
     ? await fetchUnsplashPhoto(`${toEnglishCity(featured.city)} travel`)
