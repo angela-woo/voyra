@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 import { Loader2, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
@@ -17,7 +16,6 @@ const CATEGORIES = [
 
 export default function NewPostPage() {
   const router = useRouter()
-  const supabase = createClient()
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [category, setCategory] = useState('free')
@@ -30,19 +28,17 @@ export default function NewPostPage() {
       return
     }
     setLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { toast.error('로그인이 필요합니다.'); router.push('/auth/login'); return }
-
-    const { data, error } = await supabase
-      .from('community_posts')
-      .insert({ title: title.trim(), content: content.trim(), category, user_id: user.id })
-      .select('id')
-      .single()
-
+    const res = await fetch('/api/community/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, content, category }),
+    })
     setLoading(false)
-    if (error) { toast.error('게시글 작성에 실패했습니다.'); return }
+    if (res.status === 401) { toast.error('로그인이 필요합니다.'); router.push('/auth/login'); return }
+    if (!res.ok) { toast.error('게시글 작성에 실패했습니다.'); return }
+    const { id } = await res.json()
     toast.success('게시글이 등록되었습니다.')
-    router.push(`/community/${data.id}`)
+    router.push(`/community/${id}`)
   }
 
   return (
