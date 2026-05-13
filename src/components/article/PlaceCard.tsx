@@ -3,6 +3,7 @@ import { MapPin, Star } from 'lucide-react'
 import { fetchUnsplashPhoto, categoryFallbackQuery } from '@/lib/unsplash'
 
 const AWIN_AID = '2892557'
+const KLOOK_AFF_ID = '121117'
 
 interface Place {
   id: string
@@ -119,15 +120,15 @@ export default async function PlaceCard({ place, city }: { place: Place; city?: 
               🏨 Booking.com에서 예약
             </a>
           )}
-          {attractionOrRestaurant && place.klook_url && (
+          {attractionOrRestaurant && (
             <a
-              href={place.klook_url}
+              href={place.klook_url ?? `https://www.klook.com/search/?query=${encodeURIComponent(place.name)}&aff_id=${KLOOK_AFF_ID}`}
               target="_blank"
               rel="noopener noreferrer sponsored"
               className="flex items-center justify-center gap-1.5 text-xs py-1.5 rounded-[var(--radius)] text-white font-medium transition-opacity hover:opacity-90"
               style={{ backgroundColor: '#FF5722' }}
             >
-              🎟 Klook에서 예약
+              🎯 Klook에서 예약
             </a>
           )}
         </div>
