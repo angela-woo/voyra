@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 import { Loader2, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import ImageUploader from '@/components/community/ImageUploader'
 
 const CATEGORIES = [
   { value: 'free', label: '자유' },
@@ -20,22 +21,26 @@ export default function EditPostPage() {
   const router = useRouter()
   const supabase = createClient()
 
+  const [userId, setUserId] = useState<string | null>(null)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [category, setCategory] = useState('free')
+  const [imageUrls, setImageUrls] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [initializing, setInitializing] = useState(true)
 
   useEffect(() => {
     Promise.all([
-      supabase.from('community_posts').select('title, content, category, user_id').eq('id', id).single(),
+      supabase.from('community_posts').select('title, content, category, user_id, image_urls').eq('id', id).single(),
       supabase.auth.getUser(),
     ]).then(([{ data: post }, { data: { user } }]) => {
       if (!post) { router.push('/community'); return }
       if (!user || post.user_id !== user.id) { toast.error('권한이 없습니다.'); router.push(`/community/${id}`); return }
+      setUserId(user.id)
       setTitle(post.title)
       setContent(post.content)
       setCategory(post.category ?? 'free')
+      setImageUrls(post.image_urls ?? [])
       setInitializing(false)
     })
   }, [id])
@@ -47,7 +52,7 @@ export default function EditPostPage() {
     const res = await fetch(`/api/community/posts/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, content, category }),
+      body: JSON.stringify({ title, content, category, image_urls: imageUrls }),
     })
     setLoading(false)
     if (!res.ok) { toast.error('수정에 실패했습니다.'); return }
@@ -106,9 +111,16 @@ export default function EditPostPage() {
           <textarea
             value={content}
             onChange={e => setContent(e.target.value)}
-            rows={12}
+            rows={10}
             className="w-full border border-gray-200 rounded-[var(--radius)] px-3 py-2 text-sm focus:outline-none focus:border-[var(--primary)] resize-y"
           />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">이미지 (최대 5장, 각 5MB)</label>
+          {userId && (
+            <ImageUploader urls={imageUrls} onChange={setImageUrls} userId={userId} />
+          )}
         </div>
 
         <div className="flex gap-3 pt-2">

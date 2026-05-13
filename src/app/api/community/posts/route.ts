@@ -12,14 +12,14 @@ export async function POST(req: Request) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: '로그인이 필요합니다.' }, { status: 401 })
 
-  const { title, content, category } = await req.json()
+  const { title, content, category, image_urls } = await req.json()
   if (!title?.trim() || !content?.trim()) {
     return NextResponse.json({ error: '제목과 내용을 입력해주세요.' }, { status: 400 })
   }
 
   const { data, error } = await adminSupabase
     .from('community_posts')
-    .insert({ title: title.trim(), content: content.trim(), category: category || null, user_id: user.id })
+    .insert({ title: title.trim(), content: content.trim(), category: category || null, user_id: user.id, image_urls: image_urls ?? [] })
     .select('id')
     .single()
 

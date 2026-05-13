@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import CommentSection from '@/components/community/CommentSection'
 import { ArrowLeft, Heart, Loader2, Pencil, Trash2 } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -114,6 +115,16 @@ export default function PostDetailPage() {
           <span>{timeAgo}</span>
         </div>
         <div className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{post.content}</div>
+
+        {post.image_urls?.length > 0 && (
+          <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {post.image_urls.map((url: string) => (
+              <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="relative aspect-square rounded-[var(--radius)] overflow-hidden border border-gray-100 hover:opacity-90 transition-opacity">
+                <Image src={url} alt="" fill className="object-cover" />
+              </a>
+            ))}
+          </div>
+        )}
         <div className="flex items-center gap-4 mt-6 pt-4 border-t border-gray-100">
           <button
             onClick={handleLike}

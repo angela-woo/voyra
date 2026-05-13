@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { MessageCircle, Heart, Clock } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -20,12 +21,15 @@ interface Post {
   created_at: string
   likes_count: number
   comments_count: number
+  image_urls?: string[] | null
   user_profiles?: { username: string | null; avatar_url: string | null } | null
 }
 
 export default function PostCard({ post }: { post: Post }) {
   const timeAgo = formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ko })
   const categoryColor = CATEGORY_COLORS[post.category] ?? 'bg-gray-100 text-gray-700'
+
+  const thumbnail = post.image_urls?.[0]
 
   return (
     <Link href={`/community/${post.id}`} className="block bg-white rounded-[var(--radius)] border border-gray-100 p-4 hover:shadow-sm hover:border-gray-200 transition-all">
@@ -54,6 +58,11 @@ export default function PostCard({ post }: { post: Post }) {
             </span>
           </div>
         </div>
+        {thumbnail && (
+          <div className="relative w-16 h-16 shrink-0 rounded-[var(--radius)] overflow-hidden border border-gray-100">
+            <Image src={thumbnail} alt="" fill className="object-cover" />
+          </div>
+        )}
       </div>
     </Link>
   )

@@ -18,7 +18,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   if (!user) return NextResponse.json({ error: '로그인이 필요합니다.' }, { status: 401 })
 
   const { id } = await params
-  const { title, content, category } = await req.json()
+  const { title, content, category, image_urls } = await req.json()
   if (!title?.trim() || !content?.trim()) {
     return NextResponse.json({ error: '제목과 내용을 입력해주세요.' }, { status: 400 })
   }
@@ -34,7 +34,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
   const { error } = await adminSupabase
     .from('community_posts')
-    .update({ title: title.trim(), content: content.trim(), category: category || null })
+    .update({ title: title.trim(), content: content.trim(), category: category || null, image_urls: image_urls ?? [] })
     .eq('id', id)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
