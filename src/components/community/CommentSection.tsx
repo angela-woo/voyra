@@ -33,7 +33,7 @@ export default function CommentSection({ postId }: { postId: string }) {
   const fetchComments = async () => {
     const { data } = await supabase
       .from('community_comments')
-      .select('*')
+      .select('*, user_profiles(username)')
       .eq('post_id', postId)
       .order('created_at')
     setComments(data ?? [])
