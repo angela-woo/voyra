@@ -35,12 +35,13 @@ function getWeatherLabel(code: number) {
   return weatherLabels[code] ?? '알 수 없음'
 }
 
-export default function WeatherWidget({ lat, lng, city }: { lat: number; lng: number; city: string }) {
+export default function WeatherWidget({ lat, lng, city }: { lat: number | null; lng: number | null; city: string }) {
   const [weather, setWeather] = useState<WeatherData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
   useEffect(() => {
+    if (lat == null || lng == null) { setLoading(false); setError(true); return }
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,weathercode,windspeed_10m,relativehumidity_2m&timezone=auto`
     fetch(url)
       .then(r => r.json())

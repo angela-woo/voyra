@@ -1,8 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import ArticleCard from '@/components/article/ArticleCard'
 import NewsletterSignup from '@/components/widgets/NewsletterSignup'
-import { MapPin, Compass, BookOpen } from 'lucide-react'
+import { MapPin, Compass, BookOpen, Clock, ArrowRight } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { fetchUnsplashPhoto, toEnglishCity } from '@/lib/unsplash'
 
 export const dynamic = 'force-dynamic'
@@ -16,6 +17,21 @@ async function getArticles() {
       .eq('published', true)
       .order('created_at', { ascending: false })
       .limit(50)
+    return data ?? []
+  } catch {
+    return []
+  }
+}
+
+async function getTravelPlans() {
+  try {
+    const supabase = await createClient()
+    const { data } = await supabase
+      .from('travel_plans')
+      .select('id, slug, city, country, days, travel_type, title, meta_description')
+      .eq('published', true)
+      .order('views_count', { ascending: false })
+      .limit(6)
     return data ?? []
   } catch {
     return []
@@ -38,8 +54,15 @@ async function getFeatured() {
   }
 }
 
+const TRAVEL_TYPE_LABELS: Record<string, string> = {
+  couple: '💑 커플',
+  family: '👨‍👩‍👧‍👦 가족',
+  friends: '👫 친구',
+  solo: '🧳 혼자',
+}
+
 export default async function HomePage() {
-  const [articles, featured] = await Promise.all([getArticles(), getFeatured()])
+  const [articles, featured, travelPlans] = await Promise.all([getArticles(), getFeatured(), getTravelPlans()])
   const nonFeatured = featured ? articles.filter((a: { id: string }) => a.id !== featured.id) : articles
 
   const featuredImage = featured?.city
@@ -146,6 +169,50 @@ export default async function HomePage() {
           </div>
         )}
       </section>
+
+      {/* Travel Plans */}
+      {travelPlans.length > 0 && (
+        <section className="max-w-6xl mx-auto px-4 pb-16">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>
+              인기 여행 일정
+            </h2>
+            <Link href="/destinations" className="flex items-center gap-1 text-sm text-[var(--primary)] hover:underline">
+              더 보기 <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            {travelPlans.map((plan: any) => (
+              <Link
+                key={plan.id}
+                href={`/destinations/${encodeURIComponent(plan.country)}/${encodeURIComponent(plan.city)}/${plan.slug}`}
+                className="group bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm hover:border-[var(--primary)] hover:shadow-md transition-all overflow-hidden"
+              >
+                <div className="h-2 bg-gradient-to-r from-[var(--primary)] to-indigo-400" />
+                <div className="p-5">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs text-gray-500">{plan.city}, {plan.country}</span>
+                    <span className="text-xs font-medium text-[var(--primary)]">
+                      {TRAVEL_TYPE_LABELS[plan.travel_type] ?? plan.travel_type}
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-gray-800 mb-2 group-hover:text-[var(--primary)] transition-colors line-clamp-2">
+                    {plan.title}
+                  </h3>
+                  {plan.meta_description && (
+                    <p className="text-xs text-gray-500 line-clamp-2 mb-3">{plan.meta_description}</p>
+                  )}
+                  <div className="flex items-center gap-1 text-xs text-gray-400">
+                    <Clock className="w-3 h-3" />
+                    <span>{plan.days}일 일정</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Newsletter */}
       <section className="max-w-2xl mx-auto px-4 pb-16">
