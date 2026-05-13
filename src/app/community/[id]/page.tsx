@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import CommentSection from '@/components/community/CommentSection'
-import { ArrowLeft, Heart, Loader2 } from 'lucide-react'
+import { ArrowLeft, Heart, Loader2, Pencil, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -25,6 +25,7 @@ export default function PostDetailPage() {
   const [liked, setLiked] = useState(false)
   const [likesCount, setLikesCount] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     Promise.all([
@@ -56,6 +57,15 @@ export default function PostDetailPage() {
     }
   }
 
+  const handleDelete = async () => {
+    if (!confirm('게시글을 삭제하시겠습니까?')) return
+    setDeleting(true)
+    const res = await fetch(`/api/community/posts/${id}`, { method: 'DELETE' })
+    if (!res.ok) { toast.error('삭제에 실패했습니다.'); setDeleting(false); return }
+    toast.success('게시글이 삭제되었습니다.')
+    router.push('/community')
+  }
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-96">
@@ -66,6 +76,7 @@ export default function PostDetailPage() {
 
   if (!post) return null
 
+  const isOwner = user?.id === post.user_id
   const timeAgo = formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ko })
 
   return (
@@ -75,10 +86,27 @@ export default function PostDetailPage() {
       </Link>
 
       <article className="bg-white rounded-[var(--radius)] border border-gray-100 p-6 mb-6">
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center justify-between mb-3">
           <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
-            {CATEGORY_LABELS[post.category] ?? post.category}
+            {CATEGORY_LABELS[post.category] ?? post.category ?? '일반'}
           </span>
+          {isOwner && (
+            <div className="flex items-center gap-2">
+              <Link
+                href={`/community/${id}/edit`}
+                className="flex items-center gap-1 text-xs text-gray-400 hover:text-[var(--primary)] transition-colors"
+              >
+                <Pencil className="w-3.5 h-3.5" /> 수정
+              </Link>
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-500 transition-colors disabled:opacity-50"
+              >
+                <Trash2 className="w-3.5 h-3.5" /> 삭제
+              </button>
+            </div>
+          )}
         </div>
         <h1 className="text-xl font-bold mb-3" style={{ fontFamily: 'var(--font-heading)' }}>{post.title}</h1>
         <div className="flex items-center gap-3 text-xs text-gray-400 mb-6">
@@ -97,7 +125,7 @@ export default function PostDetailPage() {
         </div>
       </article>
 
-      <CommentSection postId={id} />
+      <CommentSection postId={id} currentUserId={user?.id ?? null} />
     </div>
   )
 }
