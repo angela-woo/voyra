@@ -26,6 +26,7 @@ export default function Header({ siteName }: { siteName: string }) {
 
   const navLinks = [
     { href: '/', label: '홈' },
+    { href: '/articles', label: '여행 가이드' },
     { href: '/destinations', label: '여행 일정' },
     { href: '/community', label: '커뮤니티' },
     { href: '/about', label: 'About' },

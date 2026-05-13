@@ -16,7 +16,7 @@ async function getArticles() {
       .select('id, slug, title, meta_description, city, country, category, created_at')
       .eq('published', true)
       .order('created_at', { ascending: false })
-      .limit(50)
+      .limit(12)
     return data ?? []
   } catch {
     return []
@@ -63,7 +63,9 @@ const TRAVEL_TYPE_LABELS: Record<string, string> = {
 
 export default async function HomePage() {
   const [articles, featured, travelPlans] = await Promise.all([getArticles(), getFeatured(), getTravelPlans()])
-  const nonFeatured = featured ? articles.filter((a: { id: string }) => a.id !== featured.id) : articles
+  const allNonFeatured = featured ? articles.filter((a: { id: string }) => a.id !== featured.id) : articles
+  const nonFeatured = allNonFeatured.slice(0, 10)
+  const hasMoreArticles = allNonFeatured.length > 10
 
   const featuredImage = featured?.city
     ? await fetchUnsplashPhoto(`${toEnglishCity(featured.city)} travel`)
@@ -151,16 +153,33 @@ export default async function HomePage() {
 
       {/* Article Grid */}
       <section id="articles" className="max-w-6xl mx-auto px-4 pb-16">
-        <h2 className="text-2xl font-bold mb-6" style={{ fontFamily: 'var(--font-heading)' }}>
-          최신 여행 가이드
-        </h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>
+            최신 여행 가이드
+          </h2>
+          <Link href="/articles" className="flex items-center gap-1 text-sm text-[var(--primary)] hover:underline">
+            전체 보기 <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
         {nonFeatured.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            {nonFeatured.map((article: any) => (
-              <ArticleCard key={article.id} article={article} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              {nonFeatured.map((article: any) => (
+                <ArticleCard key={article.id} article={article} />
+              ))}
+            </div>
+            {hasMoreArticles && (
+              <div className="text-center mt-10">
+                <Link
+                  href="/articles"
+                  className="inline-flex items-center gap-2 px-8 py-3 border-2 border-[var(--primary)] text-[var(--primary)] font-semibold rounded-[var(--radius)] hover:bg-[var(--primary)] hover:text-white transition-colors"
+                >
+                  더보기 <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-16 text-gray-400">
             <BookOpen className="w-12 h-12 mx-auto mb-3 opacity-40" />
