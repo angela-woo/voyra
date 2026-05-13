@@ -44,14 +44,13 @@ export default function CommentSection({ postId }: { postId: string }) {
     if (!user) { toast.error('로그인이 필요합니다.'); return }
     if (!content.trim()) return
     setLoading(true)
-    const { error } = await supabase.from('community_comments').insert({
-      post_id: postId,
-      content: content.trim(),
-      parent_id: replyTo,
-      user_id: user.id,
+    const res = await fetch('/api/community/comments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ post_id: postId, content, parent_id: replyTo }),
     })
     setLoading(false)
-    if (error) { toast.error('댓글 작성에 실패했습니다.'); return }
+    if (!res.ok) { toast.error('댓글 작성에 실패했습니다.'); return }
     setContent('')
     setReplyTo(null)
     fetchComments()
