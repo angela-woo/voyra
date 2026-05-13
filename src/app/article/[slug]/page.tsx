@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { marked } from 'marked'
-import DOMPurify from 'isomorphic-dompurify'
 import Image from 'next/image'
 import { fetchUnsplashPhoto, toEnglishCity } from '@/lib/unsplash'
 import PlaceCard from '@/components/article/PlaceCard'
@@ -55,7 +54,7 @@ export default async function ArticlePage({ params }: PageProps) {
   if (!article) notFound()
 
   const places = await getPlaces(article.id)
-  const htmlContent = DOMPurify.sanitize(await marked(article.content ?? ''))
+  const htmlContent = await marked(article.content ?? '')
 
   const timeAgo = article.created_at
     ? formatDistanceToNow(new Date(article.created_at), { addSuffix: true, locale: ko })
