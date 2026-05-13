@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import ArticleCard from '@/components/article/ArticleCard'
 import NewsletterSignup from '@/components/widgets/NewsletterSignup'
 import { MapPin, Compass, BookOpen } from 'lucide-react'
+import Image from 'next/image'
+import { fetchUnsplashPhoto, toEnglishCity } from '@/lib/unsplash'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,6 +41,10 @@ async function getFeatured() {
 export default async function HomePage() {
   const [articles, featured] = await Promise.all([getArticles(), getFeatured()])
   const nonFeatured = featured ? articles.filter((a: { id: string }) => a.id !== featured.id) : articles
+
+  const featuredImage = featured?.city
+    ? await fetchUnsplashPhoto(`${toEnglishCity(featured.city)} travel`)
+    : null
 
   return (
     <div className="min-h-screen">
@@ -94,6 +100,15 @@ export default async function HomePage() {
             추천 가이드
           </h2>
           <a href={`/article/${featured.slug}`} className="group block relative rounded-[var(--radius)] overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-700 text-white min-h-[320px]">
+            {featuredImage && (
+              <Image
+                src={featuredImage.url}
+                alt={featured.title}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
             <div className="absolute inset-0 flex flex-col justify-end p-8">
               {(featured.city || featured.country) && (
                 <span className="inline-block bg-white/20 text-white text-xs px-3 py-1 rounded-full mb-3 w-fit">
