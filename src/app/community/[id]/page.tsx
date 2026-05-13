@@ -28,7 +28,7 @@ export default function PostDetailPage() {
 
   useEffect(() => {
     Promise.all([
-      supabase.from('community_posts').select('*, user_profiles(username, avatar_url)').eq('id', id).single(),
+      supabase.from('community_posts').select('*').eq('id', id).single(),
       supabase.auth.getUser(),
     ]).then(([{ data: postData }, { data: { user: userData } }]) => {
       if (!postData) { router.push('/community'); return }

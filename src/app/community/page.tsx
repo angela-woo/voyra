@@ -25,7 +25,7 @@ export default async function CommunityPage({ searchParams }: PageProps) {
   const supabase = await createClient()
   let query = supabase
     .from('community_posts')
-    .select('*, user_profiles(username, avatar_url)')
+    .select('*')
     .order('created_at', { ascending: false })
     .limit(30)
 
