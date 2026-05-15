@@ -55,6 +55,7 @@ interface GeneratedArticle {
   city: string
   country: string
   places: GeneratedPlace[]
+  section_images?: Record<string, string>
 }
 
 async function generateArticle(destination: string): Promise<GeneratedArticle> {
@@ -84,7 +85,10 @@ async function generateArticle(destination: string): Promise<GeneratedArticle> {
       "rating": 4.5,
       "google_maps_url": "https://maps.google.com/?q=위도,경도"
     }
-  ]
+  ],
+  "section_images": {
+    "섹션 제목": "Unsplash 검색 키워드 (영어, 도시명+주제 형식)"
+  }
 }
 
 places는 해당 도시의 대표적인 장소 4~5개를 포함해주세요.
@@ -92,7 +96,10 @@ places는 해당 도시의 대표적인 장소 4~5개를 포함해주세요.
 - restaurant: 현지 맛집 1~2개
 - attraction: 관광 명소 1~2개
 - cafe: 유명 카페 0~1개
-google_maps_url은 실제 위도/경도를 사용해주세요.`,
+google_maps_url은 실제 위도/경도를 사용해주세요.
+
+section_images는 content의 ## 헤딩마다 하나씩 Unsplash 검색 키워드를 영어로 지정해주세요.
+예시: { "도쿄 주요 관광명소": "tokyo landmarks", "도쿄 맛집 가이드": "tokyo street food" }`,
     }],
   })
 
@@ -113,7 +120,7 @@ async function main() {
       // 아티클 저장
       const { data: inserted, error: articleError } = await supabase
         .from('articles')
-        .insert({ ...articleData, published: true })
+        .insert({ ...articleData, published: true, section_images: article.section_images ?? {} })
         .select('id')
         .single()
 

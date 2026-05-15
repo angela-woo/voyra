@@ -86,3 +86,30 @@ export async function fetchUnsplashPhoto(query: string): Promise<UnsplashPhoto |
 export function categoryFallbackQuery(category: string | null): string {
   return CATEGORY_FALLBACK[category?.toLowerCase() ?? ''] ?? 'travel destination'
 }
+
+export function sectionToSearchQuery(heading: string, cityEnglish: string): string {
+  const h = heading.toLowerCase()
+  if (/attraction|landmark|sightseeing|명소|관광|볼거리|여행지/.test(h)) return `${cityEnglish} attractions`
+  if (/food|restaurant|dining|맛집|음식|먹거리|레스토랑|맛/.test(h)) return `${cityEnglish} food`
+  if (/transport|getting around|교통|이동|지하철/.test(h)) return `${cityEnglish} transportation`
+  if (/shopping|market|쇼핑|시장/.test(h)) return `${cityEnglish} shopping`
+  if (/tip|advice|guide|팁|여행 정보|주의사항/.test(h)) return `${cityEnglish} travel`
+  if (/hotel|accommodation|숙박|호텔/.test(h)) return `${cityEnglish} hotel`
+  if (/cafe|coffee|카페|커피/.test(h)) return `${cityEnglish} cafe`
+  if (/nature|park|자연|공원|hiking/.test(h)) return `${cityEnglish} nature landscape`
+  if (/night|nightlife|bar|밤|야경|클럽/.test(h)) return `${cityEnglish} nightlife`
+  if (/culture|history|art|문화|역사|예술/.test(h)) return `${cityEnglish} culture`
+  return `${cityEnglish} travel`
+}
+
+export async function fetchSectionImages(
+  sections: { heading: string; query: string }[],
+): Promise<Record<string, UnsplashPhoto | null>> {
+  const entries = await Promise.all(
+    sections.map(async ({ heading, query }) => {
+      const photo = await fetchUnsplashPhoto(query)
+      return [heading, photo] as [string, UnsplashPhoto | null]
+    }),
+  )
+  return Object.fromEntries(entries)
+}
