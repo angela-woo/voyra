@@ -105,11 +105,24 @@ export function sectionToSearchQuery(heading: string, cityEnglish: string): stri
 export async function fetchSectionImages(
   sections: { heading: string; query: string }[],
 ): Promise<Record<string, UnsplashPhoto | null>> {
-  const entries = await Promise.all(
-    sections.map(async ({ heading, query }) => {
-      const photo = await fetchUnsplashPhoto(query)
-      return [heading, photo] as [string, UnsplashPhoto | null]
-    }),
-  )
-  return Object.fromEntries(entries)
+  // 고유 쿼리만 병렬로 fetch (쿼리당 8장)
+  const uniqueQueries = Array.from(new Set(sections.map(s => s.query)))
+  const photosByQuery = Object.fromEntries(
+    await Promise.all(
+      uniqueQueries.map(async q => [q, await fetchUnsplashPhotos(q, 8)]),
+    ),
+  ) as Record<string, UnsplashPhoto[]>
+
+  // 사용된 URL 추적하며 순서대로 할당 → 중복 방지
+  const usedUrls = new Set<string>()
+  const result: Record<string, UnsplashPhoto | null> = {}
+
+  for (const { heading, query } of sections) {
+    const photos = photosByQuery[query] ?? []
+    const photo = photos.find(p => !usedUrls.has(p.url)) ?? null
+    if (photo) usedUrls.add(photo.url)
+    result[heading] = photo
+  }
+
+  return result
 }
