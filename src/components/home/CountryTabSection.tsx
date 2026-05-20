@@ -13,7 +13,6 @@ interface TabArticle {
   city: string | null
   country: string | null
   category: string | null
-  cover_image_url: string | null
 }
 
 interface TabPlan {
@@ -73,19 +72,9 @@ function ArticleCard({ a }: { a: TabArticle }) {
       className="group bg-white rounded-[var(--radius)] overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all duration-200 flex flex-col"
     >
       <div className="relative h-48 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden flex-shrink-0">
-        {a.cover_image_url ? (
-          <Image
-            src={a.cover_image_url}
-            alt={a.title}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <MapPin className="w-8 h-8 text-blue-300" />
-          </div>
-        )}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <MapPin className="w-8 h-8 text-blue-300" />
+        </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
         {dest && (
           <span className="absolute top-3 left-3 bg-[var(--primary)] text-white text-xs px-2.5 py-1 rounded-full z-10">
