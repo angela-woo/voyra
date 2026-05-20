@@ -1,21 +1,28 @@
 const CITY_NAME_MAP: Record<string, string> = {
   // 동아시아
-  교토: 'Kyoto', 오사카: 'Osaka', 도쿄: 'Tokyo', 서울: 'Seoul',
+  교토: 'Kyoto', 오사카: 'Osaka', 도쿄: 'Tokyo', 서울: 'Seoul', 나라: 'Nara',
   // 동남아시아
   발리: 'Bali', 싱가포르: 'Singapore', 방콕: 'Bangkok', 하노이: 'Hanoi',
-  // 중국·홍콩
-  홍콩: 'Hong Kong', 상하이: 'Shanghai', 베이징: 'Beijing',
+  치앙마이: 'Chiang Mai', 푸켓: 'Phuket', 다낭: 'Da Nang', 호치민: 'Ho Chi Minh City',
+  코타키나발루: 'Kota Kinabalu', 쿠알라룸푸르: 'Kuala Lumpur', 세부: 'Cebu',
+  // 중국·홍콩·대만
+  홍콩: 'Hong Kong', 상하이: 'Shanghai', 베이징: 'Beijing', 타이베이: 'Taipei',
   // 중동
-  두바이: 'Dubai', 이스탄불: 'Istanbul',
+  두바이: 'Dubai', 이스탄불: 'Istanbul', 아부다비: 'Abu Dhabi',
   // 유럽
   런던: 'London', 파리: 'Paris', 로마: 'Rome', 암스테르담: 'Amsterdam',
   프라하: 'Prague', 비엔나: 'Vienna', 베를린: 'Berlin', 취리히: 'Zurich',
   코펜하겐: 'Copenhagen', 헬싱키: 'Helsinki', 바르셀로나: 'Barcelona',
-  마드리드: 'Madrid', 리스본: 'Lisbon',
+  마드리드: 'Madrid', 리스본: 'Lisbon', 부다페스트: 'Budapest',
+  뮌헨: 'Munich', 밀라노: 'Milan', 피렌체: 'Florence', 베네치아: 'Venice',
+  더블린: 'Dublin', 에든버러: 'Edinburgh', 브뤼셀: 'Brussels',
   // 오세아니아
-  시드니: 'Sydney', 멜버른: 'Melbourne',
+  시드니: 'Sydney', 멜버른: 'Melbourne', 오클랜드: 'Auckland',
   // 북미
   뉴욕: 'New York', 로스앤젤레스: 'Los Angeles', 샌프란시스코: 'San Francisco',
+  라스베이거스: 'Las Vegas', 시카고: 'Chicago', 밴쿠버: 'Vancouver', 토론토: 'Toronto',
+  // 중남미
+  멕시코시티: 'Mexico City', 칸쿤: 'Cancun', 리우데자네이루: 'Rio de Janeiro',
 }
 
 export function toEnglishCity(city: string): string {

@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import ArticleCard from '@/components/article/ArticleCard'
-import { fetchUnsplashPhoto, fetchUnsplashPhotos, toEnglishCity } from '@/lib/unsplash'
+import { fetchUnsplashPhoto, fetchUnsplashPhotos } from '@/lib/unsplash'
 import type { UnsplashPhoto } from '@/lib/unsplash'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -48,7 +48,7 @@ async function getTravelPlans(limit: number) {
     const supabase = await createClient()
     const { data } = await supabase
       .from('travel_plans')
-      .select('id, slug, city, country, days, travel_type, title, meta_description, views_count')
+      .select('id, slug, city, country, days, travel_type, title, meta_description, views_count, cover_image_url')
       .eq('published', true)
       .order('views_count', { ascending: false })
       .limit(limit)
@@ -109,17 +109,8 @@ export default async function HomePage() {
   ])
 
   const countryPhotos = countryPhotoList as (UnsplashPhoto | null)[]
-
-  // 인기 여행 일정 도시 이미지 (city별 unique fetch)
-  const planCities = Array.from(new Set(travelPlans.map((p: { city: string | null }) => p.city).filter(Boolean) as string[]))
-  const planCityPhotoMap = Object.fromEntries(
-    await Promise.all(
-      planCities.map(async city => [
-        city,
-        await fetchUnsplashPhotos(`${toEnglishCity(city)} travel`, 1).then(r => r[0] ?? null),
-      ]),
-    ),
-  ) as Record<string, UnsplashPhoto | null>
+  // 플랜 이미지는 DB의 cover_image_url만 사용 (scripts/update-travel-plan-images.ts 로 저장)
+  // Unsplash fallback 없음 → rate limit 절약
 
   return (
     <div className="min-h-screen bg-white">
@@ -248,7 +239,7 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {travelPlans.map((plan: any) => {
-              const photo = planCityPhotoMap[plan.city] ?? null
+              const photoUrl: string | null = plan.cover_image_url ?? null
               return (
                 <Link
                   key={plan.id}
@@ -257,9 +248,9 @@ export default async function HomePage() {
                 >
                   {/* 이미지 */}
                   <div className="relative h-48 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden">
-                    {photo && (
+                    {photoUrl && (
                       <Image
-                        src={photo.url}
+                        src={photoUrl}
                         alt={plan.city}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
