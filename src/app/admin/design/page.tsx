@@ -26,7 +26,7 @@ const defaults: DesignSettings = {
   font_heading: 'Playfair Display',
   font_body: 'Inter',
   site_name: 'Voyra',
-  site_description: 'Discover the world with AI-powered travel guides',
+  site_description: 'Discover the world with expert travel guides curated by Voyra.',
 }
 
 export default function AdminDesignPage() {

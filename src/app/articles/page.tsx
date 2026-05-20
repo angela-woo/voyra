@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: '여행 가이드 | Voyra',
-  description: '전세계 여행지 가이드 모음. AI가 큐레이션한 여행 가이드를 만나보세요.',
+  description: '전세계 여행지 가이드 모음. 엄선한 여행 가이드를 만나보세요.',
 }
 
 const PER_PAGE = 12
@@ -107,7 +107,7 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
             여행 가이드
           </h1>
           <p className="text-blue-100 text-sm">
-            AI가 큐레이션한{total > 0 ? ` ${total.toLocaleString()}개의` : ''} 여행 가이드
+            엄선한{total > 0 ? ` ${total.toLocaleString()}개의` : ''} 여행 가이드
           </p>
         </div>
       </div>

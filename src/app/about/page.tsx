@@ -1,4 +1,10 @@
-import { Globe, Compass, Users, Sparkles } from 'lucide-react'
+import { Globe, Compass, Users, BookOpen } from 'lucide-react'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Voyra 소개 | Voyra',
+  description: 'Voyra는 전 세계 여행지의 정확하고 유용한 정보를 제공하는 여행 가이드 플랫폼입니다.',
+}
 
 export default function AboutPage() {
   return (
@@ -9,16 +15,16 @@ export default function AboutPage() {
           Voyra에 대하여
         </h1>
         <p className="text-lg text-gray-500 max-w-2xl mx-auto">
-          AI의 힘으로 전 세계 여행지를 탐험하는 새로운 방법을 제안합니다.
+          전 세계 여행지의 정확하고 유용한 정보를 한곳에서 만나보세요.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
         {[
           {
-            icon: <Sparkles className="w-6 h-6 text-yellow-500" />,
-            title: 'AI 큐레이션',
-            desc: 'Claude AI가 최신 정보를 바탕으로 정확하고 풍부한 여행 가이드를 작성합니다.',
+            icon: <BookOpen className="w-6 h-6 text-yellow-500" />,
+            title: '엄선된 정보',
+            desc: '각 여행지의 문화, 음식, 교통, 숙박 등 다양한 측면을 깊이 있게 다룬 가이드를 제공합니다.',
           },
           {
             icon: <Compass className="w-6 h-6 text-blue-500" />,
@@ -40,19 +46,19 @@ export default function AboutPage() {
       </div>
 
       <div className="prose prose-gray max-w-none">
-        <h2 style={{ fontFamily: 'var(--font-heading)' }}>우리의 미션</h2>
+        <h2 style={{ fontFamily: 'var(--font-heading)' }}>Voyra의 미션</h2>
         <p>
-          Voyra는 여행을 꿈꾸는 모든 사람들을 위한 AI 기반 여행 가이드 플랫폼입니다.
-          복잡한 여행 계획을 단순화하고, 신뢰할 수 있는 정보를 쉽게 접근할 수 있도록 합니다.
+          Voyra는 전 세계 여행지의 정확하고 유용한 정보를 제공하는 여행 가이드 플랫폼입니다.
+          복잡한 여행 계획을 단순화하고, 신뢰할 수 있는 정보를 누구나 쉽게 접근할 수 있도록 합니다.
         </p>
         <p>
-          우리는 Claude AI를 활용하여 각 여행지의 문화, 음식, 교통, 숙박 등 다양한 측면을
-          심층적으로 분석하고 여행자에게 맞춤화된 가이드를 제공합니다.
+          각 여행지의 문화적 맥락, 현지 음식, 교통 정보, 숙박 옵션 등을 심층적으로 분석하여
+          여행자에게 실질적인 도움이 되는 가이드를 제공합니다.
         </p>
         <h2 style={{ fontFamily: 'var(--font-heading)' }}>팀 소개</h2>
         <p>
           Voyra는 여행을 사랑하는 개발자, 디자이너, 콘텐츠 크리에이터들로 구성되어 있습니다.
-          우리는 직접 여행하며 경험한 인사이트와 AI 기술을 결합하여 최상의 여행 경험을 제공합니다.
+          다양한 여행 경험에서 얻은 인사이트를 바탕으로 실용적이고 신뢰할 수 있는 여행 정보를 만들어갑니다.
         </p>
       </div>
     </div>

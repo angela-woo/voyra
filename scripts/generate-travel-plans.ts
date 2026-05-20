@@ -47,6 +47,14 @@ async function generatePlan(dest: typeof DESTINATIONS[0], theme: typeof THEMES[0
       content: `${dest.city}(${dest.country}) ${theme.label} 여행 일정을 아래 JSON 형식으로 생성해주세요.
 마크다운 코드블록 없이 순수 JSON만 반환하세요.
 
+[문체 필수 규칙]
+- 1인칭(나, 저, 제가, 우리) 절대 사용 금지
+- "제가 가봤는데", "직접 경험한", "강력 추천" 같은 표현 금지
+- 3인칭 정보 제공 형태로 작성 (객관적·유용한 정보 중심)
+  ❌ "이 카페는 제가 정말 좋아하는 곳이에요"
+  ✅ "현지인에게 인기 있는 카페로 전통 디저트와 음료를 즐길 수 있습니다"
+
+
 {
   "title": "SEO 최적화 제목 (50자 이내, 예: 도쿄 커플 여행 3일 코스 - 신주쿠부터 아사쿠사까지)",
   "meta_description": "150자 이내 설명",

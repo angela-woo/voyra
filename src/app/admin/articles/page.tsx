@@ -22,7 +22,7 @@ export default async function AdminArticlesPage() {
           className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white font-semibold text-sm rounded-lg hover:bg-blue-700 transition-colors"
         >
           <Plus className="w-4 h-4" />
-          새 아티클 (AI 생성)
+          새 아티클 생성
         </Link>
       </div>
 

@@ -143,7 +143,7 @@ export default async function HomePage() {
             어디로 떠나고 싶으세요?
           </h1>
           <p className="text-lg md:text-xl text-white/80 mb-10 font-light">
-            AI가 추천하는 맞춤 여행 가이드
+            전문가가 엄선한 맞춤 여행 가이드
           </p>
           <HeroSearch />
         </div>
@@ -203,7 +203,7 @@ export default async function HomePage() {
           <div className="flex items-center justify-between mb-10">
             <div>
               <h2 className="text-3xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>최신 여행 가이드</h2>
-              <p className="text-gray-500 text-sm mt-1">AI가 큐레이션한 최신 여행 정보</p>
+              <p className="text-gray-500 text-sm mt-1">엄선한 최신 여행 정보</p>
             </div>
             <Link href="/articles" className="flex items-center gap-1.5 text-sm font-medium text-[var(--primary)] hover:underline transition-colors">
               전체 보기 <ArrowRight className="w-4 h-4" />

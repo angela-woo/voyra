@@ -11,7 +11,7 @@ const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfa
 
 export const metadata: Metadata = {
   title: 'Voyra – AI-Powered Travel Guides',
-  description: 'Discover the world with AI-powered travel guides',
+  description: 'Discover the world with expert travel guides curated by Voyra.',
 }
 
 interface SiteSettings {

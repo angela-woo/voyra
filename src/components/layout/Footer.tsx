@@ -11,7 +11,7 @@ export default function Footer({ siteName }: { siteName: string }) {
               {siteName}
             </Link>
             <p className="text-sm leading-relaxed text-gray-400 max-w-xs">
-              AI가 큐레이션한 여행 가이드로 세계를 탐험하세요.<br />
+              엄선한 여행 가이드로 세계를 탐험하세요.<br />
               숨겨진 명소부터 현지 맛집까지 모두 담았습니다.
             </p>
           </div>
