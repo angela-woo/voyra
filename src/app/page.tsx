@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
 import ArticleCard from '@/components/article/ArticleCard'
-import NewsletterSignup from '@/components/widgets/NewsletterSignup'
 import { MapPin, Compass, BookOpen, Clock, ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -233,10 +232,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Newsletter */}
-      <section className="max-w-2xl mx-auto px-4 pb-16">
-        <NewsletterSignup />
-      </section>
     </div>
   )
 }
