@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic'
 
 // ── 나라 카드 목록 ──────────────────────────────────────────────────────────
 const COUNTRIES = [
-  { name: '일본', flag: '🗾', query: 'Japan Mount Fuji travel', dbName: '일본' },
+  { name: '일본', flag: '🇯🇵', query: 'Japan Mount Fuji travel', dbName: '일본' },
   { name: '프랑스', flag: '🇫🇷', query: 'Paris France Eiffel Tower', dbName: '프랑스' },
   { name: '태국', flag: '🇹🇭', query: 'Bangkok Thailand golden temple', dbName: '태국' },
   { name: '인도네시아', flag: '🇮🇩', query: 'Bali Indonesia rice terraces', dbName: '인도네시아' },
