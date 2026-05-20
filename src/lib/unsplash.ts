@@ -87,6 +87,27 @@ export function categoryFallbackQuery(category: string | null): string {
   return CATEGORY_FALLBACK[category?.toLowerCase() ?? ''] ?? 'travel destination'
 }
 
+export function itemToSearchQuery(heading: string, cityEnglish: string): string {
+  // 괄호 안 영어명 우선 사용: "센소지 사원 (Senso-ji Temple)" → "Senso-ji Temple Tokyo"
+  const englishMatch = heading.match(/\(([A-Za-z][^)]*)\)/)
+  if (englishMatch) return `${englishMatch[1].trim()} ${cityEnglish}`
+  // 대시 이후 영어: "우붓 - Ubud" → "Ubud Tokyo"
+  const dashMatch = heading.match(/-\s*([A-Za-z][A-Za-z\s]+)/)
+  if (dashMatch) return `${dashMatch[1].trim()} ${cityEnglish}`
+  // 이모지·특수문자 제거 후 남은 텍스트
+  const cleaned = heading.replace(/[^\w\sㄱ-힣]/g, '').trim()
+  return `${cleaned} ${cityEnglish}`.trim()
+}
+
+export async function fetchItemImages(
+  items: { heading: string; query: string }[],
+): Promise<Record<string, UnsplashPhoto[]>> {
+  const results = await Promise.all(
+    items.map(async ({ heading, query }) => [heading, await fetchUnsplashPhotos(query, 3)] as [string, UnsplashPhoto[]]),
+  )
+  return Object.fromEntries(results)
+}
+
 export function sectionToSearchQuery(heading: string, cityEnglish: string): string {
   const h = heading.toLowerCase()
   if (/attraction|landmark|sightseeing|명소|관광|볼거리|여행지/.test(h)) return `${cityEnglish} attractions`

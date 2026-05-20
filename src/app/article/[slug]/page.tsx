@@ -4,10 +4,13 @@ import { marked } from 'marked'
 import Image from 'next/image'
 import {
   fetchUnsplashPhoto,
+  fetchItemImages,
   fetchSectionImages,
+  itemToSearchQuery,
   sectionToSearchQuery,
   toEnglishCity,
 } from '@/lib/unsplash'
+import ImageCarousel from '@/components/ui/ImageCarousel'
 import PlaceCard from '@/components/article/PlaceCard'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
 import BudgetCalculator from '@/components/widgets/BudgetCalculator'
@@ -22,43 +25,49 @@ interface PageProps {
   params: Promise<{ slug: string }>
 }
 
-// 마크다운을 intro + ## 섹션 배열로 파싱
-function parseMarkdownSections(content: string) {
+// ------- 파서 -------
+interface ArticleItem { heading: string; body: string }
+interface ArticleSection { heading: string; intro: string; items: ArticleItem[] }
+
+function parseArticle(content: string): { globalIntro: string; sections: ArticleSection[] } {
   const lines = content.split('\n')
-  const introParts: string[] = []
-  const sections: { heading: string; body: string }[] = []
-  let currentHeading: string | null = null
-  let currentBodyParts: string[] = []
-  let foundFirstH2 = false
+  const globalIntroBuf: string[] = []
+  const sections: Array<{ heading: string; introBuf: string[]; items: Array<{ heading: string; bodyBuf: string[] }> }> = []
+  let sec: typeof sections[0] | null = null
+  let item: typeof sections[0]['items'][0] | null = null
 
   for (const line of lines) {
     if (line.startsWith('## ')) {
-      foundFirstH2 = true
-      if (currentHeading !== null) {
-        sections.push({ heading: currentHeading, body: currentBodyParts.join('\n') })
-      }
-      currentHeading = line.slice(3).trim()
-      currentBodyParts = []
+      if (item && sec) { sec.items.push(item); item = null }
+      if (sec) sections.push(sec)
+      sec = { heading: line.slice(3).trim(), introBuf: [], items: [] }
+    } else if (line.startsWith('### ') && sec) {
+      if (item) sec.items.push(item)
+      item = { heading: line.slice(4).trim(), bodyBuf: [] }
     } else {
-      if (!foundFirstH2) introParts.push(line)
-      else currentBodyParts.push(line)
+      if (item) item.bodyBuf.push(line)
+      else if (sec) sec.introBuf.push(line)
+      else globalIntroBuf.push(line)
     }
   }
-  if (currentHeading !== null) {
-    sections.push({ heading: currentHeading, body: currentBodyParts.join('\n') })
-  }
+  if (item && sec) sec.items.push(item)
+  if (sec) sections.push(sec)
 
-  return { intro: introParts.join('\n'), sections }
+  return {
+    globalIntro: globalIntroBuf.join('\n'),
+    sections: sections.map(s => ({
+      heading: s.heading,
+      intro: s.introBuf.join('\n'),
+      items: s.items.map(i => ({ heading: i.heading, body: i.bodyBuf.join('\n') })),
+    })),
+  }
 }
 
+// ------- DB / 데이터 -------
 async function getArticle(slug: string) {
   const supabase = await createClient()
   const { data } = await supabase
-    .from('articles')
-    .select('*')
-    .eq('slug', slug)
-    .eq('published', true)
-    .single()
+    .from('articles').select('*').eq('slug', slug).eq('published', true).single()
   return data
 }
 
@@ -75,6 +84,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return { title: `${article.title} – Voyra`, description: article.meta_description }
 }
 
+// ------- 페이지 -------
 export default async function ArticlePage({ params }: PageProps) {
   const { slug } = await params
   const article = await getArticle(slug)
@@ -82,30 +92,42 @@ export default async function ArticlePage({ params }: PageProps) {
 
   const places = await getPlaces(article.id)
   const cityEnglish = toEnglishCity(article.city ?? '')
+  const { globalIntro, sections } = parseArticle(article.content ?? '')
 
-  // 마크다운 섹션 파싱
-  const { intro, sections } = parseMarkdownSections(article.content ?? '')
+  // 아이템 이미지 쿼리 수집
+  const allItemQueries = sections.flatMap(s =>
+    s.items.map(item => ({ heading: item.heading, query: itemToSearchQuery(item.heading, cityEnglish) })),
+  )
 
-  // 섹션별 검색어: DB에 저장된 section_images 우선, 없으면 자동 생성
+  // 아이템 없는 섹션은 섹션 단위 이미지 (하위 호환)
   const dbSectionImages: Record<string, string> = article.section_images ?? {}
-  const sectionQueryList = sections.map(s => ({
-    heading: s.heading,
-    query: dbSectionImages[s.heading] ?? sectionToSearchQuery(s.heading, cityEnglish),
-  }))
+  const sectionQueryList = sections
+    .filter(s => s.items.length === 0)
+    .map(s => ({ heading: s.heading, query: dbSectionImages[s.heading] ?? sectionToSearchQuery(s.heading, cityEnglish) }))
 
-  // 히어로 이미지 + 섹션 이미지 병렬 fetch
-  const [heroPhoto, sectionPhotos, introHtml, ...sectionHtmls] = await Promise.all([
-    article.cover_image_url
-      ? Promise.resolve(null)
-      : fetchUnsplashPhoto(`${cityEnglish} travel`),
-    fetchSectionImages(sectionQueryList),
-    marked(intro),
-    ...sections.map(s => marked(s.body)),
+  // 히어로 + 아이템 이미지 + 섹션 이미지 병렬 fetch
+  const [heroPhoto, itemImages, sectionPhotos] = await Promise.all([
+    article.cover_image_url ? Promise.resolve(null) : fetchUnsplashPhoto(`${cityEnglish} travel`),
+    fetchItemImages(allItemQueries),
+    sectionQueryList.length > 0 ? fetchSectionImages(sectionQueryList) : Promise.resolve({} as Record<string, import('@/lib/unsplash').UnsplashPhoto | null>),
   ])
 
-  const heroImageUrl = article.cover_image_url ?? heroPhoto?.url ?? null
-  const heroAttribution = article.cover_image_attribution ?? null
+  // 마크다운 → HTML (모두 병렬)
+  const allMarkdown = [
+    globalIntro,
+    ...sections.flatMap(s => [s.intro, ...s.items.map(i => i.body)]),
+  ]
+  const allHtml = await Promise.all(allMarkdown.map(md => marked(md)))
 
+  let htmlIdx = 0
+  const globalIntroHtml = allHtml[htmlIdx++]
+  const processedSections = sections.map(s => ({
+    ...s,
+    introHtml: allHtml[htmlIdx++],
+    items: s.items.map(item => ({ ...item, bodyHtml: allHtml[htmlIdx++] })),
+  }))
+
+  const heroImageUrl = article.cover_image_url ?? heroPhoto?.url ?? null
   const timeAgo = article.created_at
     ? formatDistanceToNow(new Date(article.created_at), { addSuffix: true, locale: ko })
     : null
@@ -114,7 +136,7 @@ export default async function ArticlePage({ params }: PageProps) {
 
   return (
     <div>
-      {/* 히어로 이미지 */}
+      {/* 히어로 */}
       {heroImageUrl && (
         <div className="relative w-full h-64 md:h-96 bg-gray-200">
           <Image src={heroImageUrl} alt={article.title} fill priority sizes="100vw" className="object-cover" />
@@ -129,16 +151,16 @@ export default async function ArticlePage({ params }: PageProps) {
               {article.title}
             </h1>
           </div>
-          {heroAttribution && (
-            <span className="absolute bottom-2 right-3 text-[10px] text-white/50">{heroAttribution}</span>
+          {article.cover_image_attribution && (
+            <span className="absolute bottom-2 right-3 text-[10px] text-white/50">{article.cover_image_attribution}</span>
           )}
         </div>
       )}
 
       <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
-          {/* Main content */}
           <article>
+            {/* 메타 */}
             <div className="mb-8">
               {!heroImageUrl && destination && (
                 <span className="inline-flex items-center gap-1 text-sm text-[var(--primary)] font-medium mb-3">
@@ -150,37 +172,51 @@ export default async function ArticlePage({ params }: PageProps) {
                   {article.title}
                 </h1>
               )}
-              {article.meta_description && (
-                <p className="text-lg text-gray-500 mb-4">{article.meta_description}</p>
-              )}
+              {article.meta_description && <p className="text-lg text-gray-500 mb-4">{article.meta_description}</p>}
               {timeAgo && (
                 <div className="flex items-center gap-1 text-sm text-gray-400 mb-4">
                   <Calendar className="w-4 h-4" />{timeAgo}
                 </div>
               )}
               {article.category && (
-                <span className="inline-block text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">
-                  {article.category}
-                </span>
+                <span className="inline-block text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">{article.category}</span>
               )}
             </div>
 
-            {/* 섹션별 렌더링 */}
+            {/* 본문 */}
             <div className="prose prose-gray max-w-none prose-headings:font-bold prose-a:text-[var(--primary)]">
-              {/* 인트로 (첫 ## 이전 내용) */}
-              {intro && <div dangerouslySetInnerHTML={{ __html: introHtml as string }} />}
+              {globalIntro && <div dangerouslySetInnerHTML={{ __html: globalIntroHtml as string }} />}
 
-              {/* ## 섹션들 */}
-              {sections.map((section, i) => {
-                const photo = sectionPhotos[section.heading]
-                return (
-                  <div key={section.heading}>
-                    <h2>{section.heading}</h2>
-                    {photo && (
+              {processedSections.map(section => (
+                <div key={section.heading}>
+                  <h2>{section.heading}</h2>
+
+                  {/* 섹션 인트로 (### 이전 내용) */}
+                  {section.intro && (
+                    <div dangerouslySetInnerHTML={{ __html: section.introHtml as string }} />
+                  )}
+
+                  {/* ### 아이템별 캐러셀 */}
+                  {section.items.length > 0 ? (
+                    section.items.map(item => {
+                      const photos = itemImages[item.heading] ?? []
+                      return (
+                        <div key={item.heading}>
+                          <h3>{item.heading}</h3>
+                          {photos.length > 0 && (
+                            <ImageCarousel images={photos} height={250} />
+                          )}
+                          <div dangerouslySetInnerHTML={{ __html: item.bodyHtml as string }} />
+                        </div>
+                      )
+                    })
+                  ) : (
+                    /* 아이템 없는 섹션: 섹션 단위 이미지 fallback */
+                    sectionPhotos[section.heading] && (
                       <figure className="not-prose my-4">
                         <div className="relative w-full h-[200px] rounded-[var(--radius)] overflow-hidden">
                           <Image
-                            src={photo.url}
+                            src={sectionPhotos[section.heading]!.url}
                             alt={section.heading}
                             fill
                             sizes="(max-width: 1024px) 100vw, 700px"
@@ -189,20 +225,19 @@ export default async function ArticlePage({ params }: PageProps) {
                         </div>
                         <figcaption className="text-xs text-gray-400 mt-1.5 text-right">
                           Photo by{' '}
-                          <a href={photo.authorUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">
-                            {photo.authorName}
+                          <a href={sectionPhotos[section.heading]!.authorUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">
+                            {sectionPhotos[section.heading]!.authorName}
                           </a>{' '}
                           on Unsplash
                         </figcaption>
                       </figure>
-                    )}
-                    <div dangerouslySetInnerHTML={{ __html: sectionHtmls[i] as string }} />
-                  </div>
-                )
-              })}
+                    )
+                  )}
+                </div>
+              ))}
             </div>
 
-            {/* Places */}
+            {/* 추천 장소 */}
             {places.length > 0 && (
               <div className="mt-10">
                 <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'var(--font-heading)' }}>추천 장소</h2>
@@ -216,7 +251,7 @@ export default async function ArticlePage({ params }: PageProps) {
             )}
           </article>
 
-          {/* Sidebar */}
+          {/* 사이드바 */}
           <aside className="space-y-6">
             {mainPlace && mainPlace.lat && mainPlace.lng && (
               <WeatherWidget lat={mainPlace.lat} lng={mainPlace.lng} city={article.city ?? '현지'} />
