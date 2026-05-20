@@ -41,7 +41,7 @@ function makeSlug(cityEn: string, travelType: string, days: number): string {
 async function generatePlan(dest: typeof DESTINATIONS[0], theme: typeof THEMES[0]) {
   const message = await client.messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 4096,
+    max_tokens: 8000,
     messages: [{
       role: 'user',
       content: `${dest.city}(${dest.country}) ${theme.label} 여행 일정을 아래 JSON 형식으로 생성해주세요.
@@ -90,11 +90,12 @@ async function generatePlan(dest: typeof DESTINATIONS[0], theme: typeof THEMES[0
 조건:
 - ${theme.days}일 일정
 - 여행 스타일: ${theme.label}
-- 하루 5~7개 장소
+- 하루 4~5개 장소 (간결하게)
 - 식당/카페는 alternatives 2개 포함
 - 관광지만 klook_url 포함
 - 실제 존재하는 장소 사용
-- google_maps_url은 실제 검색 가능한 URL`,
+- description은 1문장으로 짧게
+- google_maps_url은 https://www.google.com/maps/search/?api=1&query=장소명 형식`,
     }],
   })
 

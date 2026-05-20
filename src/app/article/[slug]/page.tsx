@@ -11,7 +11,6 @@ import {
 import PlaceCard from '@/components/article/PlaceCard'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
 import BudgetCalculator from '@/components/widgets/BudgetCalculator'
-import NewsletterSignup from '@/components/widgets/NewsletterSignup'
 import { Calendar, MapPin } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -223,7 +222,6 @@ export default async function ArticlePage({ params }: PageProps) {
               <WeatherWidget lat={mainPlace.lat} lng={mainPlace.lng} city={article.city ?? '현지'} />
             )}
             <BudgetCalculator />
-            <NewsletterSignup />
           </aside>
         </div>
       </div>
