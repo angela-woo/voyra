@@ -23,6 +23,10 @@ const CITY_NAME_MAP: Record<string, string> = {
   라스베이거스: 'Las Vegas', 시카고: 'Chicago', 밴쿠버: 'Vancouver', 토론토: 'Toronto',
   // 중남미
   멕시코시티: 'Mexico City', 칸쿤: 'Cancun', 리우데자네이루: 'Rio de Janeiro',
+  // 추가 유럽
+  스톡홀름: 'Stockholm', 오슬로: 'Oslo', 바르샤바: 'Warsaw', 아테네: 'Athens',
+  // 남아시아
+  뭄바이: 'Mumbai', 델리: 'New Delhi',
 }
 
 export function toEnglishCity(city: string): string {
