@@ -12,6 +12,9 @@ const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfa
 export const metadata: Metadata = {
   title: 'Kiravoy - 빛나는 여행의 시작',
   description: 'Kiravoy - 빛나는 여행의 시작',
+  verification: {
+    google: 'adsWS-dLWCg1bUDwvbJSTq_-Cbrpl40LtvHGRIjPUMQ',
+  },
 }
 
 interface SiteSettings {
