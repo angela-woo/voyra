@@ -55,7 +55,7 @@ export default async function PlaceCard({ place, city }: { place: Place; city?: 
   return (
     <div className="bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm overflow-hidden">
       {/* 장소 이미지 */}
-      <div className="h-40 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
+      <div className="h-[200px] md:h-[250px] bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
         {imageUrl ? (
           <>
             <Image

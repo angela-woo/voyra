@@ -138,8 +138,8 @@ export default async function ArticlePage({ params }: PageProps) {
     <div>
       {/* 히어로 */}
       {heroImageUrl && (
-        <div className="relative w-full h-64 md:h-96 bg-gray-200">
-          <Image src={heroImageUrl} alt={article.title} fill priority sizes="100vw" className="object-cover" />
+        <div className="relative w-full h-[300px] md:h-[500px] bg-gray-200">
+          <Image src={heroImageUrl} alt={article.title} fill priority sizes="100vw" className="object-cover object-center" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
           <div className="absolute bottom-4 left-4 right-4 max-w-6xl mx-auto">
             {destination && (
@@ -204,7 +204,7 @@ export default async function ArticlePage({ params }: PageProps) {
                         <div key={item.heading}>
                           <h3>{item.heading}</h3>
                           {photos.length > 0 && (
-                            <ImageCarousel images={photos} height={250} />
+                            <ImageCarousel images={photos} height={350} mobileHeight={220} />
                           )}
                           <div dangerouslySetInnerHTML={{ __html: item.bodyHtml as string }} />
                         </div>
@@ -214,7 +214,7 @@ export default async function ArticlePage({ params }: PageProps) {
                     /* 아이템 없는 섹션: 섹션 단위 이미지 fallback */
                     sectionPhotos[section.heading] && (
                       <figure className="not-prose my-4">
-                        <div className="relative w-full h-[200px] rounded-[var(--radius)] overflow-hidden">
+                        <div className="relative w-full h-[220px] md:h-[350px] rounded-[var(--radius)] overflow-hidden">
                           <Image
                             src={sectionPhotos[section.heading]!.url}
                             alt={section.heading}

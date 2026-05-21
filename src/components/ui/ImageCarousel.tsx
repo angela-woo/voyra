@@ -8,15 +8,24 @@ import type { UnsplashPhoto } from '@/lib/unsplash'
 interface Props {
   images: UnsplashPhoto[]
   height?: number
+  mobileHeight?: number
 }
 
-export default function ImageCarousel({ images, height = 250 }: Props) {
+export default function ImageCarousel({ images, height = 350, mobileHeight }: Props) {
   const [current, setCurrent] = useState(0)
   const [paused, setPaused] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const touchStartX = useRef<number | null>(null)
 
   const next = useCallback(() => setCurrent(c => (c + 1) % images.length), [images.length])
   const prev = useCallback(() => setCurrent(c => (c - 1 + images.length) % images.length), [images.length])
+
+  useEffect(() => {
+    const update = () => setIsMobile(window.innerWidth < 768)
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [])
 
   useEffect(() => {
     if (paused || images.length <= 1) return
@@ -27,13 +36,14 @@ export default function ImageCarousel({ images, height = 250 }: Props) {
   if (!images.length) return null
 
   const photo = images[current]
+  const displayHeight = isMobile && mobileHeight ? mobileHeight : height
 
   return (
     <div className="not-prose my-4">
       {/* 슬라이드 영역 */}
       <div
         className="relative rounded-[var(--radius)] overflow-hidden group"
-        style={{ height }}
+        style={{ height: displayHeight }}
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
         onTouchStart={e => { touchStartX.current = e.touches[0].clientX }}
@@ -48,11 +58,11 @@ export default function ImageCarousel({ images, height = 250 }: Props) {
           src={photo.url}
           alt=""
           fill
-          className="object-cover"
+          className="object-cover object-center"
           sizes="(max-width: 1024px) 100vw, 700px"
         />
 
-        {/* 하단 그라데이션 (dot 가독성) */}
+        {/* 하단 그라데이션 */}
         <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
 
         {/* 좌우 화살표 */}
