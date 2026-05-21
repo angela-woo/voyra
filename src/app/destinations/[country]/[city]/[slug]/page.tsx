@@ -7,6 +7,7 @@ import { fetchUnsplashPhoto, fetchUnsplashPhotos, toEnglishCity } from '@/lib/un
 import WeatherWidget from '@/components/widgets/WeatherWidget'
 import { MapPin, Clock, DollarSign, Thermometer, Info, ExternalLink, ChevronRight } from 'lucide-react'
 import type { Metadata } from 'next'
+import AdUnit from '@/components/ui/AdUnit'
 
 export const dynamic = 'force-dynamic'
 
@@ -314,10 +315,7 @@ export default async function TravelPlanPage({ params }: PageProps) {
               </div>
             </section>
 
-            {/* AdSense placeholder */}
-            <div className="h-24 bg-gray-50 rounded-[var(--radius)] border border-dashed border-gray-200 flex items-center justify-center">
-              <p className="text-xs text-gray-300">광고 영역</p>
-            </div>
+            <AdUnit slot="3920184756" />
 
             {/* Day-by-day itinerary */}
             {plan.days_data && plan.days_data.length > 0 && (
@@ -461,10 +459,7 @@ export default async function TravelPlanPage({ params }: PageProps) {
               </div>
             </section>
 
-            {/* AdSense placeholder */}
-            <div className="h-24 bg-gray-50 rounded-[var(--radius)] border border-dashed border-gray-200 flex items-center justify-center">
-              <p className="text-xs text-gray-300">광고 영역</p>
-            </div>
+            <AdUnit slot="6174829350" />
 
             {/* Flight search */}
             <section className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-[var(--radius)] p-6 border border-sky-100">

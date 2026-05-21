@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { ArrowRight, Clock, Eye } from 'lucide-react'
 import HeroSearch from '@/components/home/HeroSearch'
 import CountryTabSection from '@/components/home/CountryTabSection'
+import AdUnit from '@/components/ui/AdUnit'
 
 export const dynamic = 'force-dynamic'
 
@@ -220,6 +221,9 @@ export default async function HomePage() {
           ) : (
             <p className="text-center text-gray-400 py-12">아직 게시된 가이드가 없습니다.</p>
           )}
+        </div>
+        <div className="max-w-4xl mx-auto px-4 pb-4">
+          <AdUnit slot="8261047593" />
         </div>
       </section>
 

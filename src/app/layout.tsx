@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
+import Script from 'next/script'
 import './globals.css'
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import Header from '@/components/layout/Header'
@@ -75,6 +76,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <style>{`:root { ${cssVars} }`}</style>
       </head>
       <body className="bg-[var(--bg)] font-[family-name:var(--font-body)] text-gray-900 min-h-screen flex flex-col">
+        <Script
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4411523591483681"
+          async
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <Toaster position="top-right" />
         <Header siteName={siteName} />
         <main className="flex-1">{children}</main>

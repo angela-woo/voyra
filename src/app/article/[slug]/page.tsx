@@ -18,6 +18,7 @@ import { Calendar, MapPin } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import type { Metadata } from 'next'
+import AdUnit from '@/components/ui/AdUnit'
 
 export const dynamic = 'force-dynamic'
 
@@ -187,6 +188,8 @@ export default async function ArticlePage({ params }: PageProps) {
             <div className="prose prose-gray max-w-none prose-headings:font-bold prose-a:text-[var(--primary)]">
               {globalIntro && <div dangerouslySetInnerHTML={{ __html: globalIntroHtml as string }} />}
 
+              <AdUnit slot="2847391056" />
+
               {processedSections.map(section => (
                 <div key={section.heading}>
                   <h2>{section.heading}</h2>
@@ -237,6 +240,8 @@ export default async function ArticlePage({ params }: PageProps) {
               ))}
             </div>
 
+            <AdUnit slot="5193847261" />
+
             {/* 추천 장소 */}
             {places.length > 0 && (
               <div className="mt-10">
@@ -249,6 +254,8 @@ export default async function ArticlePage({ params }: PageProps) {
                 </div>
               </div>
             )}
+
+            <AdUnit slot="7384920165" />
           </article>
 
           {/* 사이드바 */}
