@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 }
 
 const PER_PAGE = 12
-const SELECT_COLS = 'id, slug, title, meta_description, city, country, category, created_at'
+const SELECT_COLS = 'id, slug, title, meta_description, city, country, category, created_at, cover_image_url'
 
 interface PageProps {
   searchParams: Promise<{ page?: string; sort?: string; country?: string; category?: string }>
