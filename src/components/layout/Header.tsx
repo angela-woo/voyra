@@ -36,11 +36,7 @@ export default function Header({ siteName }: { siteName: string }) {
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-8">
         {/* Logo */}
-        <Link
-          href="/"
-          className="flex-shrink-0 text-xl font-bold text-[var(--primary)]"
-          style={{ fontFamily: 'var(--font-heading)' }}
-        >
+        <Link href="/" className="flex-shrink-0 text-2xl font-bold" style={{ color: '#FF5722', fontFamily: 'var(--font-heading)' }}>
           {siteName}
         </Link>
 
@@ -74,7 +70,8 @@ export default function Header({ siteName }: { siteName: string }) {
               <Link href="/auth/login" className="text-sm text-gray-600 hover:text-[var(--primary)] transition-colors">로그인</Link>
               <Link
                 href="/auth/signup"
-                className="text-sm px-4 py-1.5 rounded-[var(--radius)] bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)] transition-colors duration-200"
+                className="text-sm px-4 py-2 rounded-lg font-medium text-white transition-colors duration-200"
+                style={{ backgroundColor: '#FF5722' }}
               >
                 회원가입
               </Link>

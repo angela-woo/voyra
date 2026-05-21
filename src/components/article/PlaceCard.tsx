@@ -1,6 +1,5 @@
 import Image from 'next/image'
 import { MapPin, Star } from 'lucide-react'
-import { fetchUnsplashPhoto, categoryFallbackQuery } from '@/lib/unsplash'
 
 const AWIN_AID = '2892557'
 const KLOOK_AFF_ID = '121117'
@@ -36,77 +35,58 @@ function buildBookingUrl(place: Place, city: string | null | undefined): string 
   return `https://www.booking.com/searchresults.html?aid=${AWIN_AID}&ss=${ss}`
 }
 
-export default async function PlaceCard({ place, city }: { place: Place; city?: string | null }) {
+export default function PlaceCard({ place, city }: { place: Place; city?: string | null }) {
   const hotel = isHotel(place.category)
   const attractionOrRestaurant = isAttractionOrRestaurant(place.category)
-
-  // DB 이미지 우선, 없으면 장소명으로 fetch (Next.js 24h 캐시)
-  let imageUrl = place.image_url ?? null
-  let imageAttribution = place.image_attribution ?? null
-  if (!imageUrl) {
-    const query = place.name || categoryFallbackQuery(place.category)
-    const photo = await fetchUnsplashPhoto(query)
-    if (photo) {
-      imageUrl = photo.url
-      imageAttribution = `Photo by ${photo.authorName} on Unsplash`
-    }
-  }
+  const imageUrl = place.image_url ?? null
 
   return (
-    <div className="bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm overflow-hidden">
-      {/* 장소 이미지 */}
-      <div className="h-[200px] md:h-[250px] bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex hover:shadow-md transition-shadow duration-200">
+      {/* Image - left side */}
+      <div className="w-28 h-28 relative shrink-0 bg-gradient-to-br from-orange-50 to-red-50">
         {imageUrl ? (
-          <>
-            <Image
-              src={imageUrl}
-              alt={place.name}
-              fill
-              sizes="(max-width: 640px) 100vw, 50vw"
-              className="object-cover"
-            />
-            {imageAttribution && (
-              <span className="absolute bottom-1 right-1.5 text-[9px] text-white/60 bg-black/20 px-1 rounded">
-                {imageAttribution}
-              </span>
-            )}
-          </>
+          <Image src={imageUrl} alt={place.name} fill sizes="112px" className="object-cover" />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
-            <MapPin className="w-8 h-8 text-gray-300" />
+            <MapPin className="w-6 h-6 text-orange-200" />
           </div>
         )}
       </div>
 
-      <div className="p-4">
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <div>
-            <h4 className="font-semibold text-sm">{place.name}</h4>
-            {place.category && <span className="text-xs text-gray-400">{place.category}</span>}
+      {/* Info - right side */}
+      <div className="flex-1 p-3 flex flex-col justify-between min-w-0">
+        <div>
+          <div className="flex items-start justify-between gap-1 mb-1">
+            <h4 className="font-semibold text-sm text-gray-900 leading-snug truncate">{place.name}</h4>
+            {place.rating && (
+              <span className="flex items-center gap-0.5 text-amber-500 text-xs font-medium shrink-0">
+                <Star className="w-3 h-3 fill-current" />
+                {place.rating.toFixed(1)}
+              </span>
+            )}
           </div>
-          {place.rating && (
-            <span className="flex items-center gap-1 text-amber-500 text-sm font-medium shrink-0">
-              <Star className="w-3.5 h-3.5 fill-current" />
-              {place.rating.toFixed(1)}
+          {place.category && (
+            <span className="inline-block text-[10px] px-2 py-0.5 rounded-full font-medium mb-1" style={{ backgroundColor: '#FFF3F0', color: '#FF5722' }}>
+              {place.category}
             </span>
           )}
+          {place.address && (
+            <p className="text-[11px] text-gray-400 flex items-start gap-0.5 line-clamp-1">
+              <MapPin className="w-2.5 h-2.5 shrink-0 mt-0.5" />
+              {place.address}
+            </p>
+          )}
         </div>
-        {place.address && (
-          <p className="text-xs text-gray-400 flex items-start gap-1 mb-3">
-            <MapPin className="w-3 h-3 shrink-0 mt-0.5" />
-            {place.address}
-          </p>
-        )}
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-wrap gap-1.5 mt-2">
           {place.google_maps_url && (
             <a
               href={place.google_maps_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1.5 text-xs py-1.5 rounded-[var(--radius)] border border-gray-200 hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"
+              className="text-[10px] px-2.5 py-1 rounded-lg border border-gray-200 hover:border-gray-400 transition-colors text-gray-600"
             >
-              🗺 구글맵에서 보기
+              🗺 지도
             </a>
           )}
           {hotel && (
@@ -114,10 +94,10 @@ export default async function PlaceCard({ place, city }: { place: Place; city?: 
               href={buildBookingUrl(place, city)}
               target="_blank"
               rel="noopener noreferrer sponsored"
-              className="flex items-center justify-center gap-1.5 text-xs py-1.5 rounded-[var(--radius)] text-white font-medium transition-opacity hover:opacity-90"
+              className="text-[10px] px-2.5 py-1 rounded-lg text-white font-medium transition-opacity hover:opacity-90"
               style={{ backgroundColor: '#003580' }}
             >
-              🏨 Booking.com에서 예약
+              🏨 Booking
             </a>
           )}
           {attractionOrRestaurant && (
@@ -125,10 +105,10 @@ export default async function PlaceCard({ place, city }: { place: Place; city?: 
               href={place.klook_url ?? `https://www.klook.com/search/?query=${encodeURIComponent(place.name)}&aff_id=${KLOOK_AFF_ID}`}
               target="_blank"
               rel="noopener noreferrer sponsored"
-              className="flex items-center justify-center gap-1.5 text-xs py-1.5 rounded-[var(--radius)] text-white font-medium transition-opacity hover:opacity-90"
+              className="text-[10px] px-2.5 py-1 rounded-lg text-white font-medium transition-opacity hover:opacity-90"
               style={{ backgroundColor: '#FF5722' }}
             >
-              🎯 Klook에서 예약
+              🎯 Klook
             </a>
           )}
         </div>

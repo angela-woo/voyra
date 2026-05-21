@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Playfair_Display } from 'next/font/google'
+import { Noto_Sans_KR } from 'next/font/google'
 import Script from 'next/script'
 import './globals.css'
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
@@ -7,8 +7,7 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { Toaster } from 'react-hot-toast'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
-const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' })
+const notoSansKR = Noto_Sans_KR({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-kr' })
 
 export const metadata: Metadata = {
   title: 'Kiravoy - 빛나는 여행의 시작',
@@ -48,11 +47,13 @@ function adjustColor(hex: string, amount: number): string {
 }
 
 function buildCssVars(settings: Record<string, string>): string {
-  const primary = settings.primary_color || '#2563eb'
-  const bg = settings.background_color || settings.bg_color || '#ffffff'
-  const radius = settings.border_radius || '8'
-  const fontHeading = settings.font_heading || 'Playfair Display'
-  const fontBody = settings.font_body || 'Inter'
+  const primary = settings.primary_color || '#FF5722'
+  const bg = settings.background_color || '#ffffff'
+  const radius = settings.border_radius || '12'
+  const fontHeadingName = settings.font_heading || 'Noto Sans KR'
+  const fontBodyName = settings.font_body || 'Noto Sans KR'
+  const toFontVar = (name: string) =>
+    name === 'Noto Sans KR' ? 'var(--font-kr), sans-serif' : `'${name}', sans-serif`
 
   return [
     `--primary: ${primary}`,
@@ -60,8 +61,8 @@ function buildCssVars(settings: Record<string, string>): string {
     `--bg: ${bg}`,
     `--bg-secondary: ${adjustColor(bg, bg === '#ffffff' ? -5 : 5)}`,
     `--radius: ${radius}px`,
-    `--font-heading: '${fontHeading}', serif`,
-    `--font-body: '${fontBody}', sans-serif`,
+    `--font-heading: ${toFontVar(fontHeadingName)}`,
+    `--font-body: ${toFontVar(fontBodyName)}`,
   ].join('; ')
 }
 
@@ -71,7 +72,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const siteName = settings.site_name || 'Kiravoy'
 
   return (
-    <html lang="ko" className={`${inter.variable} ${playfair.variable}`}>
+    <html lang="ko" className={notoSansKR.variable}>
       <head>
         <style>{`:root { ${cssVars} }`}</style>
       </head>

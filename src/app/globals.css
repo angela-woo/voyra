@@ -3,13 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
+  --primary: #FF5722;
+  --primary-hover: #E64A19;
+  --secondary: #FFF3F0;
   --bg: #ffffff;
-  --bg-secondary: #f9fafb;
-  --radius: 8px;
-  --font-heading: 'Playfair Display', serif;
-  --font-body: 'Inter', sans-serif;
+  --bg-secondary: #F8F8F8;
+  --radius: 12px;
+  --font-heading: 'Noto Sans KR', sans-serif;
+  --font-body: 'Noto Sans KR', sans-serif;
 }
 
 body {
@@ -17,7 +18,16 @@ body {
   font-family: var(--font-body);
 }
 
-/* Prose styles for markdown content */
+/* Card hover lift effect */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+}
+
+/* Prose styles */
 .prose h2 { font-size: 1.25rem; font-weight: 700; margin: 1.5rem 0 0.75rem; }
 .prose h3 { font-size: 1.1rem; font-weight: 600; margin: 1.25rem 0 0.5rem; }
 .prose p { margin: 0.75rem 0; line-height: 1.75; }
@@ -32,3 +42,7 @@ body {
 .prose img { border-radius: var(--radius); max-width: 100%; height: auto; margin: 1rem 0; }
 .prose strong { font-weight: 600; }
 .prose hr { border-color: #e5e7eb; margin: 2rem 0; }
+
+/* Orange scrollbar for horizontal carousels */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }

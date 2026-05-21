@@ -180,7 +180,7 @@ export default async function ArticlePage({ params }: PageProps) {
                 </div>
               )}
               {article.category && (
-                <span className="inline-block text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">{article.category}</span>
+                <span className="inline-block text-xs px-3 py-1 rounded-full font-medium" style={{ backgroundColor: '#FFF3F0', color: '#FF5722' }}>{article.category}</span>
               )}
             </div>
 
@@ -192,7 +192,11 @@ export default async function ArticlePage({ params }: PageProps) {
 
               {processedSections.map(section => (
                 <div key={section.heading}>
-                  <h2>{section.heading}</h2>
+                  {/* Orange bar section title */}
+                  <div className="not-prose flex items-center gap-3 mt-8 mb-3">
+                    <div className="w-1 h-6 rounded-full shrink-0" style={{ backgroundColor: '#FF5722' }} />
+                    <h2 className="text-xl font-bold text-gray-900">{section.heading}</h2>
+                  </div>
 
                   {/* 섹션 인트로 (### 이전 내용) */}
                   {section.intro && (
@@ -242,10 +246,46 @@ export default async function ArticlePage({ params }: PageProps) {
 
             <AdUnit slot="5193847261" />
 
+            {/* Klook 투어 캐러셀 */}
+            {article.city && (
+              <div className="mt-10 not-prose">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-1 h-6 rounded-full shrink-0" style={{ backgroundColor: '#FF5722' }} />
+                  <h2 className="text-xl font-bold">{article.city} 인기 투어 &amp; 액티비티</h2>
+                </div>
+                <div className="overflow-x-auto -mx-4 px-4 pb-2">
+                  <div className="flex gap-3" style={{ width: 'max-content' }}>
+                    {[
+                      { label: `${article.city} 베스트 투어`, icon: '🏛' },
+                      { label: `${article.city} 음식 투어`, icon: '🍜' },
+                      { label: `${article.city} 야경 투어`, icon: '🌃' },
+                      { label: `${article.city} 당일치기`, icon: '🚌' },
+                      { label: `${article.city} 문화 체험`, icon: '🎭' },
+                    ].map((tour, i) => (
+                      <a
+                        key={i}
+                        href={`https://www.klook.com/search/?query=${encodeURIComponent((article.city ?? '') + ' ' + tour.label)}&aff_id=121117`}
+                        target="_blank"
+                        rel="noopener noreferrer sponsored"
+                        className="flex items-center gap-2.5 px-4 py-3 rounded-2xl border text-sm font-medium shrink-0 hover:border-[#FF5722] hover:text-[#FF5722] transition-all"
+                        style={{ borderColor: '#E5E7EB', color: '#374151', backgroundColor: 'white' }}
+                      >
+                        <span className="text-lg">{tour.icon}</span>
+                        {tour.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* 추천 장소 */}
             {places.length > 0 && (
               <div className="mt-10">
-                <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'var(--font-heading)' }}>추천 장소</h2>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-1 h-6 rounded-full shrink-0" style={{ backgroundColor: '#FF5722' }} />
+                  <h2 className="text-xl font-bold text-gray-900">추천 장소</h2>
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {places.map((place: { id: string }) => (
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any

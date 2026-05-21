@@ -52,7 +52,7 @@ const TRAVEL_TYPE_LABELS: Record<string, string> = {
 
 const CATEGORY_COLORS: Record<string, string> = {
   맛집: 'bg-orange-100 text-orange-700',
-  관광: 'bg-blue-100 text-blue-700',
+  관광: 'bg-orange-50 text-[#FF5722]',
   쇼핑: 'bg-pink-100 text-pink-700',
   숙박: 'bg-purple-100 text-purple-700',
   액티비티: 'bg-green-100 text-green-700',
@@ -70,9 +70,9 @@ function ArticleCard({ a }: { a: TabArticle }) {
   return (
     <Link
       href={`/article/${a.slug}`}
-      className="group bg-white rounded-[var(--radius)] overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all duration-200 flex flex-col"
+      className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 hover:-translate-y-1 transition-all duration-200 flex flex-col"
     >
-      <div className="relative h-48 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden flex-shrink-0">
+      <div className="relative h-48 bg-gradient-to-br from-orange-50 to-red-100 overflow-hidden flex-shrink-0">
         {a.cover_image_url ? (
           <Image
             src={a.cover_image_url}
@@ -83,7 +83,7 @@ function ArticleCard({ a }: { a: TabArticle }) {
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
-            <MapPin className="w-8 h-8 text-blue-300" />
+            <MapPin className="w-8 h-8 text-orange-300" />
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
@@ -159,9 +159,10 @@ export default function CountryTabSection({ articles, plans }: Props) {
             onClick={() => setActiveTab(tab)}
             className={`px-6 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
               activeTab === tab
-                ? 'bg-[var(--primary)] text-white shadow-sm'
+                ? 'text-white shadow-sm'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
+            style={activeTab === tab ? { backgroundColor: '#FF5722' } : undefined}
           >
             {tab}
           </button>
