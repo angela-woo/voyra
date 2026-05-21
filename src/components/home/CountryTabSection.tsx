@@ -13,7 +13,7 @@ interface TabArticle {
   city: string | null
   country: string | null
   category: string | null
-  cover_image_url: string | null
+  cover_image_url?: string | null
 }
 
 interface TabPlan {
