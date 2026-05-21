@@ -40,7 +40,7 @@ export default function ResetPasswordPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 text-[var(--primary)] font-bold text-xl mb-2">
             <Globe className="w-6 h-6" />
-            <span style={{ fontFamily: 'var(--font-heading)' }}>Voyra</span>
+            <span style={{ fontFamily: 'var(--font-heading)' }}>Kiravoy</span>
           </Link>
           <p className="text-sm text-gray-500">새 비밀번호 설정</p>
         </div>

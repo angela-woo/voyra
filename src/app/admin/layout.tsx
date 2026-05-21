@@ -17,7 +17,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="p-4 border-b border-gray-700">
           <Link href="/" className="flex items-center gap-2 font-bold text-sm text-gray-300 hover:text-white">
             <LayoutDashboard className="w-4 h-4" />
-            Voyra Admin
+            Kiravoy Admin
           </Link>
         </div>
         <nav className="flex-1 p-3 space-y-1">

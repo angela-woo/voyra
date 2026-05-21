@@ -2,8 +2,8 @@ import { Globe, Compass, Users, BookOpen } from 'lucide-react'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Voyra 소개 | Voyra',
-  description: 'Voyra는 전 세계 여행지의 정확하고 유용한 정보를 제공하는 여행 가이드 플랫폼입니다.',
+  title: 'Kiravoy 소개 | Kiravoy',
+  description: 'Kiravoy는 전 세계 여행지의 정확하고 유용한 정보를 제공하는 여행 가이드 플랫폼입니다.',
 }
 
 export default function AboutPage() {
@@ -12,7 +12,7 @@ export default function AboutPage() {
       <div className="text-center mb-12">
         <Globe className="w-14 h-14 text-[var(--primary)] mx-auto mb-4" />
         <h1 className="text-4xl font-bold mb-4" style={{ fontFamily: 'var(--font-heading)' }}>
-          Voyra에 대하여
+          Kiravoy에 대하여
         </h1>
         <p className="text-lg text-gray-500 max-w-2xl mx-auto">
           전 세계 여행지의 정확하고 유용한 정보를 한곳에서 만나보세요.
@@ -46,9 +46,9 @@ export default function AboutPage() {
       </div>
 
       <div className="prose prose-gray max-w-none">
-        <h2 style={{ fontFamily: 'var(--font-heading)' }}>Voyra의 미션</h2>
+        <h2 style={{ fontFamily: 'var(--font-heading)' }}>Kiravoy의 미션</h2>
         <p>
-          Voyra는 전 세계 여행지의 정확하고 유용한 정보를 제공하는 여행 가이드 플랫폼입니다.
+          Kiravoy는 전 세계 여행지의 정확하고 유용한 정보를 제공하는 여행 가이드 플랫폼입니다.
           복잡한 여행 계획을 단순화하고, 신뢰할 수 있는 정보를 누구나 쉽게 접근할 수 있도록 합니다.
         </p>
         <p>
@@ -57,7 +57,7 @@ export default function AboutPage() {
         </p>
         <h2 style={{ fontFamily: 'var(--font-heading)' }}>팀 소개</h2>
         <p>
-          Voyra는 여행을 사랑하는 개발자, 디자이너, 콘텐츠 크리에이터들로 구성되어 있습니다.
+          Kiravoy는 여행을 사랑하는 개발자, 디자이너, 콘텐츠 크리에이터들로 구성되어 있습니다.
           다양한 여행 경험에서 얻은 인사이트를 바탕으로 실용적이고 신뢰할 수 있는 여행 정보를 만들어갑니다.
         </p>
       </div>

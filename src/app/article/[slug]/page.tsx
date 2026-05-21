@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params
   const article = await getArticle(slug)
   if (!article) return { title: 'Not Found' }
-  return { title: `${article.title} – Voyra`, description: article.meta_description }
+  return { title: `${article.title} – Kiravoy`, description: article.meta_description }
 }
 
 // ------- 페이지 -------

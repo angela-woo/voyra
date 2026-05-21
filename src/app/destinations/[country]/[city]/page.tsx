@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const decodedCity = decodeURIComponent(city)
   const decodedCountry = decodeURIComponent(country)
   return {
-    title: `${decodedCity} 여행 일정 | Voyra`,
+    title: `${decodedCity} 여행 일정 | Kiravoy`,
     description: `${decodedCity}(${decodedCountry}) 맞춤 여행 일정 - 커플, 가족, 친구, 혼자 여행까지.`,
   }
 }

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: '여행 일정 | Voyra',
+  title: '여행 일정 | Kiravoy',
   description: '세계 각국의 맞춤 여행 일정을 탐색해보세요. 커플, 가족, 친구, 혼자 여행까지.',
 }
 

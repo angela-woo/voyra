@@ -10,8 +10,8 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' })
 
 export const metadata: Metadata = {
-  title: 'Voyra – AI-Powered Travel Guides',
-  description: 'Discover the world with expert travel guides curated by Voyra.',
+  title: 'Kiravoy - 빛나는 여행의 시작',
+  description: 'Kiravoy - 빛나는 여행의 시작',
 }
 
 interface SiteSettings {
@@ -64,7 +64,7 @@ function buildCssVars(settings: Record<string, string>): string {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const settings = await getSiteSettings()
   const cssVars = buildCssVars(settings)
-  const siteName = settings.site_name || 'Voyra'
+  const siteName = settings.site_name || 'Kiravoy'
 
   return (
     <html lang="ko" className={`${inter.variable} ${playfair.variable}`}>

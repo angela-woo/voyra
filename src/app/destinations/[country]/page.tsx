@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { country } = await params
   const decoded = decodeURIComponent(country)
   return {
-    title: `${decoded} 여행 일정 | Voyra`,
+    title: `${decoded} 여행 일정 | Kiravoy`,
     description: `${decoded}의 도시별 맞춤 여행 일정을 확인해보세요.`,
   }
 }

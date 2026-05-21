@@ -58,7 +58,7 @@ export async function fetchUnsplashPhotos(query: string, count: number): Promise
     return (data.results ?? []).map((photo: { urls: { regular: string }; user: { name: string; links: { html: string } } }) => ({
       url: photo.urls.regular,
       authorName: photo.user.name,
-      authorUrl: `${photo.user.links.html}?utm_source=voyra&utm_medium=referral`,
+      authorUrl: `${photo.user.links.html}?utm_source=kiravoy&utm_medium=referral`,
     }))
   } catch {
     return []
@@ -83,7 +83,7 @@ export async function fetchUnsplashPhoto(query: string): Promise<UnsplashPhoto |
     return {
       url: photo.urls.regular,
       authorName: photo.user.name,
-      authorUrl: `${photo.user.links.html}?utm_source=voyra&utm_medium=referral`,
+      authorUrl: `${photo.user.links.html}?utm_source=kiravoy&utm_medium=referral`,
     }
   } catch {
     return null

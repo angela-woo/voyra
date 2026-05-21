@@ -25,8 +25,8 @@ const defaults: DesignSettings = {
   border_radius: '8',
   font_heading: 'Playfair Display',
   font_body: 'Inter',
-  site_name: 'Voyra',
-  site_description: 'Discover the world with expert travel guides curated by Voyra.',
+  site_name: 'Kiravoy',
+  site_description: 'Discover the world with expert travel guides curated by Kiravoy.',
 }
 
 export default function AdminDesignPage() {

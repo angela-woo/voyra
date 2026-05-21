@@ -76,7 +76,7 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 text-[var(--primary)] font-bold text-xl mb-2">
             <Globe className="w-6 h-6" />
-            <span style={{ fontFamily: 'var(--font-heading)' }}>Voyra</span>
+            <span style={{ fontFamily: 'var(--font-heading)' }}>Kiravoy</span>
           </Link>
           <p className="text-sm text-gray-500">로그인하고 여행을 시작하세요</p>
         </div>

@@ -35,7 +35,7 @@ async function getArticles(limit: number) {
     const supabase = await createClient()
     const { data } = await supabase
       .from('articles')
-      .select('id, slug, title, meta_description, city, country, category, created_at')
+      .select('id, slug, title, meta_description, city, country, category, created_at, cover_image_url')
       .eq('published', true)
       .order('created_at', { ascending: false })
       .limit(limit)
@@ -74,7 +74,7 @@ async function getTabData() {
     const [{ data: articles }, { data: plans }] = await Promise.all([
       supabase
         .from('articles')
-        .select('id, slug, title, meta_description, city, country, category')
+        .select('id, slug, title, meta_description, city, country, category, cover_image_url')
         .eq('published', true)
         .order('created_at', { ascending: false })
         .limit(60),

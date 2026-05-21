@@ -8,12 +8,12 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: '여행 가이드 | Voyra',
-  description: '전세계 여행지 가이드 모음. 엄선한 여행 가이드를 만나보세요.',
+  title: '여행 가이드 | Kiravoy',
+  description: 'Kiravoy - 전세계 여행지 가이드 모음. 엄선한 여행 가이드를 만나보세요.',
 }
 
 const PER_PAGE = 12
-const SELECT_COLS = 'id, slug, title, meta_description, city, country, category, created_at'
+const SELECT_COLS = 'id, slug, title, meta_description, city, country, category, created_at, cover_image_url'
 
 interface PageProps {
   searchParams: Promise<{ page?: string; sort?: string; country?: string; category?: string }>

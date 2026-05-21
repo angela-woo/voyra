@@ -7,7 +7,7 @@ export default function PrivacyPage() {
       <div className="prose prose-gray max-w-none space-y-6 text-sm text-gray-700">
         <section>
           <h2 className="text-lg font-bold mb-2">1. 수집하는 개인정보</h2>
-          <p>Voyra는 서비스 이용을 위해 이메일 주소, 닉네임 등 최소한의 정보를 수집합니다.</p>
+          <p>Kiravoy는 서비스 이용을 위해 이메일 주소, 닉네임 등 최소한의 정보를 수집합니다.</p>
         </section>
         <section>
           <h2 className="text-lg font-bold mb-2">2. 개인정보의 이용 목적</h2>

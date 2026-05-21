@@ -136,7 +136,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const plan = await getPlan(slug)
   if (!plan) return { title: 'Not Found' }
   return {
-    title: `${plan.title} | Voyra`,
+    title: `${plan.title} | Kiravoy`,
     description: plan.meta_description ?? undefined,
   }
 }
