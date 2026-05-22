@@ -117,10 +117,11 @@ export default async function EnHomePage() {
           <div className="absolute inset-0 bg-black/50" />
         </div>
         <div className="relative z-10 text-center px-4 w-full max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
-            Where do you want to go?
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-2 leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+            Travel Guides &amp; Itineraries for Every Destination
           </h1>
-          <p className="text-lg md:text-xl text-white/80 mb-10 font-light">
+          <h2 className="text-xl md:text-2xl text-white/90 mb-3 font-medium">Where do you want to go?</h2>
+          <p className="text-base md:text-lg text-white/70 mb-10 font-light">
             Discover curated travel guides for every destination
           </p>
         </div>

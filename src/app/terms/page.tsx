@@ -12,7 +12,7 @@ export default function TermsPage() {
       <h1 className="text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
         이용약관
       </h1>
-      <p className="text-sm text-gray-400 mb-10">시행일: 2025년 5월 1일 · 최종 수정: 2026년 5월</p>
+      <p className="text-sm text-gray-400 mb-10">시행일: 2026년 5월 22일</p>
 
       <div className="prose prose-gray max-w-none space-y-8 text-sm text-gray-700">
 
@@ -33,23 +33,24 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-lg font-bold mb-3">제3조 약관의 게시와 개정</h2>
-          <p>서비스는 이 약관을 서비스 초기 화면에 게시합니다. 약관을 개정할 경우 시행 7일 전부터 공지하며, 이용자가 개정 약관에 동의하지 않을 경우 서비스 이용을 중단하고 탈퇴할 수 있습니다.</p>
+          <p>서비스는 이 약관을 서비스 초기 화면 하단에 게시합니다. 약관을 개정할 경우 시행 7일 전부터 공지하며, 이용자가 개정 약관에 동의하지 않을 경우 서비스 이용을 중단하고 탈퇴할 수 있습니다.</p>
         </section>
 
         <section>
           <h2 className="text-lg font-bold mb-3">제4조 서비스 이용</h2>
           <ul className="list-disc pl-5 space-y-1">
             <li>서비스는 여행 정보 제공, 일정 추천, 커뮤니티 기능을 제공합니다.</li>
-            <li>일부 기능은 회원 가입 후 이용 가능합니다.</li>
+            <li>일부 기능(댓글, 커뮤니티 글쓰기 등)은 회원 가입 후 이용 가능합니다.</li>
             <li>서비스는 연중무휴 24시간 제공을 원칙으로 하나, 시스템 점검·장애 등으로 일시 중단될 수 있습니다.</li>
           </ul>
         </section>
 
         <section>
-          <h2 className="text-lg font-bold mb-3">제5조 회원 가입 및 계정 관리</h2>
+          <h2 className="text-lg font-bold mb-3">제5조 회원 가입 및 탈퇴</h2>
           <ul className="list-disc pl-5 space-y-1">
             <li>이용자는 서비스가 정한 양식에 따라 정확한 정보를 입력하여 회원 가입을 신청합니다.</li>
             <li>계정은 본인만 사용 가능하며, 타인에게 양도·대여할 수 없습니다.</li>
+            <li>회원 탈퇴는 서비스 내 설정 또는 이메일(imrubywoo@gmail.com)을 통해 신청할 수 있으며, 탈퇴 시 개인정보는 즉시 삭제됩니다.</li>
             <li>계정 정보 관리 소홀로 인한 피해는 이용자 본인이 책임집니다.</li>
           </ul>
         </section>
@@ -72,29 +73,41 @@ export default function TermsPage() {
         <section>
           <h2 className="text-lg font-bold mb-3">제7조 콘텐츠 저작권</h2>
           <ul className="list-disc pl-5 space-y-1">
-            <li>서비스가 제공하는 콘텐츠(여행 가이드, 이미지 등)의 저작권은 Kiravoy 또는 해당 저작권자에게 있습니다.</li>
+            <li>서비스가 제공하는 여행 가이드, 일정 콘텐츠의 저작권은 Kiravoy에 있습니다.</li>
+            <li>일부 콘텐츠는 AI(인공지능) 기술을 활용하여 생성되었으며, 이 경우에도 편집·검수의 책임은 Kiravoy에 있습니다.</li>
             <li>이용자가 게시한 콘텐츠의 저작권은 해당 이용자에게 있으며, 서비스는 서비스 운영 목적에 한하여 이를 이용할 수 있습니다.</li>
-            <li>서비스의 콘텐츠를 무단 복제·배포하는 행위는 저작권법에 위반될 수 있습니다.</li>
+            <li>서비스의 콘텐츠를 무단으로 복제·배포·상업적으로 이용하는 행위는 저작권법에 위반될 수 있습니다.</li>
           </ul>
         </section>
 
         <section>
-          <h2 className="text-lg font-bold mb-3">제8조 서비스 면책</h2>
+          <h2 className="text-lg font-bold mb-3">제8조 제휴 링크 고지</h2>
+          <p>서비스는 이용자에게 편의를 제공하기 위해 아래 제휴사의 어필리에이트(수익 연계) 링크를 포함할 수 있습니다.</p>
+          <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li><strong>Booking.com</strong> (AWIN 제휴): 숙박 예약 링크</li>
+            <li><strong>Klook</strong>: 투어·액티비티 예약 링크</li>
+          </ul>
+          <p className="mt-2">이용자가 해당 링크를 통해 예약·구매하는 경우, 서비스는 소정의 수수료를 받을 수 있습니다. 링크를 통한 예약 가격은 직접 예약과 동일하며, 이용자에게 추가 비용이 발생하지 않습니다.</p>
+        </section>
+
+        <section>
+          <h2 className="text-lg font-bold mb-3">제9조 서비스 면책</h2>
           <ul className="list-disc pl-5 space-y-1">
             <li>서비스는 이용자가 게시한 콘텐츠의 정확성·신뢰성에 대해 보증하지 않습니다.</li>
-            <li>서비스 내 여행 정보는 참고용이며, 실제 여행 시 별도 확인이 필요합니다.</li>
+            <li>서비스 내 여행 정보(가격, 운영 시간, 입장 여부 등)는 참고용이며, 실제 여행 시 별도 확인이 필요합니다.</li>
+            <li>AI 생성 콘텐츠의 경우 사실과 다를 수 있으며, 중요한 사항은 공식 출처에서 반드시 확인하시기 바랍니다.</li>
             <li>천재지변, 통신 장애, 불가항력적 사유로 인한 서비스 중단에 대해 책임을 지지 않습니다.</li>
             <li>제휴사(Klook, Booking.com 등) 서비스 이용 관련 분쟁은 해당 업체와 직접 해결하셔야 합니다.</li>
           </ul>
         </section>
 
         <section>
-          <h2 className="text-lg font-bold mb-3">제9조 서비스 변경 및 종료</h2>
+          <h2 className="text-lg font-bold mb-3">제10조 서비스 변경 및 종료</h2>
           <p>서비스는 운영상 필요에 따라 서비스 내용을 변경하거나 종료할 수 있습니다. 서비스 종료 시 30일 전에 공지합니다.</p>
         </section>
 
         <section>
-          <h2 className="text-lg font-bold mb-3">제10조 분쟁 해결 및 관할 법원</h2>
+          <h2 className="text-lg font-bold mb-3">제11조 분쟁 해결 및 관할 법원</h2>
           <p>이 약관의 해석과 서비스 이용으로 발생한 분쟁은 대한민국 법률을 따르며, 관할 법원은 민사소송법에 따릅니다.</p>
         </section>
 

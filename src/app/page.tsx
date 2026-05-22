@@ -124,8 +124,22 @@ export default async function HomePage() {
 
   const countryPhotos = countryPhotoList as (UnsplashPhoto | null)[]
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Kiravoy',
+    url: 'https://kiravoy.com',
+    description: '전 세계 여행지 가이드와 맞춤 여행 일정',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://kiravoy.com/destinations?q={search_term_string}',
+      'query-input': 'required name=search_term_string',
+    },
+  }
+
   return (
     <div className="min-h-screen bg-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       {/* ── 1. 히어로 ───────────────────────────────────────────── */}
       <section className="relative h-[580px] flex items-center justify-center overflow-hidden">
@@ -139,9 +153,9 @@ export default async function HomePage() {
         </div>
         <div className="relative z-10 text-center px-4 w-full max-w-3xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-2 leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
-            해외여행 가이드 &amp; 일정 추천
+            해외여행 가이드 &amp; 여행 일정 추천
           </h1>
-          <p className="text-xl md:text-2xl text-white/90 mb-3 font-medium">어디로 떠나고 싶으세요?</p>
+          <h2 className="text-xl md:text-2xl text-white/90 mb-3 font-medium">어디로 떠나고 싶으세요?</h2>
           <p className="text-base md:text-lg text-white/70 mb-10 font-light">
             엄선된 여행 가이드로 완벽한 여행을 계획하세요
           </p>
