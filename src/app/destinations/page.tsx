@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { toCountryUrl } from '@/lib/location'
+import { getCountryFlag } from '@/lib/utils/countryFlags'
 
 export const metadata: Metadata = {
   title: '여행 일정',
@@ -11,29 +12,6 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic'
 
-const COUNTRY_FLAGS: Record<string, string> = {
-  '일본': '🇯🇵',
-  '프랑스': '🇫🇷',
-  '스페인': '🇪🇸',
-  '태국': '🇹🇭',
-  '인도네시아': '🇮🇩',
-  '싱가포르': '🇸🇬',
-  '영국': '🇬🇧',
-  '이탈리아': '🇮🇹',
-  '독일': '🇩🇪',
-  '미국': '🇺🇸',
-  '호주': '🇦🇺',
-  '베트남': '🇻🇳',
-  '대만': '🇹🇼',
-  '홍콩': '🇭🇰',
-  '포르투갈': '🇵🇹',
-  '네덜란드': '🇳🇱',
-  '체코': '🇨🇿',
-  '오스트리아': '🇦🇹',
-  '스위스': '🇨🇭',
-  '덴마크': '🇩🇰',
-  '핀란드': '🇫🇮',
-}
 
 interface CountryGroup {
   country: string
@@ -87,7 +65,7 @@ export default async function DestinationsPage() {
               href={toCountryUrl(country)}
               className="group bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm p-6 hover:border-[var(--primary)] hover:shadow-md transition-all text-center"
             >
-              <div className="text-5xl mb-3">{COUNTRY_FLAGS[country] ?? '🌍'}</div>
+              <div className="text-5xl mb-3">{getCountryFlag(country)}</div>
               <h2 className="font-bold text-gray-800 mb-1">{country}</h2>
               <p className="text-xs text-gray-400">{cities.length}개 도시 · {planCount}개 일정</p>
             </Link>

@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { getCountryFlag } from '@/lib/utils/countryFlags'
 
 export const metadata: Metadata = {
   title: 'Travel Itineraries by Destination | Kiravoy',
@@ -10,20 +11,6 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic'
 
-const COUNTRY_FLAGS: Record<string, string> = {
-  'japan': '🇯🇵',
-  'france': '🇫🇷',
-  'spain': '🇪🇸',
-  'thailand': '🇹🇭',
-  'indonesia': '🇮🇩',
-  'singapore': '🇸🇬',
-  'uk': '🇬🇧',
-  'italy': '🇮🇹',
-  'germany': '🇩🇪',
-  'usa': '🇺🇸',
-  'australia': '🇦🇺',
-  'netherlands': '🇳🇱',
-}
 
 interface CountryGroup {
   country: string
@@ -81,7 +68,7 @@ export default async function EnDestinationsPage() {
               href={`/en/destinations/${country_en}`}
               className="group bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm p-6 hover:border-[var(--primary)] hover:shadow-md transition-all text-center"
             >
-              <div className="text-5xl mb-3">{COUNTRY_FLAGS[country_en] ?? '🌍'}</div>
+              <div className="text-5xl mb-3">{getCountryFlag(country_en)}</div>
               <h2 className="font-bold text-gray-800 mb-1">{country}</h2>
               <p className="text-xs text-gray-400">{cities.length} {cities.length === 1 ? 'city' : 'cities'} · {planCount} {planCount === 1 ? 'itinerary' : 'itineraries'}</p>
             </Link>
