@@ -354,7 +354,7 @@ export default async function TravelPlanPage({ params }: PageProps) {
                                   )}
                                   {place.cost && (
                                     <span className="flex items-center gap-1">
-                                      <DollarSign className="w-3 h-3" />{place.cost}
+                                      💰 {place.cost}
                                     </span>
                                   )}
                                 </div>
