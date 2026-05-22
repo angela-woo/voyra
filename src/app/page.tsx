@@ -24,7 +24,7 @@ const COUNTRIES = [
 ]
 
 const TRAVEL_TYPE_LABELS: Record<string, string> = {
-  couple: '💑 커플', family: '👨‍👩‍👧‍👦 가족', friends: '👫 친구', solo: '🧳 혼자',
+  couple: '커플', family: '가족', friends: '친구', solo: '혼자',
 }
 
 // SectionTitle component (inline in this file)

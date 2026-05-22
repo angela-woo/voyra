@@ -1,7 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { Clock } from 'lucide-react'
+import { Clock, Heart, Users, UserCheck, Luggage, Plane } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import type { Metadata } from 'next'
 import { SLUG_TO_COUNTRY_MAP, SLUG_TO_CITY_MAP } from '@/lib/location'
 
@@ -11,11 +12,11 @@ interface PageProps {
   params: Promise<{ country: string; city: string }>
 }
 
-const TRAVEL_TYPE_LABELS: Record<string, { label: string; emoji: string; color: string }> = {
-  couple: { label: '커플', emoji: '💑', color: 'bg-pink-50 border-pink-200 text-pink-700' },
-  family: { label: '가족', emoji: '👨‍👩‍👧‍👦', color: 'bg-green-50 border-green-200 text-green-700' },
-  friends: { label: '친구', emoji: '👫', color: 'bg-blue-50 border-blue-200 text-blue-700' },
-  solo: { label: '혼자', emoji: '🧳', color: 'bg-purple-50 border-purple-200 text-purple-700' },
+const TRAVEL_TYPE_LABELS: Record<string, { label: string; icon: LucideIcon; color: string }> = {
+  couple: { label: '커플', icon: Heart, color: 'bg-pink-50 border-pink-200 text-pink-700' },
+  family: { label: '가족', icon: Users, color: 'bg-green-50 border-green-200 text-green-700' },
+  friends: { label: '친구', icon: UserCheck, color: 'bg-blue-50 border-blue-200 text-blue-700' },
+  solo: { label: '혼자', icon: Luggage, color: 'bg-purple-50 border-purple-200 text-purple-700' },
 }
 
 async function getPlans(countrySlug: string, citySlug: string) {
@@ -70,7 +71,8 @@ export default async function CityPage({ params }: PageProps) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {plans.map(plan => {
-          const typeInfo = TRAVEL_TYPE_LABELS[plan.travel_type] ?? { label: plan.travel_type, emoji: '✈️', color: 'bg-gray-50 border-gray-200 text-gray-700' }
+          const typeInfo = TRAVEL_TYPE_LABELS[plan.travel_type] ?? { label: plan.travel_type, icon: Plane, color: 'bg-gray-50 border-gray-200 text-gray-700' }
+          const TypeIcon = typeInfo.icon
           return (
             <Link
               key={plan.id}
@@ -78,7 +80,7 @@ export default async function CityPage({ params }: PageProps) {
               className="group bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm hover:border-[var(--primary)] hover:shadow-md transition-all overflow-hidden"
             >
               <div className={`px-4 py-3 border-b flex items-center gap-2 ${typeInfo.color}`}>
-                <span className="text-xl">{typeInfo.emoji}</span>
+                <TypeIcon className="w-4 h-4" />
                 <span className="font-semibold text-sm">{typeInfo.label} 여행</span>
               </div>
               <div className="p-5">

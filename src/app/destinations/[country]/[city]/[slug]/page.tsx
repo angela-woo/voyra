@@ -1,11 +1,12 @@
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
+import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { fetchUnsplashPhoto, fetchUnsplashPhotos, toEnglishCity } from '@/lib/unsplash'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
-import { MapPin, Clock, DollarSign, Thermometer, Info, ExternalLink, ChevronRight } from 'lucide-react'
+import { MapPin, Clock, DollarSign, Thermometer, Info, ExternalLink, ChevronRight, Landmark, UtensilsCrossed, Coffee, Hotel, Map, Ticket, Plane, Building2, Coins } from 'lucide-react'
 import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
 import { toPlanUrl } from '@/lib/location'
@@ -96,11 +97,11 @@ const adminSupabase = createServiceClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
 )
 
-const CATEGORY_ICONS: Record<string, string> = {
-  attraction: '🏛',
-  restaurant: '🍽',
-  cafe: '☕',
-  hotel: '🏨',
+const CATEGORY_ICONS: Record<string, React.ElementType> = {
+  attraction: Landmark,
+  restaurant: UtensilsCrossed,
+  cafe: Coffee,
+  hotel: Hotel,
 }
 
 const TRAVEL_TYPE_LABELS: Record<string, string> = {
@@ -311,7 +312,7 @@ export default async function TravelPlanPage({ params }: PageProps) {
                           <Image src={hotelImages[i].url} alt={hotel.name} fill className="object-cover" sizes="192px" />
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center">
-                            <span className="text-3xl">🏨</span>
+                            <Building2 className="w-8 h-8 text-blue-300" />
                           </div>
                         )}
                       </div>
@@ -352,7 +353,7 @@ export default async function TravelPlanPage({ params }: PageProps) {
                           <div key={pi} className="bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm p-4">
                             <div className="flex items-start gap-3">
                               <div className="flex flex-col items-center gap-1 shrink-0">
-                                <span className="text-xl">{CATEGORY_ICONS[place.category] ?? '📍'}</span>
+                                {(() => { const Icon = CATEGORY_ICONS[place.category] ?? MapPin; return <Icon className="w-5 h-5 text-gray-400" /> })()}
                                 {place.time && (
                                   <span className="text-[10px] text-gray-400 font-mono">{place.time}</span>
                                 )}
@@ -370,7 +371,7 @@ export default async function TravelPlanPage({ params }: PageProps) {
                                   )}
                                   {place.cost && (
                                     <span className="flex items-center gap-1">
-                                      💰 {place.cost}
+                                      <Coins className="w-3 h-3" />{place.cost}
                                     </span>
                                   )}
                                 </div>
@@ -394,9 +395,9 @@ export default async function TravelPlanPage({ params }: PageProps) {
                                       href={place.google_maps_url}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="text-[10px] px-2.5 py-1 border border-gray-200 rounded hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"
+                                      className="flex items-center gap-1 text-[10px] px-2.5 py-1 border border-gray-200 rounded hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"
                                     >
-                                      🗺 구글맵
+                                      <Map className="w-3 h-3" />구글맵
                                     </a>
                                   )}
                                   {place.category === 'attraction' && (
@@ -404,10 +405,10 @@ export default async function TravelPlanPage({ params }: PageProps) {
                                       href={place.klook_url ?? `https://www.klook.com/search/?query=${encodeURIComponent(place.name)}&aff_id=${KLOOK_AFF_ID}`}
                                       target="_blank"
                                       rel="noopener noreferrer sponsored"
-                                      className="text-[10px] px-2.5 py-1 rounded text-white font-medium"
+                                      className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded text-white font-medium"
                                       style={{ backgroundColor: '#FF5722' }}
                                     >
-                                      🎯 Klook 예약
+                                      <Ticket className="w-3 h-3" />Klook 예약
                                     </a>
                                   )}
                                 </div>
@@ -455,7 +456,7 @@ export default async function TravelPlanPage({ params }: PageProps) {
                           <Image src={tourImages[i].url} alt={tour.name} fill className="object-cover" sizes="192px" />
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center">
-                            <span className="text-3xl">🎯</span>
+                            <Ticket className="w-8 h-8 text-orange-300" />
                           </div>
                         )}
                       </div>
@@ -479,7 +480,7 @@ export default async function TravelPlanPage({ params }: PageProps) {
 
             {/* Flight search */}
             <section className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-[var(--radius)] p-6 border border-sky-100">
-              <h2 className="text-lg font-bold mb-2" style={{ fontFamily: 'var(--font-heading)' }}>✈️ 항공권 검색</h2>
+              <h2 className="text-lg font-bold mb-2 flex items-center gap-2" style={{ fontFamily: 'var(--font-heading)' }}><Plane className="w-5 h-5 text-sky-500" />항공권 검색</h2>
               <p className="text-sm text-gray-600 mb-4">Skyscanner에서 최저가 항공권을 찾아보세요.</p>
               <a
                 href={`https://www.skyscanner.co.kr/flights/sel/${(plan.country_code ?? 'TYO').toLowerCase()}/`}
@@ -543,20 +544,20 @@ export default async function TravelPlanPage({ params }: PageProps) {
               href={`https://www.booking.com/searchresults.html?aid=${AWIN_AID}&ss=${encodeURIComponent(cityEn)}`}
               target="_blank"
               rel="noopener noreferrer sponsored"
-              className="block w-full text-center py-3 rounded-[var(--radius)] text-white text-sm font-semibold hover:opacity-90 transition-opacity"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-[var(--radius)] text-white text-sm font-semibold hover:opacity-90 transition-opacity"
               style={{ backgroundColor: '#003580' }}
             >
-              🏨 숙소 예약하기
+              <Building2 className="w-4 h-4" />숙소 예약하기
             </a>
 
             <a
               href={`https://www.klook.com/search/?query=${encodeURIComponent(cityEn + ' tour')}&aff_id=${KLOOK_AFF_ID}`}
               target="_blank"
               rel="noopener noreferrer sponsored"
-              className="block w-full text-center py-3 rounded-[var(--radius)] text-white text-sm font-semibold hover:opacity-90 transition-opacity"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-[var(--radius)] text-white text-sm font-semibold hover:opacity-90 transition-opacity"
               style={{ backgroundColor: '#FF5722' }}
             >
-              🎯 투어 예약하기
+              <Ticket className="w-4 h-4" />투어 예약하기
             </a>
           </div>
         </div>

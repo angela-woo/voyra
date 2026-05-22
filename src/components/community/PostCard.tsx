@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { MessageCircle, Heart, Clock } from 'lucide-react'
+import { MessageCircle, ThumbsUp, Clock } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 
@@ -49,7 +49,7 @@ export default function PostCard({ post }: { post: Post }) {
               {timeAgo}
             </span>
             <span className="flex items-center gap-1">
-              <Heart className="w-3 h-3" />
+              <ThumbsUp className="w-3 h-3" />
               {post.likes_count ?? 0}
             </span>
             <span className="flex items-center gap-1">

@@ -30,7 +30,7 @@ const COUNTRIES = [
 ]
 
 const TRAVEL_TYPE_LABELS: Record<string, string> = {
-  couple: '💑 Couple', family: '👨‍👩‍👧‍👦 Family', friends: '👫 Friends', solo: '🧳 Solo',
+  couple: 'Couple', family: 'Family', friends: 'Friends', solo: 'Solo',
 }
 
 function SectionTitle({ title, subtitle, viewAllHref }: { title: string; subtitle?: string; viewAllHref?: string }) {

@@ -15,7 +15,7 @@ import ImageCarousel from '@/components/ui/ImageCarousel'
 import PlaceCard from '@/components/article/PlaceCard'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
 import BudgetCalculator from '@/components/widgets/BudgetCalculator'
-import { Calendar, MapPin } from 'lucide-react'
+import { Calendar, MapPin, Ticket, UtensilsCrossed, Moon, Bus, Landmark } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { enUS } from 'date-fns/locale'
 import type { Metadata } from 'next'
@@ -251,11 +251,11 @@ export default async function EnArticlePage({ params }: PageProps) {
                 <div className="overflow-x-auto -mx-4 px-4 pb-2">
                   <div className="flex gap-3" style={{ width: 'max-content' }}>
                     {[
-                      { label: `Best Tours in ${article.city}`, icon: '🏛' },
-                      { label: `${article.city} Food Tour`, icon: '🍜' },
-                      { label: `${article.city} Night Tour`, icon: '🌃' },
-                      { label: `${article.city} Day Trip`, icon: '🚌' },
-                      { label: `${article.city} Cultural Experience`, icon: '🎭' },
+                      { label: `Best Tours in ${article.city}`, Icon: Ticket },
+                      { label: `${article.city} Food Tour`, Icon: UtensilsCrossed },
+                      { label: `${article.city} Night Tour`, Icon: Moon },
+                      { label: `${article.city} Day Trip`, Icon: Bus },
+                      { label: `${article.city} Cultural Experience`, Icon: Landmark },
                     ].map((tour, i) => (
                       <a
                         key={i}
@@ -265,7 +265,7 @@ export default async function EnArticlePage({ params }: PageProps) {
                         className="flex items-center gap-2.5 px-4 py-3 rounded-2xl border text-sm font-medium shrink-0 hover:border-[#FF5722] hover:text-[#FF5722] transition-all"
                         style={{ borderColor: '#E5E7EB', color: '#374151', backgroundColor: 'white' }}
                       >
-                        <span className="text-lg">{tour.icon}</span>
+                        <tour.Icon className="w-4 h-4" />
                         {tour.label}
                       </a>
                     ))}

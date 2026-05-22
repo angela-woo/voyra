@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { MapPin, Star } from 'lucide-react'
+import { MapPin, Star, Map, Building2, Ticket } from 'lucide-react'
 
 const AWIN_AID = '2892557'
 const KLOOK_AFF_ID = '121117'
@@ -84,9 +84,9 @@ export default function PlaceCard({ place, city }: { place: Place; city?: string
               href={place.google_maps_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[10px] px-2.5 py-1 rounded-lg border border-gray-200 hover:border-gray-400 transition-colors text-gray-600"
+              className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-lg border border-gray-200 hover:border-gray-400 transition-colors text-gray-600"
             >
-              🗺 지도
+              <Map className="w-3 h-3" />지도
             </a>
           )}
           {hotel && (
@@ -94,10 +94,10 @@ export default function PlaceCard({ place, city }: { place: Place; city?: string
               href={buildBookingUrl(place, city)}
               target="_blank"
               rel="noopener noreferrer sponsored"
-              className="text-[10px] px-2.5 py-1 rounded-lg text-white font-medium transition-opacity hover:opacity-90"
+              className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-lg text-white font-medium transition-opacity hover:opacity-90"
               style={{ backgroundColor: '#003580' }}
             >
-              🏨 Booking
+              <Building2 className="w-3 h-3" />Booking
             </a>
           )}
           {attractionOrRestaurant && (
@@ -105,10 +105,10 @@ export default function PlaceCard({ place, city }: { place: Place; city?: string
               href={place.klook_url ?? `https://www.klook.com/search/?query=${encodeURIComponent(place.name)}&aff_id=${KLOOK_AFF_ID}`}
               target="_blank"
               rel="noopener noreferrer sponsored"
-              className="text-[10px] px-2.5 py-1 rounded-lg text-white font-medium transition-opacity hover:opacity-90"
+              className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-lg text-white font-medium transition-opacity hover:opacity-90"
               style={{ backgroundColor: '#FF5722' }}
             >
-              🎯 Klook
+              <Ticket className="w-3 h-3" />Klook
             </a>
           )}
         </div>

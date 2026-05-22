@@ -1,17 +1,17 @@
 import { createClient } from '@/lib/supabase/server'
 import PostCard from '@/components/community/PostCard'
 import Link from 'next/link'
-import { PenSquare } from 'lucide-react'
+import { PenSquare, MessageCircle, Lightbulb, HelpCircle, Star, Users } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
 const CATEGORIES = [
-  { value: 'all', label: '전체' },
-  { value: 'free', label: '자유' },
-  { value: 'tips', label: '꿀팁' },
-  { value: 'question', label: '질문' },
-  { value: 'review', label: '후기' },
-  { value: 'meetup', label: '모임' },
+  { value: 'all', label: '전체', icon: null },
+  { value: 'free', label: '자유', icon: MessageCircle },
+  { value: 'tips', label: '꿀팁', icon: Lightbulb },
+  { value: 'question', label: '질문', icon: HelpCircle },
+  { value: 'review', label: '후기', icon: Star },
+  { value: 'meetup', label: '모임', icon: Users },
 ]
 
 interface PageProps {
@@ -58,12 +58,13 @@ export default async function CommunityPage({ searchParams }: PageProps) {
             <Link
               key={cat.value}
               href={cat.value === 'all' ? '/community' : `/community?category=${cat.value}`}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                 isActive
                   ? 'bg-[var(--primary)] text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
+              {cat.icon && <cat.icon className="w-3.5 h-3.5" />}
               {cat.label}
             </Link>
           )

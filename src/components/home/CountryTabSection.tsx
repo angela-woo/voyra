@@ -45,10 +45,10 @@ const COUNTRY_GROUPS: Record<Tab, string[]> = {
 }
 
 const TRAVEL_TYPE_LABELS: Record<string, string> = {
-  couple: '💑 커플',
-  family: '👨‍👩‍👧‍👦 가족',
-  friends: '👫 친구',
-  solo: '🧳 혼자',
+  couple: '커플',
+  family: '가족',
+  friends: '친구',
+  solo: '혼자',
 }
 
 const CATEGORY_COLORS: Record<string, string> = {

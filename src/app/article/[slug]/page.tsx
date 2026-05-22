@@ -14,7 +14,7 @@ import ImageCarousel from '@/components/ui/ImageCarousel'
 import PlaceCard from '@/components/article/PlaceCard'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
 import BudgetCalculator from '@/components/widgets/BudgetCalculator'
-import { Calendar, MapPin } from 'lucide-react'
+import { Calendar, MapPin, Ticket, UtensilsCrossed, Moon, Bus, Landmark } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import type { Metadata } from 'next'
@@ -280,11 +280,11 @@ export default async function ArticlePage({ params }: PageProps) {
                 <div className="overflow-x-auto -mx-4 px-4 pb-2">
                   <div className="flex gap-3" style={{ width: 'max-content' }}>
                     {[
-                      { label: `${article.city} 베스트 투어`, icon: '🏛' },
-                      { label: `${article.city} 음식 투어`, icon: '🍜' },
-                      { label: `${article.city} 야경 투어`, icon: '🌃' },
-                      { label: `${article.city} 당일치기`, icon: '🚌' },
-                      { label: `${article.city} 문화 체험`, icon: '🎭' },
+                      { label: `${article.city} 베스트 투어`, Icon: Ticket },
+                      { label: `${article.city} 음식 투어`, Icon: UtensilsCrossed },
+                      { label: `${article.city} 야경 투어`, Icon: Moon },
+                      { label: `${article.city} 당일치기`, Icon: Bus },
+                      { label: `${article.city} 문화 체험`, Icon: Landmark },
                     ].map((tour, i) => (
                       <a
                         key={i}
@@ -294,7 +294,7 @@ export default async function ArticlePage({ params }: PageProps) {
                         className="flex items-center gap-2.5 px-4 py-3 rounded-2xl border text-sm font-medium shrink-0 hover:border-[#FF5722] hover:text-[#FF5722] transition-all"
                         style={{ borderColor: '#E5E7EB', color: '#374151', backgroundColor: 'white' }}
                       >
-                        <span className="text-lg">{tour.icon}</span>
+                        <tour.Icon className="w-4 h-4" />
                         {tour.label}
                       </a>
                     ))}

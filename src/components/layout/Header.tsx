@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, Globe, Home, BookOpen, MapPin, Users, LogIn, LogOut, UserCircle, UserPlus } from 'lucide-react'
 import type { User } from '@supabase/supabase-js'
 
 export default function Header({ siteName }: { siteName: string }) {
@@ -18,10 +18,10 @@ export default function Header({ siteName }: { siteName: string }) {
   const base = isEn ? '/en' : ''
 
   const NAV_LINKS = [
-    { href: `${base}/`, label: isEn ? 'Home' : '홈' },
-    { href: `${base}/articles`, label: isEn ? 'Travel Guides' : '여행 가이드' },
-    { href: `${base}/destinations`, label: isEn ? 'Itineraries' : '여행 일정' },
-    { href: '/community', label: isEn ? 'Community' : '커뮤니티' },
+    { href: `${base}/`, label: isEn ? 'Home' : '홈', icon: Home },
+    { href: `${base}/articles`, label: isEn ? 'Travel Guides' : '여행 가이드', icon: BookOpen },
+    { href: `${base}/destinations`, label: isEn ? 'Itineraries' : '여행 일정', icon: MapPin },
+    { href: '/community', label: isEn ? 'Community' : '커뮤니티', icon: Users },
   ]
 
   function toggleLang() {
@@ -61,8 +61,9 @@ export default function Header({ siteName }: { siteName: string }) {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-gray-600 hover:text-[var(--primary)] transition-colors duration-200"
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-[var(--primary)] transition-colors duration-200"
             >
+              <link.icon className="w-4 h-4" />
               {link.label}
             </Link>
           ))}
@@ -72,23 +73,27 @@ export default function Header({ siteName }: { siteName: string }) {
         <div className="hidden md:flex items-center gap-3 flex-shrink-0">
           {user ? (
             <>
-              <Link href="/auth/profile" className="text-sm text-gray-600 hover:text-[var(--primary)] transition-colors">{isEn ? 'Profile' : '프로필'}</Link>
+              <Link href="/auth/profile" className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-[var(--primary)] transition-colors">
+                <UserCircle className="w-4 h-4" />{isEn ? 'Profile' : '프로필'}
+              </Link>
               <button
                 onClick={handleSignOut}
-                className="text-sm px-4 py-1.5 rounded-[var(--radius)] border border-gray-300 hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors duration-200"
+                className="flex items-center gap-1.5 text-sm px-4 py-1.5 rounded-[var(--radius)] border border-gray-300 hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors duration-200"
               >
-                {isEn ? 'Log Out' : '로그아웃'}
+                <LogOut className="w-4 h-4" />{isEn ? 'Log Out' : '로그아웃'}
               </button>
             </>
           ) : (
             <>
-              <Link href="/auth/login" className="text-sm text-gray-600 hover:text-[var(--primary)] transition-colors">{isEn ? 'Log In' : '로그인'}</Link>
+              <Link href="/auth/login" className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-[var(--primary)] transition-colors">
+                <LogIn className="w-4 h-4" />{isEn ? 'Log In' : '로그인'}
+              </Link>
               <Link
                 href="/auth/signup"
-                className="text-sm px-4 py-2 rounded-lg font-medium text-white transition-colors duration-200"
+                className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg font-medium text-white transition-colors duration-200"
                 style={{ backgroundColor: '#FF5722' }}
               >
-                {isEn ? 'Sign Up' : '회원가입'}
+                <UserPlus className="w-4 h-4" />{isEn ? 'Sign Up' : '회원가입'}
               </Link>
             </>
           )}
@@ -97,7 +102,7 @@ export default function Header({ siteName }: { siteName: string }) {
             className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 hover:border-[var(--primary)] transition-colors duration-200 flex items-center gap-1.5 font-medium text-gray-600 hover:text-[var(--primary)]"
             title={isEn ? '한국어로 보기' : 'View in English'}
           >
-            {isEn ? '🇰🇷 KO' : '🇺🇸 EN'}
+            <Globe className="w-4 h-4" />{isEn ? 'KO' : 'EN'}
           </button>
         </div>
 
@@ -114,29 +119,38 @@ export default function Header({ siteName }: { siteName: string }) {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-gray-700 hover:text-[var(--primary)]"
+              className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-[var(--primary)]"
               onClick={() => setMenuOpen(false)}
             >
+              <link.icon className="w-4 h-4" />
               {link.label}
             </Link>
           ))}
           <hr className="border-gray-100" />
           {user ? (
             <>
-              <Link href="/auth/profile" className="text-sm text-gray-700" onClick={() => setMenuOpen(false)}>{isEn ? 'Profile' : '프로필'}</Link>
-              <button onClick={handleSignOut} className="text-sm text-left text-gray-700">{isEn ? 'Log Out' : '로그아웃'}</button>
+              <Link href="/auth/profile" className="flex items-center gap-2 text-sm text-gray-700" onClick={() => setMenuOpen(false)}>
+                <UserCircle className="w-4 h-4" />{isEn ? 'Profile' : '프로필'}
+              </Link>
+              <button onClick={handleSignOut} className="flex items-center gap-2 text-sm text-left text-gray-700">
+                <LogOut className="w-4 h-4" />{isEn ? 'Log Out' : '로그아웃'}
+              </button>
             </>
           ) : (
             <>
-              <Link href="/auth/login" className="text-sm text-gray-700" onClick={() => setMenuOpen(false)}>{isEn ? 'Log In' : '로그인'}</Link>
-              <Link href="/auth/signup" className="text-sm font-medium text-[var(--primary)]" onClick={() => setMenuOpen(false)}>{isEn ? 'Sign Up' : '회원가입'}</Link>
+              <Link href="/auth/login" className="flex items-center gap-2 text-sm text-gray-700" onClick={() => setMenuOpen(false)}>
+                <LogIn className="w-4 h-4" />{isEn ? 'Log In' : '로그인'}
+              </Link>
+              <Link href="/auth/signup" className="flex items-center gap-2 text-sm font-medium text-[var(--primary)]" onClick={() => setMenuOpen(false)}>
+                <UserPlus className="w-4 h-4" />{isEn ? 'Sign Up' : '회원가입'}
+              </Link>
             </>
           )}
           <button
             onClick={() => { toggleLang(); setMenuOpen(false) }}
-            className="text-sm font-medium text-gray-700 text-left"
+            className="flex items-center gap-2 text-sm font-medium text-gray-700 text-left"
           >
-            {isEn ? '🇰🇷 한국어로 보기' : '🇺🇸 View in English'}
+            <Globe className="w-4 h-4" />{isEn ? '한국어로 보기' : 'View in English'}
           </button>
         </div>
       )}

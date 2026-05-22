@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import CommentSection from '@/components/community/CommentSection'
-import { ArrowLeft, Heart, Loader2, Pencil, Trash2 } from 'lucide-react'
+import { ArrowLeft, ThumbsUp, Loader2, Pencil, Trash2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
@@ -128,9 +128,9 @@ export default function PostDetailPage() {
         <div className="flex items-center gap-4 mt-6 pt-4 border-t border-gray-100">
           <button
             onClick={handleLike}
-            className={`flex items-center gap-1.5 text-sm transition-colors ${liked ? 'text-red-500' : 'text-gray-400 hover:text-red-400'}`}
+            className={`flex items-center gap-1.5 text-sm transition-colors ${liked ? 'text-[var(--primary)]' : 'text-gray-400 hover:text-[var(--primary)]'}`}
           >
-            <Heart className={`w-4 h-4 ${liked ? 'fill-current' : ''}`} />
+            <ThumbsUp className={`w-4 h-4 ${liked ? 'fill-current' : ''}`} />
             {likesCount}
           </button>
         </div>
