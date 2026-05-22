@@ -25,6 +25,7 @@ async function getPlans(country: string, city: string) {
     .eq('country', country)
     .eq('city', city)
     .eq('published', true)
+    .eq('language', 'ko')
     .order('created_at', { ascending: false })
   return data ?? []
 }

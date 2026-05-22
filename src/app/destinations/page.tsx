@@ -25,6 +25,7 @@ async function getCountries(): Promise<CountryGroup[]> {
     .from('travel_plans')
     .select('country, city')
     .eq('published', true)
+    .eq('language', 'ko')
 
   if (!data) return []
 

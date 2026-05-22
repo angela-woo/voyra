@@ -36,6 +36,7 @@ async function getCities(country: string): Promise<CityGroup[]> {
     .select('city, travel_type, days')
     .eq('country', country)
     .eq('published', true)
+    .eq('language', 'ko')
 
   if (!data) return []
 
