@@ -1,10 +1,12 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { toCountryUrl } from '@/lib/location'
 
 export const metadata: Metadata = {
-  title: '여행 일정 | Kiravoy',
+  title: '여행 일정',
   description: '세계 각국의 맞춤 여행 일정을 탐색해보세요. 커플, 가족, 친구, 혼자 여행까지.',
+  alternates: { canonical: 'https://kiravoy.com/destinations' },
 }
 
 export const dynamic = 'force-dynamic'
@@ -82,7 +84,7 @@ export default async function DestinationsPage() {
           {countries.map(({ country, cities, planCount }) => (
             <Link
               key={country}
-              href={`/destinations/${encodeURIComponent(country)}`}
+              href={toCountryUrl(country)}
               className="group bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm p-6 hover:border-[var(--primary)] hover:shadow-md transition-all text-center"
             >
               <div className="text-5xl mb-3">{COUNTRY_FLAGS[country] ?? '🌍'}</div>

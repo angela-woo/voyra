@@ -82,7 +82,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params
   const article = await getArticle(slug)
   if (!article) return { title: 'Not Found' }
-  return { title: `${article.title} – Kiravoy`, description: article.meta_description }
+  return {
+    title: article.title,
+    description: article.meta_description ?? undefined,
+    alternates: { canonical: `https://kiravoy.com/article/${slug}` },
+    openGraph: {
+      type: 'article',
+      title: article.title,
+      description: article.meta_description ?? undefined,
+      images: article.cover_image_url ? [{ url: article.cover_image_url, width: 1200, height: 630 }] : ['/og-image.jpg'],
+      publishedTime: article.created_at ?? undefined,
+    },
+  }
 }
 
 // ------- 페이지 -------
@@ -135,8 +146,21 @@ export default async function ArticlePage({ params }: PageProps) {
   const destination = [article.city, article.country].filter(Boolean).join(', ')
   const mainPlace = places.find((p: { lat: number | null; lng: number | null }) => p.lat && p.lng)
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.title,
+    description: article.meta_description,
+    image: article.cover_image_url ?? undefined,
+    datePublished: article.created_at ?? undefined,
+    author: { '@type': 'Organization', name: 'Kiravoy' },
+    publisher: { '@type': 'Organization', name: 'Kiravoy', logo: { '@type': 'ImageObject', url: 'https://kiravoy.com/og-image.jpg' } },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://kiravoy.com/article/${article.slug}` },
+  }
+
   return (
     <div>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* 히어로 */}
       {heroImageUrl && (
         <div className="relative w-full h-[300px] md:h-[500px] bg-gray-200">

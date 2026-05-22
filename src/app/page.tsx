@@ -8,6 +8,7 @@ import { ArrowRight, Clock, Eye, MapPin } from 'lucide-react'
 import HeroSearch from '@/components/home/HeroSearch'
 import CountryTabSection from '@/components/home/CountryTabSection'
 import AdUnit from '@/components/ui/AdUnit'
+import { toPlanUrl, toCountryUrl } from '@/lib/location'
 
 export const dynamic = 'force-dynamic'
 
@@ -137,10 +138,11 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-black/50" />
         </div>
         <div className="relative z-10 text-center px-4 w-full max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
-            어디로 떠나고 싶으세요?
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-2 leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+            해외여행 가이드 &amp; 일정 추천
           </h1>
-          <p className="text-lg md:text-xl text-white/80 mb-10 font-light">
+          <p className="text-xl md:text-2xl text-white/90 mb-3 font-medium">어디로 떠나고 싶으세요?</p>
+          <p className="text-base md:text-lg text-white/70 mb-10 font-light">
             엄선된 여행 가이드로 완벽한 여행을 계획하세요
           </p>
           <HeroSearch />
@@ -157,7 +159,7 @@ export default async function HomePage() {
             return (
               <Link
                 key={country.name}
-                href={`/destinations/${encodeURIComponent(country.dbName)}`}
+                href={toCountryUrl(country.dbName)}
                 className="group relative rounded-2xl overflow-hidden block card-hover"
                 style={{ height: '240px' }}
               >
@@ -191,7 +193,7 @@ export default async function HomePage() {
                 {travelPlans.map((plan: any) => (
                   <Link
                     key={plan.id}
-                    href={`/destinations/${encodeURIComponent(plan.country)}/${encodeURIComponent(plan.city)}/${plan.slug}`}
+                    href={toPlanUrl(plan)}
                     className="group shrink-0 w-52 bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200"
                   >
                     <div className="relative h-44 bg-gradient-to-br from-orange-100 to-red-100 overflow-hidden">
@@ -259,7 +261,7 @@ export default async function HomePage() {
               {travelPlans.map((plan: any) => (
                 <Link
                   key={plan.id}
-                  href={`/destinations/${encodeURIComponent(plan.country)}/${encodeURIComponent(plan.city)}/${plan.slug}`}
+                  href={toPlanUrl(plan)}
                   className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1"
                 >
                   <div className="relative h-48 bg-gradient-to-br from-orange-50 to-red-50 overflow-hidden">

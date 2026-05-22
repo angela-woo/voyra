@@ -45,7 +45,7 @@ export default function PlaceCard({ place, city }: { place: Place; city?: string
       {/* Image - left side */}
       <div className="w-28 h-28 relative shrink-0 bg-gradient-to-br from-orange-50 to-red-50">
         {imageUrl ? (
-          <Image src={imageUrl} alt={place.name} fill sizes="112px" className="object-cover" />
+          <Image src={imageUrl} alt={`${place.name} ${place.category ?? ''}`.trim()} fill sizes="112px" className="object-cover" />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <MapPin className="w-6 h-6 text-orange-200" />

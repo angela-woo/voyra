@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { MapPin, Clock } from 'lucide-react'
+import { toPlanUrl } from '@/lib/location'
 
 interface TabArticle {
   id: string
@@ -111,7 +112,7 @@ function ArticleCard({ a }: { a: TabArticle }) {
 function PlanCard({ p }: { p: TabPlan }) {
   return (
     <Link
-      href={`/destinations/${encodeURIComponent(p.country ?? '')}/${encodeURIComponent(p.city ?? '')}/${p.slug}`}
+      href={toPlanUrl({ country: p.country ?? '', city: p.city ?? '', slug: p.slug })}
       className="group bg-white rounded-[var(--radius)] overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all duration-200 flex flex-col"
     >
       <div className="h-2 bg-gradient-to-r from-[var(--primary)] to-indigo-400 flex-shrink-0" />

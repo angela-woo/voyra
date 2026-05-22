@@ -14,9 +14,15 @@ export default function SignupPage() {
   const [password, setPassword] = useState('')
   const [username, setUsername] = useState('')
   const [loading, setLoading] = useState(false)
+  const [agreeTerms, setAgreeTerms] = useState(false)
+  const [agreePrivacy, setAgreePrivacy] = useState(false)
+  const [agreeMarketing, setAgreeMarketing] = useState(false)
+
+  const canSubmit = agreeTerms && agreePrivacy
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!agreeTerms || !agreePrivacy) { toast.error('필수 약관에 동의해주세요.'); return }
     if (password.length < 8) { toast.error('비밀번호는 8자 이상이어야 합니다.'); return }
     setLoading(true)
 
@@ -87,10 +93,48 @@ export default function SignupPage() {
               className="w-full border border-gray-200 rounded-[var(--radius)] px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--primary)]"
             />
           </div>
+          <div className="space-y-2.5 pt-1">
+            <label className="flex items-start gap-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={agreeTerms}
+                onChange={e => setAgreeTerms(e.target.checked)}
+                className="mt-0.5 accent-[var(--primary)]"
+              />
+              <span className="text-sm text-gray-700">
+                <span className="text-red-500 font-medium">[필수]</span>{' '}
+                <Link href="/terms" target="_blank" className="text-[var(--primary)] underline">이용약관</Link>에 동의합니다
+              </span>
+            </label>
+            <label className="flex items-start gap-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={agreePrivacy}
+                onChange={e => setAgreePrivacy(e.target.checked)}
+                className="mt-0.5 accent-[var(--primary)]"
+              />
+              <span className="text-sm text-gray-700">
+                <span className="text-red-500 font-medium">[필수]</span>{' '}
+                <Link href="/privacy" target="_blank" className="text-[var(--primary)] underline">개인정보 수집·이용</Link>에 동의합니다
+              </span>
+            </label>
+            <label className="flex items-start gap-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={agreeMarketing}
+                onChange={e => setAgreeMarketing(e.target.checked)}
+                className="mt-0.5 accent-[var(--primary)]"
+              />
+              <span className="text-sm text-gray-700">
+                <span className="text-gray-400 font-medium">[선택]</span>{' '}
+                마케팅 정보 수신에 동의합니다
+              </span>
+            </label>
+          </div>
           <button
             type="submit"
-            disabled={loading}
-            className="w-full py-2.5 bg-[var(--primary)] text-white font-semibold rounded-[var(--radius)] hover:bg-[var(--primary-hover)] disabled:opacity-60 flex items-center justify-center gap-2 transition-colors"
+            disabled={loading || !canSubmit}
+            className="w-full py-2.5 bg-[var(--primary)] text-white font-semibold rounded-[var(--radius)] hover:bg-[var(--primary-hover)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors"
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
             회원가입

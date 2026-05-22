@@ -8,6 +8,7 @@ import WeatherWidget from '@/components/widgets/WeatherWidget'
 import { MapPin, Clock, DollarSign, Thermometer, Info, ExternalLink, ChevronRight } from 'lucide-react'
 import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
+import { toPlanUrl } from '@/lib/location'
 
 export const dynamic = 'force-dynamic'
 
@@ -136,9 +137,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params
   const plan = await getPlan(slug)
   if (!plan) return { title: 'Not Found' }
+  const planUrl = toPlanUrl(plan)
   return {
-    title: `${plan.title} | Kiravoy`,
+    title: plan.title,
     description: plan.meta_description ?? undefined,
+    alternates: { canonical: `https://kiravoy.com${planUrl}` },
+    openGraph: {
+      title: plan.title,
+      description: plan.meta_description ?? undefined,
+      images: plan.cover_image_url ? [{ url: plan.cover_image_url }] : ['/og-image.jpg'],
+    },
   }
 }
 
@@ -171,8 +179,18 @@ export default async function TravelPlanPage({ params }: PageProps) {
     fetchUnsplashPhotos(`${cityEn} tour activity`, 4),
   ])
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'TouristDestination',
+    name: plan.city,
+    description: plan.meta_description,
+    touristType: plan.travel_type,
+    url: `https://kiravoy.com${toPlanUrl(plan)}`,
+  }
+
   return (
     <div className="min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* Hero */}
       <section className="relative h-72 md:h-96 bg-gradient-to-br from-blue-700 to-indigo-800 overflow-hidden">
         {heroImage && (
@@ -483,7 +501,7 @@ export default async function TravelPlanPage({ params }: PageProps) {
                   {related.map(r => (
                     <Link
                       key={r.id}
-                      href={`/destinations/${country}/${city}/${r.slug}`}
+                      href={toPlanUrl({ country: plan.country, city: plan.city, slug: r.slug })}
                       className="bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm p-4 hover:border-[var(--primary)] hover:shadow-md transition-all"
                     >
                       <p className="text-xs text-[var(--primary)] mb-1">

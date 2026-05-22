@@ -10,10 +10,36 @@ import { Toaster } from 'react-hot-toast'
 const notoSansKR = Noto_Sans_KR({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-kr' })
 
 export const metadata: Metadata = {
-  title: 'Kiravoy - 빛나는 여행의 시작',
-  description: 'Kiravoy - 빛나는 여행의 시작',
+  metadataBase: new URL('https://kiravoy.com'),
+  title: {
+    default: 'Kiravoy — 빛나는 여행의 시작',
+    template: '%s | Kiravoy',
+  },
+  description: '전 세계 여행지 가이드와 맞춤 여행 일정. 커플, 가족, 친구, 혼자 여행까지 Kiravoy에서 완벽한 여행을 계획하세요.',
+  keywords: ['여행', '여행가이드', '여행일정', '해외여행', '도쿄여행', '파리여행', '발리여행', '방콕여행', '싱가포르여행'],
+  authors: [{ name: 'Kiravoy' }],
+  creator: 'Kiravoy',
+  openGraph: {
+    type: 'website',
+    locale: 'ko_KR',
+    url: 'https://kiravoy.com',
+    siteName: 'Kiravoy',
+    title: 'Kiravoy — 빛나는 여행의 시작',
+    description: '전 세계 여행지 가이드와 맞춤 여행 일정',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Kiravoy 여행 가이드' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Kiravoy — 빛나는 여행의 시작',
+    description: '전 세계 여행지 가이드와 맞춤 여행 일정',
+    images: ['/og-image.jpg'],
+  },
   verification: {
     google: 'adsWS-dLWCg1bUDwvbJSTq_-Cbrpl40LtvHGRIjPUMQ',
+  },
+  alternates: {
+    canonical: 'https://kiravoy.com',
+    languages: { ko: 'https://kiravoy.com', en: 'https://kiravoy.com/en' },
   },
 }
 
