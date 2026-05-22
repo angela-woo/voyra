@@ -73,6 +73,7 @@ async function getTravelPlans(limit: number) {
       .from('travel_plans')
       .select('id, slug, city, country, days, travel_type, title, meta_description, views_count, cover_image_url')
       .eq('published', true)
+      .eq('language', 'en')
       .order('views_count', { ascending: false })
       .limit(limit)
     return data ?? []
@@ -82,7 +83,7 @@ async function getTravelPlans(limit: number) {
 async function getCountryCounts() {
   try {
     const supabase = await createClient()
-    const { data } = await supabase.from('travel_plans').select('country').eq('published', true)
+    const { data } = await supabase.from('travel_plans').select('country').eq('published', true).eq('language', 'en')
     const counts: Record<string, number> = {}
     for (const row of data ?? []) {
       if (row.country) counts[row.country] = (counts[row.country] ?? 0) + 1
