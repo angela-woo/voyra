@@ -1,12 +1,16 @@
 const CITY_NAME_MAP: Record<string, string> = {
-  // 동아시아
+  // 동아시아 - 일본
   교토: 'Kyoto', 오사카: 'Osaka', 도쿄: 'Tokyo', 서울: 'Seoul', 나라: 'Nara',
+  나고야: 'Nagoya', 후쿠오카: 'Fukuoka', 삿포로: 'Sapporo', 오키나와: 'Okinawa',
   // 동남아시아
   발리: 'Bali', 싱가포르: 'Singapore', 방콕: 'Bangkok', 하노이: 'Hanoi',
   치앙마이: 'Chiang Mai', 푸켓: 'Phuket', 다낭: 'Da Nang', 호치민: 'Ho Chi Minh City',
-  코타키나발루: 'Kota Kinabalu', 쿠알라룸푸르: 'Kuala Lumpur', 세부: 'Cebu',
+  나트랑: 'Nha Trang', 코타키나발루: 'Kota Kinabalu', 쿠알라룸푸르: 'Kuala Lumpur',
+  세부: 'Cebu', 보라카이: 'Boracay', 마닐라: 'Manila',
+  괌: 'Guam', 사이판: 'Saipan',
   // 중국·홍콩·대만
   홍콩: 'Hong Kong', 상하이: 'Shanghai', 베이징: 'Beijing', 타이베이: 'Taipei',
+  타이중: 'Taichung',
   // 중동
   두바이: 'Dubai', 이스탄불: 'Istanbul', 아부다비: 'Abu Dhabi',
   // 유럽
@@ -16,6 +20,8 @@ const CITY_NAME_MAP: Record<string, string> = {
   마드리드: 'Madrid', 리스본: 'Lisbon', 부다페스트: 'Budapest',
   뮌헨: 'Munich', 밀라노: 'Milan', 피렌체: 'Florence', 베네치아: 'Venice',
   더블린: 'Dublin', 에든버러: 'Edinburgh', 브뤼셀: 'Brussels',
+  아테네: 'Athens', 스톡홀름: 'Stockholm', 오슬로: 'Oslo',
+  바르샤바: 'Warsaw',
   // 오세아니아
   시드니: 'Sydney', 멜버른: 'Melbourne', 오클랜드: 'Auckland',
   // 북미
@@ -23,14 +29,29 @@ const CITY_NAME_MAP: Record<string, string> = {
   라스베이거스: 'Las Vegas', 시카고: 'Chicago', 밴쿠버: 'Vancouver', 토론토: 'Toronto',
   // 중남미
   멕시코시티: 'Mexico City', 칸쿤: 'Cancun', 리우데자네이루: 'Rio de Janeiro',
-  // 추가 유럽
-  스톡홀름: 'Stockholm', 오슬로: 'Oslo', 바르샤바: 'Warsaw', 아테네: 'Athens',
   // 남아시아
   뭄바이: 'Mumbai', 델리: 'New Delhi',
 }
 
 export function toEnglishCity(city: string): string {
   return CITY_NAME_MAP[city] ?? city
+}
+
+// slug에서 위치 키워드 추출 → "nagoya-japan-travel-guide" → "nagoya japan travel"
+const SLUG_STOP_WORDS = new Set([
+  'travel', 'guide', 'tips', 'ultimate', 'best', 'things', 'what', 'how',
+  'for', 'korean', 'travelers', 'to', 'in', 'the', 'a', 'an', 'top',
+  'complete', 'perfect', 'must', 'see', 'do', 'visit',
+])
+export function slugToSearchQuery(slug: string): string {
+  const words = slug.split('-')
+  const locationWords: string[] = []
+  for (const word of words) {
+    if (SLUG_STOP_WORDS.has(word)) break
+    locationWords.push(word)
+  }
+  if (locationWords.length === 0) return slug.split('-').slice(0, 2).join(' ') + ' travel'
+  return locationWords.join(' ') + ' travel'
 }
 
 export interface UnsplashPhoto {
