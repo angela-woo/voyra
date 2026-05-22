@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Calendar, MapPin } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
-import { ko } from 'date-fns/locale'
+import { ko, enUS } from 'date-fns/locale'
 import { fetchUnsplashPhoto, toEnglishCity } from '@/lib/unsplash'
 
 interface Article {
@@ -18,9 +18,9 @@ interface Article {
   cover_image_attribution?: string | null
 }
 
-export default async function ArticleCard({ article }: { article: Article }) {
+export default async function ArticleCard({ article, locale = 'ko' }: { article: Article; locale?: 'ko' | 'en' }) {
   const timeAgo = article.created_at
-    ? formatDistanceToNow(new Date(article.created_at), { addSuffix: true, locale: ko })
+    ? formatDistanceToNow(new Date(article.created_at), { addSuffix: true, locale: locale === 'en' ? enUS : ko })
     : null
 
   const destination = [article.city, article.country].filter(Boolean).join(', ')
@@ -34,8 +34,10 @@ export default async function ArticleCard({ article }: { article: Article }) {
     if (fetched) photo = fetched
   }
 
+  const href = locale === 'en' ? `/en/article/${article.slug}` : `/article/${article.slug}`
+
   return (
-    <Link href={`/article/${article.slug}`} className="group block bg-white rounded-[var(--radius)] overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+    <Link href={href} className="group block bg-white rounded-[var(--radius)] overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
       {/* Cover image */}
       <div className="h-48 bg-gradient-to-br from-blue-50 to-indigo-100 relative overflow-hidden">
         {photo ? (

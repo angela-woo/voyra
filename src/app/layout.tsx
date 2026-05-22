@@ -75,6 +75,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="ko" className={notoSansKR.variable}>
       <head>
         <style>{`:root { ${cssVars} }`}</style>
+        <link rel="alternate" hrefLang="ko" href="https://kiravoy.com/" />
+        <link rel="alternate" hrefLang="en" href="https://kiravoy.com/en/" />
+        <link rel="alternate" hrefLang="x-default" href="https://kiravoy.com/" />
       </head>
       <body className="bg-[var(--bg)] font-[family-name:var(--font-body)] text-gray-900 min-h-screen flex flex-col">
         <Script

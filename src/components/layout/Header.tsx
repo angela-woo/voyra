@@ -2,21 +2,36 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Menu, X } from 'lucide-react'
 import type { User } from '@supabase/supabase-js'
 
-const NAV_LINKS = [
-  { href: '/', label: '홈' },
-  { href: '/articles', label: '여행 가이드' },
-  { href: '/destinations', label: '여행 일정' },
-  { href: '/community', label: '커뮤니티' },
-]
-
 export default function Header({ siteName }: { siteName: string }) {
   const [user, setUser] = useState<User | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const pathname = usePathname()
+  const router = useRouter()
   const supabase = createClient()
+
+  const isEn = pathname.startsWith('/en')
+  const base = isEn ? '/en' : ''
+
+  const NAV_LINKS = [
+    { href: `${base}/`, label: isEn ? 'Home' : '홈' },
+    { href: `${base}/articles`, label: isEn ? 'Travel Guides' : '여행 가이드' },
+    { href: `${base}/destinations`, label: isEn ? 'Itineraries' : '여행 일정' },
+    { href: '/community', label: isEn ? 'Community' : '커뮤니티' },
+  ]
+
+  function toggleLang() {
+    if (isEn) {
+      const ko = pathname.slice(3) || '/'
+      router.push(ko)
+    } else {
+      router.push('/en' + (pathname === '/' ? '' : pathname))
+    }
+  }
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user))
@@ -53,30 +68,37 @@ export default function Header({ siteName }: { siteName: string }) {
           ))}
         </nav>
 
-        {/* Auth */}
+        {/* Auth + Lang toggle */}
         <div className="hidden md:flex items-center gap-3 flex-shrink-0">
           {user ? (
             <>
-              <Link href="/auth/profile" className="text-sm text-gray-600 hover:text-[var(--primary)] transition-colors">프로필</Link>
+              <Link href="/auth/profile" className="text-sm text-gray-600 hover:text-[var(--primary)] transition-colors">{isEn ? 'Profile' : '프로필'}</Link>
               <button
                 onClick={handleSignOut}
                 className="text-sm px-4 py-1.5 rounded-[var(--radius)] border border-gray-300 hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors duration-200"
               >
-                로그아웃
+                {isEn ? 'Log Out' : '로그아웃'}
               </button>
             </>
           ) : (
             <>
-              <Link href="/auth/login" className="text-sm text-gray-600 hover:text-[var(--primary)] transition-colors">로그인</Link>
+              <Link href="/auth/login" className="text-sm text-gray-600 hover:text-[var(--primary)] transition-colors">{isEn ? 'Log In' : '로그인'}</Link>
               <Link
                 href="/auth/signup"
                 className="text-sm px-4 py-2 rounded-lg font-medium text-white transition-colors duration-200"
                 style={{ backgroundColor: '#FF5722' }}
               >
-                회원가입
+                {isEn ? 'Sign Up' : '회원가입'}
               </Link>
             </>
           )}
+          <button
+            onClick={toggleLang}
+            className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 hover:border-[var(--primary)] transition-colors duration-200 flex items-center gap-1.5 font-medium text-gray-600 hover:text-[var(--primary)]"
+            title={isEn ? '한국어로 보기' : 'View in English'}
+          >
+            {isEn ? '🇰🇷 KO' : '🇺🇸 EN'}
+          </button>
         </div>
 
         {/* Mobile hamburger */}
@@ -101,15 +123,21 @@ export default function Header({ siteName }: { siteName: string }) {
           <hr className="border-gray-100" />
           {user ? (
             <>
-              <Link href="/auth/profile" className="text-sm text-gray-700" onClick={() => setMenuOpen(false)}>프로필</Link>
-              <button onClick={handleSignOut} className="text-sm text-left text-gray-700">로그아웃</button>
+              <Link href="/auth/profile" className="text-sm text-gray-700" onClick={() => setMenuOpen(false)}>{isEn ? 'Profile' : '프로필'}</Link>
+              <button onClick={handleSignOut} className="text-sm text-left text-gray-700">{isEn ? 'Log Out' : '로그아웃'}</button>
             </>
           ) : (
             <>
-              <Link href="/auth/login" className="text-sm text-gray-700" onClick={() => setMenuOpen(false)}>로그인</Link>
-              <Link href="/auth/signup" className="text-sm font-medium text-[var(--primary)]" onClick={() => setMenuOpen(false)}>회원가입</Link>
+              <Link href="/auth/login" className="text-sm text-gray-700" onClick={() => setMenuOpen(false)}>{isEn ? 'Log In' : '로그인'}</Link>
+              <Link href="/auth/signup" className="text-sm font-medium text-[var(--primary)]" onClick={() => setMenuOpen(false)}>{isEn ? 'Sign Up' : '회원가입'}</Link>
             </>
           )}
+          <button
+            onClick={() => { toggleLang(); setMenuOpen(false) }}
+            className="text-sm font-medium text-gray-700 text-left"
+          >
+            {isEn ? '🇰🇷 한국어로 보기' : '🇺🇸 View in English'}
+          </button>
         </div>
       )}
     </header>
