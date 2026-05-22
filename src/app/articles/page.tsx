@@ -28,6 +28,7 @@ async function fetchArticles(page: number, sort: string, country: string, catego
       .from('articles')
       .select(SELECT_COLS, { count: 'exact' })
       .eq('published', true)
+      .eq('language', 'ko')
     if (country) q = q.eq('country', country)
     if (category) q = q.eq('category', category)
     return q
@@ -53,6 +54,7 @@ async function getFilters() {
     .from('articles')
     .select('country, category')
     .eq('published', true)
+    .eq('language', 'ko')
 
   const countries = Array.from(
     new Set((data ?? []).map(r => r.country).filter((v): v is string => !!v)),
