@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Clock } from 'lucide-react'
 import type { Metadata } from 'next'
+import { SLUG_TO_COUNTRY_MAP, SLUG_TO_CITY_MAP } from '@/lib/location'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,13 +18,15 @@ const TRAVEL_TYPE_LABELS: Record<string, { label: string; emoji: string; color: 
   solo: { label: '혼자', emoji: '🧳', color: 'bg-purple-50 border-purple-200 text-purple-700' },
 }
 
-async function getPlans(country: string, city: string) {
+async function getPlans(countrySlug: string, citySlug: string) {
+  const koreanCountry = SLUG_TO_COUNTRY_MAP[countrySlug] ?? decodeURIComponent(countrySlug)
+  const koreanCity = SLUG_TO_CITY_MAP[citySlug] ?? decodeURIComponent(citySlug)
   const supabase = await createClient()
   const { data } = await supabase
     .from('travel_plans')
     .select('id, slug, title, meta_description, days, travel_type, theme, country, city')
-    .eq('country', country)
-    .eq('city', city)
+    .eq('country', koreanCountry)
+    .eq('city', koreanCity)
     .eq('published', true)
     .eq('language', 'ko')
     .order('created_at', { ascending: false })
@@ -32,34 +35,35 @@ async function getPlans(country: string, city: string) {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { country, city } = await params
-  const decodedCity = decodeURIComponent(city)
-  const decodedCountry = decodeURIComponent(country)
+  const koreanCountry = SLUG_TO_COUNTRY_MAP[country] ?? decodeURIComponent(country)
+  const koreanCity = SLUG_TO_CITY_MAP[city] ?? decodeURIComponent(city)
   return {
-    title: `${decodedCity} 여행 일정 | Kiravoy`,
-    description: `${decodedCity}(${decodedCountry}) 맞춤 여행 일정 - 커플, 가족, 친구, 혼자 여행까지.`,
+    title: `${koreanCity} 여행 일정 | Kiravoy`,
+    description: `${koreanCity}(${koreanCountry}) 맞춤 여행 일정 - 커플, 가족, 친구, 혼자 여행까지.`,
   }
 }
 
 export default async function CityPage({ params }: PageProps) {
   const { country, city } = await params
-  const decodedCountry = decodeURIComponent(country)
-  const decodedCity = decodeURIComponent(city)
-  const plans = await getPlans(decodedCountry, decodedCity)
+  const plans = await getPlans(country, city)
 
   if (plans.length === 0) notFound()
+
+  const koreanCountry = plans[0].country
+  const koreanCity = plans[0].city
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
       <div className="mb-2 text-sm text-gray-400">
         <Link href="/destinations" className="hover:text-[var(--primary)]">여행 일정</Link>
         {' › '}
-        <Link href={`/destinations/${country}`} className="hover:text-[var(--primary)]">{decodedCountry}</Link>
+        <Link href={`/destinations/${country}`} className="hover:text-[var(--primary)]">{koreanCountry}</Link>
         {' › '}
-        <span>{decodedCity}</span>
+        <span>{koreanCity}</span>
       </div>
       <div className="mb-10">
         <h1 className="text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
-          {decodedCity} 여행 일정
+          {koreanCity} 여행 일정
         </h1>
         <p className="text-gray-500">여행 스타일에 맞는 일정을 선택해보세요.</p>
       </div>

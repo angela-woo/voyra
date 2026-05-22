@@ -155,12 +155,10 @@ export default async function TravelPlanPage({ params }: PageProps) {
   const decodedCountry = decodeURIComponent(country)
   const decodedCity = decodeURIComponent(city)
 
-  const [plan, related] = await Promise.all([
-    getPlan(slug),
-    getRelated(decodedCity, slug),
-  ])
-
+  const plan = await getPlan(slug)
   if (!plan) notFound()
+
+  const related = await getRelated(plan.city, slug)
 
   // 조회수 증가 (fire-and-forget)
   adminSupabase

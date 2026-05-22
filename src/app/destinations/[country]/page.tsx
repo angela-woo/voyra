@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { SLUG_TO_COUNTRY_MAP, CITY_SLUG_MAP } from '@/lib/location'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,20 +26,22 @@ const THEME_COLORS: Record<string, string> = {
 
 interface CityGroup {
   city: string
+  citySlug: string
   themes: string[]
   planCount: number
 }
 
-async function getCities(country: string): Promise<CityGroup[]> {
+async function getCities(countrySlug: string): Promise<{ koreanName: string; cities: CityGroup[] }> {
+  const koreanCountry = SLUG_TO_COUNTRY_MAP[countrySlug] ?? decodeURIComponent(countrySlug)
   const supabase = await createClient()
   const { data } = await supabase
     .from('travel_plans')
-    .select('city, travel_type, days')
-    .eq('country', country)
+    .select('city, travel_type')
+    .eq('country', koreanCountry)
     .eq('published', true)
     .eq('language', 'ko')
 
-  if (!data) return []
+  if (!data || data.length === 0) return { koreanName: koreanCountry, cities: [] }
 
   const map = new Map<string, Set<string>>()
   for (const row of data) {
@@ -46,26 +49,29 @@ async function getCities(country: string): Promise<CityGroup[]> {
     map.get(row.city)!.add(row.travel_type)
   }
 
-  return Array.from(map.entries()).map(([city, themes]) => ({
-    city,
-    themes: Array.from(themes),
-    planCount: data.filter(r => r.city === city).length,
-  }))
+  return {
+    koreanName: koreanCountry,
+    cities: Array.from(map.entries()).map(([city, themes]) => ({
+      city,
+      citySlug: CITY_SLUG_MAP[city] ?? encodeURIComponent(city),
+      themes: Array.from(themes),
+      planCount: data.filter(r => r.city === city).length,
+    })),
+  }
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { country } = await params
-  const decoded = decodeURIComponent(country)
+  const { koreanName } = await getCities(country)
   return {
-    title: `${decoded} 여행 일정 | Kiravoy`,
-    description: `${decoded}의 도시별 맞춤 여행 일정을 확인해보세요.`,
+    title: `${koreanName} 여행 일정 | Kiravoy`,
+    description: `${koreanName}의 도시별 맞춤 여행 일정을 확인해보세요.`,
   }
 }
 
 export default async function CountryPage({ params }: PageProps) {
   const { country } = await params
-  const decoded = decodeURIComponent(country)
-  const cities = await getCities(decoded)
+  const { koreanName, cities } = await getCities(country)
 
   if (cities.length === 0) notFound()
 
@@ -74,20 +80,20 @@ export default async function CountryPage({ params }: PageProps) {
       <div className="mb-2 text-sm text-gray-400">
         <Link href="/destinations" className="hover:text-[var(--primary)]">여행 일정</Link>
         {' › '}
-        <span>{decoded}</span>
+        <span>{koreanName}</span>
       </div>
       <div className="mb-10">
         <h1 className="text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
-          {decoded} 여행 일정
+          {koreanName} 여행 일정
         </h1>
         <p className="text-gray-500">도시를 선택해서 일정을 확인해보세요.</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {cities.map(({ city, themes, planCount }) => (
+        {cities.map(({ city, citySlug, themes, planCount }) => (
           <Link
             key={city}
-            href={`/destinations/${encodeURIComponent(decoded)}/${encodeURIComponent(city)}`}
+            href={`/destinations/${country}/${citySlug}`}
             className="group bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm p-6 hover:border-[var(--primary)] hover:shadow-md transition-all"
           >
             <h2 className="font-bold text-xl text-gray-800 mb-3 group-hover:text-[var(--primary)] transition-colors">

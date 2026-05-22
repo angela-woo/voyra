@@ -105,6 +105,13 @@ export const CITY_SLUG_MAP: Record<string, string> = {
   '타이중': 'taichung',
 }
 
+export const SLUG_TO_COUNTRY_MAP: Record<string, string> = Object.fromEntries(
+  Object.entries(COUNTRY_SLUG_MAP).map(([ko, en]) => [en, ko])
+)
+export const SLUG_TO_CITY_MAP: Record<string, string> = Object.fromEntries(
+  Object.entries(CITY_SLUG_MAP).map(([ko, en]) => [en, ko])
+)
+
 export function toPlanUrl(plan: { country: string; city: string; slug: string }): string {
   const country = COUNTRY_SLUG_MAP[plan.country] ?? encodeURIComponent(plan.country)
   const city = CITY_SLUG_MAP[plan.city] ?? encodeURIComponent(plan.city)
