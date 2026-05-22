@@ -68,6 +68,7 @@ async function getTravelPlans(limit: number) {
       .from('travel_plans')
       .select('id, slug, city, country, days, travel_type, title, meta_description, views_count, cover_image_url')
       .eq('published', true)
+      .eq('language', 'ko')
       .order('views_count', { ascending: false })
       .limit(limit)
     return data ?? []
@@ -77,7 +78,7 @@ async function getTravelPlans(limit: number) {
 async function getCountryCounts() {
   try {
     const supabase = await createClient()
-    const { data } = await supabase.from('travel_plans').select('country').eq('published', true)
+    const { data } = await supabase.from('travel_plans').select('country').eq('published', true).eq('language', 'ko')
     const counts: Record<string, number> = {}
     for (const row of data ?? []) {
       if (row.country) counts[row.country] = (counts[row.country] ?? 0) + 1
@@ -91,7 +92,7 @@ async function getTabData() {
     const supabase = await createClient()
     const [{ data: articles }, { data: plans }] = await Promise.all([
       supabase.from('articles').select('id, slug, title, meta_description, city, country, category, cover_image_url').eq('published', true).eq('language', 'ko').order('created_at', { ascending: false }).limit(60),
-      supabase.from('travel_plans').select('id, slug, city, country, days, travel_type, title, meta_description').eq('published', true).order('views_count', { ascending: false }).limit(40),
+      supabase.from('travel_plans').select('id, slug, city, country, days, travel_type, title, meta_description').eq('published', true).eq('language', 'ko').order('views_count', { ascending: false }).limit(40),
     ])
     return { articles: articles ?? [], plans: plans ?? [] }
   } catch { return { articles: [], plans: [] } }
