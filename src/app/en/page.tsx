@@ -19,14 +19,14 @@ export const metadata: Metadata = {
 }
 
 const COUNTRIES = [
-  { name: 'Japan', flag: '🇯🇵', query: 'Japan Mount Fuji travel', dbName: '일본' },
-  { name: 'France', flag: '🇫🇷', query: 'Paris France Eiffel Tower', dbName: '프랑스' },
-  { name: 'Thailand', flag: '🇹🇭', query: 'Bangkok Thailand golden temple', dbName: '태국' },
-  { name: 'Indonesia', flag: '🇮🇩', query: 'Bali Indonesia rice terraces', dbName: '인도네시아' },
-  { name: 'Singapore', flag: '🇸🇬', query: 'Singapore Marina Bay Sands skyline', dbName: '싱가포르' },
-  { name: 'UK', flag: '🇬🇧', query: 'London UK Big Ben bridge', dbName: '영국' },
-  { name: 'Spain', flag: '🇪🇸', query: 'Barcelona Spain Sagrada Familia', dbName: '스페인' },
-  { name: 'Australia', flag: '🇦🇺', query: 'Sydney Australia Opera House harbour', dbName: '호주' },
+  { name: 'Japan', flag: '🇯🇵', query: 'Japan Mount Fuji travel', dbName: 'Japan' },
+  { name: 'France', flag: '🇫🇷', query: 'Paris France Eiffel Tower', dbName: 'France' },
+  { name: 'Thailand', flag: '🇹🇭', query: 'Bangkok Thailand golden temple', dbName: 'Thailand' },
+  { name: 'Indonesia', flag: '🇮🇩', query: 'Bali Indonesia rice terraces', dbName: 'Indonesia' },
+  { name: 'Singapore', flag: '🇸🇬', query: 'Singapore Marina Bay Sands skyline', dbName: 'Singapore' },
+  { name: 'UK', flag: '🇬🇧', query: 'London UK Big Ben bridge', dbName: 'UK' },
+  { name: 'Spain', flag: '🇪🇸', query: 'Barcelona Spain Sagrada Familia', dbName: 'Spain' },
+  { name: 'Italy', flag: '🇮🇹', query: 'Rome Italy Colosseum travel', dbName: 'Italy' },
 ]
 
 const TRAVEL_TYPE_LABELS: Record<string, string> = {
