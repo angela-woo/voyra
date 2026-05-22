@@ -33,6 +33,11 @@ export const COUNTRY_SLUG_MAP: Record<string, string> = {
   '중국': 'china',
   '말레이시아': 'malaysia',
   '멕시코': 'mexico',
+  '필리핀': 'philippines',
+  '괌': 'guam',
+  '사이판': 'cnmi',
+  '미국령괌': 'guam',
+  '미국령북마리아나제도': 'cnmi',
 }
 
 export const CITY_SLUG_MAP: Record<string, string> = {
@@ -86,6 +91,18 @@ export const CITY_SLUG_MAP: Record<string, string> = {
   '베이징': 'beijing',
   '쿠알라룸푸르': 'kuala-lumpur',
   '멕시코시티': 'mexico-city',
+  '후쿠오카': 'fukuoka',
+  '오키나와': 'okinawa',
+  '삿포로': 'sapporo',
+  '나고야': 'nagoya',
+  '다낭': 'da-nang',
+  '나트랑': 'nha-trang',
+  '세부': 'cebu',
+  '보라카이': 'boracay',
+  '마닐라': 'manila',
+  '괌': 'guam',
+  '사이판': 'saipan',
+  '타이중': 'taichung',
 }
 
 export function toPlanUrl(plan: { country: string; city: string; slug: string }): string {
