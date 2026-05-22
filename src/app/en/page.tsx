@@ -71,7 +71,7 @@ async function getTravelPlans(limit: number) {
     const supabase = await createClient()
     const { data } = await supabase
       .from('travel_plans')
-      .select('id, slug, city, country, days, travel_type, title, meta_description, views_count, cover_image_url')
+      .select('id, slug, city, country, country_en, city_en, days, travel_type, title, meta_description, views_count, cover_image_url')
       .eq('published', true)
       .eq('language', 'en')
       .order('views_count', { ascending: false })
@@ -137,7 +137,7 @@ export default async function EnHomePage() {
             return (
               <Link
                 key={country.name}
-                href={`/destinations/${encodeURIComponent(country.dbName)}`}
+                href={`/en/destinations/${country.dbName.toLowerCase()}`}
                 className="group relative rounded-2xl overflow-hidden block card-hover"
                 style={{ height: '240px' }}
               >
@@ -164,14 +164,14 @@ export default async function EnHomePage() {
       {travelPlans.length > 0 && (
         <section className="py-16" style={{ backgroundColor: '#FFF8F6' }}>
           <div className="max-w-7xl mx-auto px-4">
-            <SectionTitle title="Trending Now" subtitle="Most viewed travel itineraries" viewAllHref="/destinations" />
+            <SectionTitle title="Trending Now" subtitle="Most viewed travel itineraries" viewAllHref="/en/destinations" />
             <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 pb-2">
               <div className="flex gap-4" style={{ width: 'max-content' }}>
                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {travelPlans.map((plan: any) => (
                   <Link
                     key={plan.id}
-                    href={`/destinations/${encodeURIComponent(plan.country)}/${encodeURIComponent(plan.city)}/${plan.slug}`}
+                    href={`/en/destinations/${plan.country_en ?? plan.country.toLowerCase()}/${plan.city_en ?? plan.city.toLowerCase().replace(/\s+/g, '-')}/${plan.slug}`}
                     className="group shrink-0 w-52 bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200"
                   >
                     <div className="relative h-44 bg-gradient-to-br from-orange-100 to-red-100 overflow-hidden">
@@ -222,7 +222,7 @@ export default async function EnHomePage() {
         ) : (
           <div className="text-center py-16">
             <p className="text-gray-400 mb-4">English articles coming soon!</p>
-            <Link href="/articles" className="text-sm font-medium hover:underline" style={{ color: '#FF5722' }}>
+            <Link href="/en/articles" className="text-sm font-medium hover:underline" style={{ color: '#FF5722' }}>
               Browse Korean guides →
             </Link>
           </div>
@@ -237,13 +237,13 @@ export default async function EnHomePage() {
       {travelPlans.length > 0 && (
         <section className="py-16" style={{ backgroundColor: '#F8F8F8' }}>
           <div className="max-w-7xl mx-auto px-4">
-            <SectionTitle title="Popular Itineraries" subtitle="Top-rated itineraries from travelers" viewAllHref="/destinations" />
+            <SectionTitle title="Popular Itineraries" subtitle="Top-rated itineraries from travelers" viewAllHref="/en/destinations" />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {travelPlans.map((plan: any) => (
                 <Link
                   key={plan.id}
-                  href={`/destinations/${encodeURIComponent(plan.country)}/${encodeURIComponent(plan.city)}/${plan.slug}`}
+                  href={`/en/destinations/${plan.country_en ?? plan.country.toLowerCase()}/${plan.city_en ?? plan.city.toLowerCase().replace(/\s+/g, '-')}/${plan.slug}`}
                   className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1"
                 >
                   <div className="relative h-48 bg-gradient-to-br from-orange-50 to-red-50 overflow-hidden">
