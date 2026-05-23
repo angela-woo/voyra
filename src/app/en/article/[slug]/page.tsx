@@ -1,6 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { marked } from 'marked'
+
+function preprocessMarkdown(md: string): string {
+  return md.replace(/~~/g, '~')
+}
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -121,7 +125,7 @@ export default async function EnArticlePage({ params }: PageProps) {
     globalIntro,
     ...sections.flatMap(s => [s.intro, ...s.items.map(i => i.body)]),
   ]
-  const allHtml = await Promise.all(allMarkdown.map(md => marked(md)))
+  const allHtml = await Promise.all(allMarkdown.map(md => marked(preprocessMarkdown(md))))
 
   let htmlIdx = 0
   const globalIntroHtml = allHtml[htmlIdx++]
