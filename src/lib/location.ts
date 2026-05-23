@@ -36,8 +36,6 @@ export const COUNTRY_SLUG_MAP: Record<string, string> = {
   '필리핀': 'philippines',
   '괌': 'guam',
   '사이판': 'cnmi',
-  '미국령괌': 'guam',
-  '미국령북마리아나제도': 'cnmi',
 }
 
 export const CITY_SLUG_MAP: Record<string, string> = {
