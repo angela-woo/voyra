@@ -1,8 +1,23 @@
 import Image from 'next/image'
 import { MapPin, Star, Map, Building2, Ticket } from 'lucide-react'
+import { fetchUnsplashPhoto, toEnglishCity } from '@/lib/unsplash'
 
 const AWIN_AID = '2892557'
 const KLOOK_AFF_ID = '121117'
+
+const CATEGORY_QUERIES: Record<string, string> = {
+  hotel: 'luxury hotel lobby room',
+  restaurant: 'restaurant food dining',
+  attraction: 'tourist landmark attraction',
+  cafe: 'cafe coffee shop interior',
+}
+
+const CATEGORY_GRADIENTS: Record<string, string> = {
+  hotel: 'from-green-50 to-teal-100',
+  restaurant: 'from-orange-50 to-red-100',
+  attraction: 'from-blue-50 to-indigo-100',
+  cafe: 'from-yellow-50 to-orange-100',
+}
 
 interface Place {
   id: string
@@ -35,15 +50,25 @@ function buildBookingUrl(place: Place, city: string | null | undefined): string 
   return `https://www.booking.com/searchresults.html?aid=${AWIN_AID}&ss=${ss}`
 }
 
-export default function PlaceCard({ place, city }: { place: Place; city?: string | null }) {
+export default async function PlaceCard({ place, city }: { place: Place; city?: string | null }) {
   const hotel = isHotel(place.category)
   const attractionOrRestaurant = isAttractionOrRestaurant(place.category)
-  const imageUrl = place.image_url ?? null
+  const cat = place.category?.toLowerCase() ?? ''
+  const gradient = CATEGORY_GRADIENTS[cat] ?? 'from-orange-50 to-red-50'
+
+  let imageUrl = place.image_url ?? null
+  if (!imageUrl) {
+    const cityEn = city ? toEnglishCity(city) : ''
+    const catKeyword = CATEGORY_QUERIES[cat] ?? 'travel destination'
+    const query = [place.name, cityEn, catKeyword].filter(Boolean).join(' ')
+    const photo = await fetchUnsplashPhoto(query)
+    imageUrl = photo?.url ?? null
+  }
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex hover:shadow-md transition-shadow duration-200">
       {/* Image - left side */}
-      <div className="w-28 h-28 relative shrink-0 bg-gradient-to-br from-orange-50 to-red-50">
+      <div className={`w-28 h-28 relative shrink-0 bg-gradient-to-br ${gradient}`}>
         {imageUrl ? (
           <Image src={imageUrl} alt={`${place.name} ${place.category ?? ''}`.trim()} fill sizes="112px" className="object-cover" />
         ) : (
