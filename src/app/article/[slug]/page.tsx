@@ -1,10 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { marked } from 'marked'
-
-function preprocessMarkdown(md: string): string {
-  return md.replace(/~~/g, '~')
-}
 import Image from 'next/image'
 import {
   fetchUnsplashPhoto,
@@ -25,6 +21,12 @@ import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
 
 export const dynamic = 'force-dynamic'
+
+marked.use({ renderer: { del({ text }: { text: string }) { return `~${text}~` } } })
+
+function preprocessMarkdown(md: string): string {
+  return md.replace(/(\S)~~(\S)/g, '$1~$2').replace(/~~/g, '')
+}
 
 interface PageProps {
   params: Promise<{ slug: string }>
