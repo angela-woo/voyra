@@ -142,17 +142,42 @@ export async function fetchItemImages(
 
 export function sectionToSearchQuery(heading: string, cityEnglish: string): string {
   const h = heading.toLowerCase()
-  if (/attraction|landmark|sightseeing|명소|관광|볼거리|여행지/.test(h)) return `${cityEnglish} attractions`
-  if (/food|restaurant|dining|맛집|음식|먹거리|레스토랑|맛/.test(h)) return `${cityEnglish} food`
-  if (/transport|getting around|교통|이동|지하철/.test(h)) return `${cityEnglish} transportation`
-  if (/shopping|market|쇼핑|시장/.test(h)) return `${cityEnglish} shopping`
-  if (/tip|advice|guide|팁|여행 정보|주의사항/.test(h)) return `${cityEnglish} travel`
-  if (/hotel|accommodation|숙박|호텔/.test(h)) return `${cityEnglish} hotel`
-  if (/cafe|coffee|카페|커피/.test(h)) return `${cityEnglish} cafe`
-  if (/nature|park|자연|공원|hiking/.test(h)) return `${cityEnglish} nature landscape`
-  if (/night|nightlife|bar|밤|야경|클럽/.test(h)) return `${cityEnglish} nightlife`
-  if (/culture|history|art|문화|역사|예술/.test(h)) return `${cityEnglish} culture`
-  return `${cityEnglish} travel`
+  const city = cityEnglish || 'travel'
+
+  // 비자/입국 — 도시명 없이 범용 키워드
+  if (/visa|비자|입국|immigration|passport/.test(h)) return 'passport visa airport travel document'
+  // 날씨/기후
+  if (/weather|climate|날씨|기후|계절|여행 시기|best time/.test(h)) return `${city} travel season weather`
+  // 화폐/환전/물가
+  if (/currency|money|exchange|화폐|환전|물가|cost/.test(h)) return `${city} local market currency`
+  // 안전
+  if (/safety|safe|안전/.test(h)) return `${city} travel safety`
+  // 해변/바다
+  if (/beach|ocean|sea|해변|바다|해수욕/.test(h)) return `${city} beach ocean`
+  // 관광/명소
+  if (/attraction|landmark|sightseeing|명소|관광|볼거리|여행지/.test(h)) return `${city} tourist landmark`
+  // 음식/맛집
+  if (/food|restaurant|dining|맛집|음식|먹거리|레스토랑|맛/.test(h)) return `${city} food cuisine`
+  // 교통
+  if (/transport|getting around|교통|이동|지하철|버스/.test(h)) return `${city} transportation`
+  // 쇼핑
+  if (/shopping|market|쇼핑|시장/.test(h)) return `${city} shopping market`
+  // 팁/가이드/주의사항
+  if (/tip|advice|guide|팁|여행 정보|주의사항|준비/.test(h)) return `${city} travel guide`
+  // 숙소/호텔
+  if (/hotel|accommodation|숙박|호텔|숙소/.test(h)) return `${city} hotel accommodation`
+  // 카페
+  if (/cafe|coffee|카페|커피/.test(h)) return `${city} cafe coffee`
+  // 자연/공원
+  if (/nature|park|자연|공원|hiking|등산/.test(h)) return `${city} nature landscape`
+  // 야경/밤
+  if (/night|nightlife|bar|밤|야경|클럽/.test(h)) return `${city} night city lights`
+  // 문화/역사/예술/사원
+  if (/culture|history|art|temple|shrine|문화|역사|예술|사원|성당|사찰/.test(h)) return `${city} culture history`
+  // 영문이 포함된 제목 — 도시 + 그대로 활용
+  if (/[a-zA-Z]{3,}/.test(heading)) return `${city} ${heading}`
+  // 기본값
+  return `${city} travel`
 }
 
 export async function fetchSectionImages(
