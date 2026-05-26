@@ -9,6 +9,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
 
 const DESTINATIONS = [
+  // Already generated — script skips existing cities automatically
   { city: 'Tokyo', country: 'Japan', type: 'first-timers guide' },
   { city: 'Paris', country: 'France', type: '3-day itinerary on a budget' },
   { city: 'Bali', country: 'Indonesia', type: 'best things to do' },
@@ -19,7 +20,6 @@ const DESTINATIONS = [
   { city: 'Rome', country: 'Italy', type: '3-day itinerary on a budget' },
   { city: 'Amsterdam', country: 'Netherlands', type: 'travel guide for first-time visitors' },
   { city: 'New York', country: 'USA', type: 'best things to do' },
-  // South Korea
   { city: 'Seoul', country: 'South Korea', type: 'travel guide for foreigners' },
   { city: 'Busan', country: 'South Korea', type: 'travel itinerary' },
   { city: 'Jeju Island', country: 'South Korea', type: 'things to do guide' },
@@ -28,6 +28,65 @@ const DESTINATIONS = [
   { city: 'Jeonju', country: 'South Korea', type: 'hanok village guide' },
   { city: 'Sokcho', country: 'South Korea', type: 'Seoraksan hiking guide' },
   { city: 'Nami Island', country: 'South Korea', type: 'day trip from Seoul guide' },
+  // Japan — additional cities
+  { city: 'Osaka', country: 'Japan', type: 'best things to do' },
+  { city: 'Kyoto', country: 'Japan', type: 'temples and culture guide' },
+  { city: 'Fukuoka', country: 'Japan', type: 'travel guide for first-time visitors' },
+  { city: 'Sapporo', country: 'Japan', type: 'best things to do' },
+  { city: 'Nagoya', country: 'Japan', type: 'travel guide' },
+  { city: 'Okinawa', country: 'Japan', type: 'beach and island guide' },
+  { city: 'Nara', country: 'Japan', type: 'day trip guide' },
+  // Southeast Asia
+  { city: 'Chiang Mai', country: 'Thailand', type: 'temples and culture guide' },
+  { city: 'Phuket', country: 'Thailand', type: 'beach guide for first-time visitors' },
+  { city: 'Da Nang', country: 'Vietnam', type: 'beach and city guide' },
+  { city: 'Hanoi', country: 'Vietnam', type: 'travel guide for first-time visitors' },
+  { city: 'Ho Chi Minh City', country: 'Vietnam', type: 'travel guide' },
+  { city: 'Nha Trang', country: 'Vietnam', type: 'beach resort guide' },
+  { city: 'Kuala Lumpur', country: 'Malaysia', type: 'travel guide for first-time visitors' },
+  { city: 'Manila', country: 'Philippines', type: 'travel guide' },
+  { city: 'Cebu', country: 'Philippines', type: 'island and beach guide' },
+  { city: 'Boracay', country: 'Philippines', type: 'beach paradise guide' },
+  { city: 'Guam', country: 'USA (Guam)', type: 'island travel guide' },
+  { city: 'Saipan', country: 'Northern Mariana Islands', type: 'island travel guide' },
+  // China · Hong Kong · Taiwan
+  { city: 'Hong Kong', country: 'Hong Kong', type: 'travel guide for first-time visitors' },
+  { city: 'Taipei', country: 'Taiwan', type: 'best things to do' },
+  { city: 'Taichung', country: 'Taiwan', type: 'travel guide' },
+  { city: 'Beijing', country: 'China', type: 'travel guide for first-time visitors' },
+  { city: 'Shanghai', country: 'China', type: 'best things to do' },
+  // Middle East
+  { city: 'Dubai', country: 'UAE', type: 'luxury travel guide' },
+  { city: 'Istanbul', country: 'Turkey', type: 'best things to do' },
+  // Europe — additional cities
+  { city: 'Madrid', country: 'Spain', type: 'travel guide for first-time visitors' },
+  { city: 'Berlin', country: 'Germany', type: 'travel guide for first-time visitors' },
+  { city: 'Vienna', country: 'Austria', type: 'best things to do' },
+  { city: 'Prague', country: 'Czech Republic', type: '3-day itinerary on a budget' },
+  { city: 'Lisbon', country: 'Portugal', type: 'best things to do' },
+  { city: 'Budapest', country: 'Hungary', type: 'travel guide for first-time visitors' },
+  { city: 'Copenhagen', country: 'Denmark', type: 'travel guide' },
+  { city: 'Helsinki', country: 'Finland', type: 'travel guide' },
+  { city: 'Oslo', country: 'Norway', type: 'travel guide' },
+  { city: 'Stockholm', country: 'Sweden', type: 'best things to do' },
+  { city: 'Brussels', country: 'Belgium', type: 'travel guide' },
+  { city: 'Warsaw', country: 'Poland', type: 'travel guide for first-time visitors' },
+  { city: 'Athens', country: 'Greece', type: 'best things to do' },
+  { city: 'Munich', country: 'Germany', type: 'travel guide' },
+  { city: 'Milan', country: 'Italy', type: 'travel guide' },
+  { city: 'Florence', country: 'Italy', type: 'art and culture guide' },
+  { city: 'Zurich', country: 'Switzerland', type: 'travel guide' },
+  // Oceania
+  { city: 'Sydney', country: 'Australia', type: 'best things to do' },
+  { city: 'Melbourne', country: 'Australia', type: 'travel guide for first-time visitors' },
+  // Americas — additional
+  { city: 'Los Angeles', country: 'USA', type: 'best things to do' },
+  { city: 'Las Vegas', country: 'USA', type: 'travel guide for first-time visitors' },
+  { city: 'Vancouver', country: 'Canada', type: 'travel guide' },
+  { city: 'Toronto', country: 'Canada', type: 'best things to do' },
+  // South Asia
+  { city: 'Mumbai', country: 'India', type: 'travel guide for first-time visitors' },
+  { city: 'New Delhi', country: 'India', type: 'travel guide' },
 ]
 
 const supabase = createClient(
