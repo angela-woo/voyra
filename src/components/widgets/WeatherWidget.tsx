@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Cloud, Sun, CloudRain, Wind, Droplets } from 'lucide-react'
+import { getCityCoordinates } from '@/lib/utils/cityCoordinates'
 
 interface WeatherData {
   temperature: number
@@ -41,17 +42,21 @@ export default function WeatherWidget({ lat, lng, city }: { lat: number | null; 
   const [error, setError] = useState(false)
 
   useEffect(() => {
-    if (lat == null || lng == null) { setLoading(false); setError(true); return }
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,weathercode,windspeed_10m,relativehumidity_2m&timezone=auto`
+    // lat/lng 없으면 도시명으로 좌표 조회
+    const resolved = (lat != null && lng != null) ? { lat, lng } : getCityCoordinates(city)
+    if (!resolved) { setLoading(false); setError(true); return }
+
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${resolved.lat}&longitude=${resolved.lng}&current=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m&timezone=auto`
     fetch(url)
       .then(r => r.json())
       .then(data => {
         const c = data.current
+        if (!c) { setError(true); return }
         setWeather({
           temperature: Math.round(c.temperature_2m),
-          weatherCode: c.weathercode,
-          windSpeed: Math.round(c.windspeed_10m),
-          humidity: c.relativehumidity_2m,
+          weatherCode: c.weather_code,
+          windSpeed: Math.round(c.wind_speed_10m),
+          humidity: c.relative_humidity_2m,
           city,
         })
       })

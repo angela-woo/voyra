@@ -10,41 +10,13 @@ import { MapPin, Clock, DollarSign, Thermometer, Info, ExternalLink, ChevronRigh
 import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
 import { toPlanUrl } from '@/lib/location'
+import { getCityCoordinates } from '@/lib/utils/cityCoordinates'
 
 export const dynamic = 'force-dynamic'
 
 const KLOOK_AFF_ID = '121117'
 const AWIN_AID = '2892557'
 
-const CITY_COORDS: Record<string, { lat: number; lng: number }> = {
-  도쿄: { lat: 35.6762, lng: 139.6503 },
-  오사카: { lat: 34.6937, lng: 135.5023 },
-  교토: { lat: 35.0116, lng: 135.7681 },
-  서울: { lat: 37.5665, lng: 126.9780 },
-  파리: { lat: 48.8566, lng: 2.3522 },
-  바르셀로나: { lat: 41.3851, lng: 2.1734 },
-  마드리드: { lat: 40.4168, lng: -3.7038 },
-  방콕: { lat: 13.7563, lng: 100.5018 },
-  치앙마이: { lat: 18.7883, lng: 98.9853 },
-  발리: { lat: -8.4095, lng: 115.1889 },
-  싱가포르: { lat: 1.3521, lng: 103.8198 },
-  런던: { lat: 51.5074, lng: -0.1278 },
-  뉴욕: { lat: 40.7128, lng: -74.0060 },
-  로마: { lat: 41.9028, lng: 12.4964 },
-  암스테르담: { lat: 52.3676, lng: 4.9041 },
-  프라하: { lat: 50.0755, lng: 14.4378 },
-  비엔나: { lat: 48.2082, lng: 16.3738 },
-  베를린: { lat: 52.5200, lng: 13.4050 },
-  취리히: { lat: 47.3769, lng: 8.5417 },
-  코펜하겐: { lat: 55.6761, lng: 12.5683 },
-  헬싱키: { lat: 60.1699, lng: 24.9384 },
-  리스본: { lat: 38.7223, lng: -9.1393 },
-  시드니: { lat: -33.8688, lng: 151.2093 },
-  멜버른: { lat: -37.8136, lng: 144.9631 },
-  홍콩: { lat: 22.3193, lng: 114.1694 },
-  두바이: { lat: 25.2048, lng: 55.2708 },
-  이스탄불: { lat: 41.0082, lng: 28.9784 },
-}
 
 interface PageProps {
   params: Promise<{ country: string; city: string; slug: string }>
@@ -551,8 +523,8 @@ export default async function TravelPlanPage({ params }: PageProps) {
           <div className="space-y-6">
             <WeatherWidget
               city={plan.city}
-              lat={CITY_COORDS[plan.city]?.lat ?? null}
-              lng={CITY_COORDS[plan.city]?.lng ?? null}
+              lat={getCityCoordinates(plan.city)?.lat ?? null}
+              lng={getCityCoordinates(plan.city)?.lng ?? null}
             />
 
             <div className="bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm p-4">

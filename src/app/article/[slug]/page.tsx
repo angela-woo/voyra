@@ -356,8 +356,8 @@ export default async function ArticlePage({ params }: PageProps) {
 
           {/* 사이드바 */}
           <aside className="space-y-6">
-            {mainPlace && mainPlace.lat && mainPlace.lng && (
-              <WeatherWidget lat={mainPlace.lat} lng={mainPlace.lng} city={article.city ?? '현지'} />
+            {article.city && (
+              <WeatherWidget lat={mainPlace?.lat ?? null} lng={mainPlace?.lng ?? null} city={article.city} />
             )}
             <BudgetCalculator />
           </aside>

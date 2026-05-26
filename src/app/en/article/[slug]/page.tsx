@@ -346,8 +346,8 @@ export default async function EnArticlePage({ params }: PageProps) {
           </article>
 
           <aside className="space-y-6">
-            {mainPlace && mainPlace.lat && mainPlace.lng && (
-              <WeatherWidget lat={mainPlace.lat} lng={mainPlace.lng} city={article.city ?? 'local'} />
+            {article.city && (
+              <WeatherWidget lat={mainPlace?.lat ?? null} lng={mainPlace?.lng ?? null} city={article.city} />
             )}
             <BudgetCalculator />
           </aside>

@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { fetchUnsplashPhoto, fetchUnsplashPhotos, toEnglishCity } from '@/lib/unsplash'
 import { toPlanUrl } from '@/lib/location'
+import { getCityCoordinates } from '@/lib/utils/cityCoordinates'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
 import { MapPin, Clock, DollarSign, Thermometer, Info, ExternalLink, ChevronRight, Landmark, UtensilsCrossed, Coffee, Hotel, Map, Ticket, Plane, Building2, Coins } from 'lucide-react'
 import type { Metadata } from 'next'
@@ -16,23 +17,6 @@ export const dynamic = 'force-dynamic'
 const KLOOK_AFF_ID = '121117'
 const AWIN_AID = '2892557'
 
-const CITY_COORDS: Record<string, { lat: number; lng: number }> = {
-  도쿄: { lat: 35.6762, lng: 139.6503 },
-  오사카: { lat: 34.6937, lng: 135.5023 },
-  교토: { lat: 35.0116, lng: 135.7681 },
-  파리: { lat: 48.8566, lng: 2.3522 },
-  바르셀로나: { lat: 41.3851, lng: 2.1734 },
-  방콕: { lat: 13.7563, lng: 100.5018 },
-  발리: { lat: -8.4095, lng: 115.1889 },
-  싱가포르: { lat: 1.3521, lng: 103.8198 },
-  런던: { lat: 51.5074, lng: -0.1278 },
-  뉴욕: { lat: 40.7128, lng: -74.0060 },
-  로마: { lat: 41.9028, lng: 12.4964 },
-  암스테르담: { lat: 52.3676, lng: 4.9041 },
-  프라하: { lat: 50.0755, lng: 14.4378 },
-  비엔나: { lat: 48.2082, lng: 16.3738 },
-  베를린: { lat: 52.5200, lng: 13.4050 },
-}
 
 interface PageProps {
   params: Promise<{ country: string; city: string; slug: string }>
@@ -513,8 +497,8 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
           <div className="space-y-6">
             <WeatherWidget
               city={plan.city}
-              lat={CITY_COORDS[plan.city]?.lat ?? null}
-              lng={CITY_COORDS[plan.city]?.lng ?? null}
+              lat={getCityCoordinates(plan.city)?.lat ?? null}
+              lng={getCityCoordinates(plan.city)?.lng ?? null}
             />
 
             <div className="bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm p-4">
