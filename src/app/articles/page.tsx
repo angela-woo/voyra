@@ -8,8 +8,25 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: '여행 가이드 | Kiravoy',
-  description: 'Kiravoy - 전세계 여행지 가이드 모음. 엄선한 여행 가이드를 만나보세요.',
+  title: '해외여행 가이드 모음 | Kiravoy',
+  description: '도쿄, 파리, 발리 등 인기 여행지 가이드. 현지 맛집, 관광지, 교통, 숙소 정보까지 한번에.',
+  keywords: ['해외여행가이드', '여행정보', '여행가이드', '도쿄여행정보', '파리여행정보'],
+  alternates: {
+    canonical: 'https://kiravoy.com/articles',
+    languages: {
+      ko: 'https://kiravoy.com/articles',
+      en: 'https://kiravoy.com/en/articles',
+      'x-default': 'https://kiravoy.com/articles',
+    },
+  },
+  openGraph: {
+    title: '해외여행 가이드 모음 | Kiravoy',
+    description: '도쿄, 파리, 발리 등 인기 여행지 가이드.',
+    url: 'https://kiravoy.com/articles',
+    siteName: 'Kiravoy',
+    locale: 'ko_KR',
+    type: 'website',
+  },
 }
 
 const PER_PAGE = 12

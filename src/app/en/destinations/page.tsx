@@ -4,9 +4,25 @@ import type { Metadata } from 'next'
 import { getCountryFlag } from '@/lib/utils/countryFlags'
 
 export const metadata: Metadata = {
-  title: 'Travel Itineraries by Destination | Kiravoy',
-  description: 'Browse curated travel itineraries for couples, families, friends, and solo travelers around the world.',
-  alternates: { canonical: 'https://kiravoy.com/en/destinations' },
+  title: 'Travel Itineraries & Trip Plans | Kiravoy',
+  description: 'Find perfect travel itineraries for couples, families, friends and solo travelers. Tokyo 3 days, Paris 5 days and more.',
+  keywords: ['travel itinerary', 'trip plan', 'travel planner', 'vacation itinerary'],
+  alternates: {
+    canonical: 'https://kiravoy.com/en/destinations',
+    languages: {
+      ko: 'https://kiravoy.com/destinations',
+      en: 'https://kiravoy.com/en/destinations',
+      'x-default': 'https://kiravoy.com/destinations',
+    },
+  },
+  openGraph: {
+    title: 'Travel Itineraries & Trip Plans | Kiravoy',
+    description: 'Find perfect travel itineraries for couples, families, friends and solo travelers.',
+    url: 'https://kiravoy.com/en/destinations',
+    siteName: 'Kiravoy',
+    locale: 'en_US',
+    type: 'website',
+  },
 }
 
 export const dynamic = 'force-dynamic'

@@ -5,6 +5,7 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { fetchUnsplashPhoto, fetchUnsplashPhotos, toEnglishCity } from '@/lib/unsplash'
+import { toPlanUrl } from '@/lib/location'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
 import { MapPin, Clock, DollarSign, Thermometer, Info, ExternalLink, ChevronRight, Landmark, UtensilsCrossed, Coffee, Hotel, Map, Ticket, Plane, Building2, Coins } from 'lucide-react'
 import type { Metadata } from 'next'
@@ -101,14 +102,37 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params
   const plan = await getPlan(slug)
   if (!plan) return { title: 'Not Found' }
+  const koPlanUrl = toPlanUrl(plan)
+  const enPlanUrl = `/en${koPlanUrl}`
+  const keywords = [
+    plan.city,
+    plan.country,
+    'travel itinerary',
+    'trip plan',
+    plan.city ? `${plan.city} travel` : null,
+  ].filter(Boolean) as string[]
   return {
     title: `${plan.title} | Kiravoy`,
     description: plan.meta_description ?? undefined,
+    keywords,
     alternates: {
+      canonical: `https://kiravoy.com${enPlanUrl}`,
       languages: {
-        ko: `https://kiravoy.com/destinations/${encodeURIComponent(plan.country)}/${encodeURIComponent(plan.city)}/${slug}`,
-        en: `https://kiravoy.com/en/destinations/${encodeURIComponent(plan.country)}/${encodeURIComponent(plan.city)}/${slug}`,
+        ko: `https://kiravoy.com${koPlanUrl}`,
+        en: `https://kiravoy.com${enPlanUrl}`,
+        'x-default': `https://kiravoy.com${koPlanUrl}`,
       },
+    },
+    openGraph: {
+      title: `${plan.title} | Kiravoy`,
+      description: plan.meta_description ?? undefined,
+      url: `https://kiravoy.com${enPlanUrl}`,
+      siteName: 'Kiravoy',
+      locale: 'en_US',
+      type: 'website',
+      images: plan.cover_image_url
+        ? [{ url: plan.cover_image_url, width: 1200, height: 630, alt: plan.title }]
+        : [{ url: 'https://kiravoy.com/og-image.jpg', width: 1200, height: 630 }],
     },
   }
 }
@@ -143,8 +167,31 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
 
   const days_data: DayData[] = plan.days_data ?? []
 
+  const koPlanUrl = toPlanUrl(plan)
+  const enPlanFullUrl = `https://kiravoy.com/en${koPlanUrl}`
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'TouristDestination',
+      name: plan.city,
+      description: plan.meta_description,
+      touristType: plan.travel_type,
+      url: enPlanFullUrl,
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://kiravoy.com/en' },
+        { '@type': 'ListItem', position: 2, name: 'Destinations', item: 'https://kiravoy.com/en/destinations' },
+        { '@type': 'ListItem', position: 3, name: plan.city, item: enPlanFullUrl },
+      ],
+    },
+  ]
+
   return (
     <div className="min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* Hero */}
       <section className="relative h-72 md:h-96 bg-gradient-to-br from-blue-700 to-indigo-800 overflow-hidden">
         {heroImage && (

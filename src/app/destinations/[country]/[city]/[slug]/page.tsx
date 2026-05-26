@@ -139,14 +139,35 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const plan = await getPlan(slug)
   if (!plan) return { title: 'Not Found' }
   const planUrl = toPlanUrl(plan)
+  const keywords = [
+    plan.city,
+    plan.country,
+    '여행일정',
+    '여행코스',
+    plan.city && plan.days ? `${plan.city}${plan.days}일` : null,
+  ].filter(Boolean) as string[]
   return {
-    title: plan.title,
+    title: `${plan.title} | Kiravoy`,
     description: plan.meta_description ?? undefined,
-    alternates: { canonical: `https://kiravoy.com${planUrl}` },
+    keywords,
+    alternates: {
+      canonical: `https://kiravoy.com${planUrl}`,
+      languages: {
+        ko: `https://kiravoy.com${planUrl}`,
+        en: `https://kiravoy.com/en${planUrl}`,
+        'x-default': `https://kiravoy.com${planUrl}`,
+      },
+    },
     openGraph: {
-      title: plan.title,
+      title: `${plan.title} | Kiravoy`,
       description: plan.meta_description ?? undefined,
-      images: plan.cover_image_url ? [{ url: plan.cover_image_url }] : ['/og-image.jpg'],
+      url: `https://kiravoy.com${planUrl}`,
+      siteName: 'Kiravoy',
+      locale: 'ko_KR',
+      type: 'website',
+      images: plan.cover_image_url
+        ? [{ url: plan.cover_image_url, width: 1200, height: 630, alt: plan.title }]
+        : [{ url: 'https://kiravoy.com/og-image.jpg', width: 1200, height: 630 }],
     },
   }
 }
@@ -178,14 +199,26 @@ export default async function TravelPlanPage({ params }: PageProps) {
     fetchUnsplashPhotos(`${cityEn} tour activity`, 4),
   ])
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'TouristDestination',
-    name: plan.city,
-    description: plan.meta_description,
-    touristType: plan.travel_type,
-    url: `https://kiravoy.com${toPlanUrl(plan)}`,
-  }
+  const planFullUrl = `https://kiravoy.com${toPlanUrl(plan)}`
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'TouristDestination',
+      name: plan.city,
+      description: plan.meta_description,
+      touristType: plan.travel_type,
+      url: planFullUrl,
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: '홈', item: 'https://kiravoy.com' },
+        { '@type': 'ListItem', position: 2, name: '여행 일정', item: 'https://kiravoy.com/destinations' },
+        { '@type': 'ListItem', position: 3, name: plan.city, item: planFullUrl },
+      ],
+    },
+  ]
 
   return (
     <div className="min-h-screen">

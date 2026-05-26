@@ -88,16 +88,37 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params
   const article = await getArticle(slug)
   if (!article) return { title: 'Not Found' }
+  const keywords = [
+    article.city,
+    article.country,
+    '여행가이드',
+    '여행정보',
+    article.city ? `${article.city}여행` : null,
+  ].filter(Boolean) as string[]
   return {
-    title: article.title,
+    title: `${article.title} | Kiravoy`,
     description: article.meta_description ?? undefined,
-    alternates: { canonical: `https://kiravoy.com/article/${slug}` },
+    keywords,
+    alternates: {
+      canonical: `https://kiravoy.com/article/${slug}`,
+      languages: {
+        ko: `https://kiravoy.com/article/${slug}`,
+        en: `https://kiravoy.com/en/article/${slug}`,
+        'x-default': `https://kiravoy.com/article/${slug}`,
+      },
+    },
     openGraph: {
       type: 'article',
-      title: article.title,
+      title: `${article.title} | Kiravoy`,
       description: article.meta_description ?? undefined,
-      images: article.cover_image_url ? [{ url: article.cover_image_url, width: 1200, height: 630 }] : ['/og-image.jpg'],
+      url: `https://kiravoy.com/article/${slug}`,
+      siteName: 'Kiravoy',
+      locale: 'ko_KR',
+      images: article.cover_image_url
+        ? [{ url: article.cover_image_url, width: 1200, height: 630, alt: article.title }]
+        : [{ url: 'https://kiravoy.com/og-image.jpg', width: 1200, height: 630 }],
       publishedTime: article.created_at ?? undefined,
+      modifiedTime: article.updated_at ?? undefined,
     },
   }
 }
@@ -157,10 +178,15 @@ export default async function ArticlePage({ params }: PageProps) {
     '@type': 'Article',
     headline: article.title,
     description: article.meta_description,
-    image: article.cover_image_url ?? undefined,
+    image: article.cover_image_url ?? 'https://kiravoy.com/og-image.jpg',
     datePublished: article.created_at ?? undefined,
-    author: { '@type': 'Organization', name: 'Kiravoy' },
-    publisher: { '@type': 'Organization', name: 'Kiravoy', logo: { '@type': 'ImageObject', url: 'https://kiravoy.com/og-image.jpg' } },
+    dateModified: article.updated_at ?? article.created_at ?? undefined,
+    author: { '@type': 'Organization', name: 'Kiravoy', url: 'https://kiravoy.com' },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Kiravoy',
+      logo: { '@type': 'ImageObject', url: 'https://kiravoy.com/og-image.jpg' },
+    },
     mainEntityOfPage: { '@type': 'WebPage', '@id': `https://kiravoy.com/article/${article.slug}` },
   }
 

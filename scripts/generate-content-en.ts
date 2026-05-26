@@ -19,6 +19,15 @@ const DESTINATIONS = [
   { city: 'Rome', country: 'Italy', type: '3-day itinerary on a budget' },
   { city: 'Amsterdam', country: 'Netherlands', type: 'travel guide for first-time visitors' },
   { city: 'New York', country: 'USA', type: 'best things to do' },
+  // South Korea
+  { city: 'Seoul', country: 'South Korea', type: 'travel guide for foreigners' },
+  { city: 'Busan', country: 'South Korea', type: 'travel itinerary' },
+  { city: 'Jeju Island', country: 'South Korea', type: 'things to do guide' },
+  { city: 'Gyeongju', country: 'South Korea', type: 'historical sites guide' },
+  { city: 'Incheon', country: 'South Korea', type: 'travel guide' },
+  { city: 'Jeonju', country: 'South Korea', type: 'hanok village guide' },
+  { city: 'Sokcho', country: 'South Korea', type: 'Seoraksan hiking guide' },
+  { city: 'Nami Island', country: 'South Korea', type: 'day trip from Seoul guide' },
 ]
 
 const supabase = createClient(
@@ -27,17 +36,30 @@ const supabase = createClient(
 )
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
+const KOREA_EXTRA_PROMPT = `
+Must include these sections for South Korea destinations:
+- How to get there from Incheon International Airport (ICN)
+- English communication tips (how much English is spoken, translation apps)
+- K-pop and K-drama related spots (filming locations, fan cafes, agency buildings)
+- Must-try Korean foods with English menu names (e.g. "Bibimbap (비빔밥)", "Tteokbokki (떡볶이)")
+- T-money transportation card usage guide
+- Essential apps for navigating Korea (KakaoMap, Naver Map, Papago, etc.)
+- Currency and exchange rate info (KRW, where to exchange)
+- Visa information (visa-free entry for major countries)
+`
+
 async function generateArticle(city: string, country: string, type: string) {
+  const isKorea = country === 'South Korea'
   const message = await client.messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 6000,
+    max_tokens: 8000,
     messages: [{
       role: 'user',
       content: `Write a travel guide article for English-speaking travelers.
 
 Destination: ${city}, ${country}
 Focus: ${city} ${type}
-
+${isKorea ? KOREA_EXTRA_PROMPT : ''}
 [Writing rules]
 - Write in third person only (no "I visited", "we recommend", "I suggest")
 - Factual, informative tone — like a professional travel guide

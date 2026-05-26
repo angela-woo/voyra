@@ -9,8 +9,32 @@ import HeroSearch from '@/components/home/HeroSearch'
 import CountryTabSection from '@/components/home/CountryTabSection'
 import AdUnit from '@/components/ui/AdUnit'
 import { toPlanUrl, toCountryUrl } from '@/lib/location'
+import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: '해외여행 가이드 & 여행 일정 추천 | Kiravoy',
+  description: '도쿄, 파리, 발리, 방콕 등 전 세계 여행지 가이드와 맞춤 여행 일정. 커플, 가족, 친구, 혼자 여행까지 Kiravoy에서 완벽한 여행을 계획하세요.',
+  keywords: ['해외여행', '여행가이드', '여행일정', '도쿄여행', '파리여행', '발리여행', '방콕여행', '해외여행코스', '여행추천'],
+  alternates: {
+    canonical: 'https://kiravoy.com',
+    languages: {
+      ko: 'https://kiravoy.com',
+      en: 'https://kiravoy.com/en',
+      'x-default': 'https://kiravoy.com',
+    },
+  },
+  openGraph: {
+    title: '해외여행 가이드 & 여행 일정 추천 | Kiravoy',
+    description: '전 세계 여행지 가이드와 맞춤 여행 일정',
+    url: 'https://kiravoy.com',
+    siteName: 'Kiravoy',
+    locale: 'ko_KR',
+    type: 'website',
+    images: [{ url: 'https://kiravoy.com/og-image.jpg', width: 1200, height: 630, alt: 'Kiravoy 해외여행 가이드' }],
+  },
+}
 
 const COUNTRIES = [
   { name: '일본', flag: '🇯🇵', query: 'Japan Mount Fuji travel', dbName: '일본' },

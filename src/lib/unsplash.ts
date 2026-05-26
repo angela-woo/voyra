@@ -120,6 +120,26 @@ export function categoryFallbackQuery(category: string | null): string {
 }
 
 export function itemToSearchQuery(heading: string, cityEnglish: string): string {
+  const city = cityEnglish || 'travel'
+  const h = heading.toLowerCase()
+
+  // Korean semantic patterns (same as sectionToSearchQuery)
+  if (/visa|비자|입국|immigration|passport/.test(h)) return 'passport visa airport travel document'
+  if (/weather|climate|날씨|기후|계절|여행 시기|best time/.test(h)) return `${city} travel season weather`
+  if (/currency|money|exchange|화폐|환전|물가|cost/.test(h)) return `${city} local market currency`
+  if (/safety|safe|안전/.test(h)) return `${city} travel safety`
+  if (/beach|ocean|sea|해변|바다|해수욕/.test(h)) return `${city} beach ocean`
+  if (/attraction|landmark|sightseeing|명소|관광|볼거리|여행지/.test(h)) return `${city} tourist landmark`
+  if (/food|restaurant|dining|맛집|음식|먹거리|레스토랑/.test(h)) return `${city} food cuisine`
+  if (/transport|getting around|교통|이동|지하철|버스/.test(h)) return `${city} transportation`
+  if (/shopping|market|쇼핑|시장/.test(h)) return `${city} shopping market`
+  if (/tip|advice|주의사항|여행 정보|준비/.test(h)) return `${city} travel guide`
+  if (/hotel|accommodation|숙박|호텔|숙소/.test(h)) return `${city} hotel accommodation`
+  if (/cafe|coffee|카페|커피/.test(h)) return `${city} cafe coffee`
+  if (/nature|park|자연|공원|hiking|등산/.test(h)) return `${city} nature landscape`
+  if (/night|nightlife|bar|밤|야경|클럽/.test(h)) return `${city} night city lights`
+  if (/culture|history|art|temple|shrine|문화|역사|예술|사원|성당|사찰/.test(h)) return `${city} culture history`
+
   // 괄호 안 영어명 우선 사용: "센소지 사원 (Senso-ji Temple)" → "Senso-ji Temple Tokyo"
   const englishMatch = heading.match(/\(([A-Za-z][^)]*)\)/)
   if (englishMatch) return `${englishMatch[1].trim()} ${cityEnglish}`

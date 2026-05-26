@@ -76,7 +76,12 @@ export const COUNTRY_FLAGS: Record<string, string> = {
   'Belgium': '🇧🇪',
   'Guam': '🇬🇺',
   'Saipan': '🇲🇵',
+  // 한국
+  '한국': '🇰🇷',
+  'South Korea': '🇰🇷',
+  'Korea': '🇰🇷',
   // 영어 슬러그 (소문자, en/destinations용)
+  'south-korea': '🇰🇷',
   'japan': '🇯🇵',
   'france': '🇫🇷',
   'thailand': '🇹🇭',

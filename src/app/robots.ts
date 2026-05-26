@@ -4,10 +4,17 @@ export default function robots() {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin/', '/api/', '/auth/callback'],
+        disallow: [
+          '/admin/',
+          '/api/',
+          '/auth/callback',
+          '/*?*',
+        ],
       },
     ],
-    sitemap: 'https://kiravoy.com/sitemap.xml',
+    sitemap: [
+      'https://kiravoy.com/sitemap.xml',
+    ],
     host: 'https://kiravoy.com',
   }
 }

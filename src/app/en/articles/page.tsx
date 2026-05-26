@@ -8,12 +8,23 @@ export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Travel Guides | Kiravoy',
-  description: 'Explore curated travel guides for destinations around the world.',
+  description: 'Expert travel guides for top destinations worldwide. Find local tips, attractions, restaurants and transportation info.',
+  keywords: ['travel guide', 'travel tips', 'destination guide', 'travel information'],
   alternates: {
+    canonical: 'https://kiravoy.com/en/articles',
     languages: {
       ko: 'https://kiravoy.com/articles',
       en: 'https://kiravoy.com/en/articles',
+      'x-default': 'https://kiravoy.com/articles',
     },
+  },
+  openGraph: {
+    title: 'Travel Guides | Kiravoy',
+    description: 'Expert travel guides for top destinations worldwide.',
+    url: 'https://kiravoy.com/en/articles',
+    siteName: 'Kiravoy',
+    locale: 'en_US',
+    type: 'website',
   },
 }
 

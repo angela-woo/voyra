@@ -11,10 +11,25 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Kiravoy - Your Shining Travel Guide',
-  description: 'Discover curated travel guides, itineraries, and tips for destinations around the world.',
+  title: 'Travel Guides & Itineraries for Every Destination | Kiravoy',
+  description: 'Discover travel guides and custom itineraries for Tokyo, Paris, Bali, Bangkok and more. Plan your perfect trip with Kiravoy.',
+  keywords: ['travel guide', 'travel itinerary', 'tokyo travel', 'paris travel', 'bali travel', 'travel tips', 'trip planner'],
   alternates: {
-    languages: { ko: 'https://kiravoy.com/', en: 'https://kiravoy.com/en/' },
+    canonical: 'https://kiravoy.com/en',
+    languages: {
+      ko: 'https://kiravoy.com',
+      en: 'https://kiravoy.com/en',
+      'x-default': 'https://kiravoy.com',
+    },
+  },
+  openGraph: {
+    title: 'Travel Guides & Itineraries for Every Destination | Kiravoy',
+    description: 'Discover travel guides and custom itineraries for top destinations worldwide.',
+    url: 'https://kiravoy.com/en',
+    siteName: 'Kiravoy',
+    locale: 'en_US',
+    type: 'website',
+    images: [{ url: 'https://kiravoy.com/og-image.jpg', width: 1200, height: 630, alt: 'Kiravoy Travel Guides' }],
   },
 }
 
@@ -103,8 +118,22 @@ export default async function EnHomePage() {
 
   const countryPhotos = countryPhotoList as (UnsplashPhoto | null)[]
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Kiravoy',
+    url: 'https://kiravoy.com',
+    description: 'Travel guides and custom itineraries for destinations worldwide',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://kiravoy.com/en/destinations?q={search_term_string}',
+      'query-input': 'required name=search_term_string',
+    },
+  }
+
   return (
     <div className="min-h-screen bg-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       {/* Hero */}
       <section className="relative h-[580px] flex items-center justify-center overflow-hidden">
