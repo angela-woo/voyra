@@ -187,40 +187,30 @@ export default async function EnArticlePage({ params }: PageProps) {
   return (
     <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      {heroImageUrl && (
-        <div className="relative w-full h-[300px] md:h-[500px] bg-gray-200">
+      <div className={`relative w-full h-[300px] md:h-[500px] ${heroImageUrl ? 'bg-gray-200' : 'bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900'}`}>
+        {heroImageUrl && (
           <Image src={heroImageUrl} alt={article.title} fill priority sizes="100vw" className="object-cover object-center" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-          <div className="absolute bottom-4 left-4 right-4 max-w-6xl mx-auto">
-            {destination && (
-              <span className="inline-flex items-center gap-1 text-sm text-white/90 font-medium mb-2">
-                <MapPin className="w-4 h-4" />{destination}
-              </span>
-            )}
-            <h1 className="text-2xl md:text-4xl font-bold text-white leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
-              {article.title}
-            </h1>
-          </div>
-          {article.cover_image_attribution && (
-            <span className="absolute bottom-2 right-3 text-[10px] text-white/50">{article.cover_image_attribution}</span>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+        <div className="absolute bottom-4 left-4 right-4 max-w-6xl mx-auto">
+          {destination && (
+            <span className="inline-flex items-center gap-1 text-sm text-white/90 font-medium mb-2">
+              <MapPin className="w-4 h-4" />{destination}
+            </span>
           )}
+          <h1 className="text-2xl md:text-4xl font-bold text-white leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+            {article.title}
+          </h1>
         </div>
-      )}
+        {heroImageUrl && article.cover_image_attribution && (
+          <span className="absolute bottom-2 right-3 text-[10px] text-white/50">{article.cover_image_attribution}</span>
+        )}
+      </div>
 
       <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
           <article>
             <div className="mb-8">
-              {!heroImageUrl && destination && (
-                <span className="inline-flex items-center gap-1 text-sm text-[var(--primary)] font-medium mb-3">
-                  <MapPin className="w-4 h-4" />{destination}
-                </span>
-              )}
-              {!heroImageUrl && (
-                <h1 className="text-3xl md:text-4xl font-bold leading-tight mb-4" style={{ fontFamily: 'var(--font-heading)' }}>
-                  {article.title}
-                </h1>
-              )}
               {article.meta_description && <p className="text-lg text-gray-500 mb-4">{article.meta_description}</p>}
               {timeAgo && (
                 <div className="flex items-center gap-1 text-sm text-gray-400 mb-4">

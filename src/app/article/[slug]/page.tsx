@@ -194,25 +194,25 @@ export default async function ArticlePage({ params }: PageProps) {
     <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* 히어로 */}
-      {heroImageUrl && (
-        <div className="relative w-full h-[300px] md:h-[500px] bg-gray-200">
+      <div className={`relative w-full h-[300px] md:h-[500px] ${heroImageUrl ? 'bg-gray-200' : 'bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900'}`}>
+        {heroImageUrl && (
           <Image src={heroImageUrl} alt={article.title} fill priority sizes="100vw" className="object-cover object-center" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-          <div className="absolute bottom-4 left-4 right-4 max-w-6xl mx-auto">
-            {destination && (
-              <span className="inline-flex items-center gap-1 text-sm text-white/90 font-medium mb-2">
-                <MapPin className="w-4 h-4" />{destination}
-              </span>
-            )}
-            <h1 className="text-2xl md:text-4xl font-bold text-white leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
-              {article.title}
-            </h1>
-          </div>
-          {article.cover_image_attribution && (
-            <span className="absolute bottom-2 right-3 text-[10px] text-white/50">{article.cover_image_attribution}</span>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+        <div className="absolute bottom-4 left-4 right-4 max-w-6xl mx-auto">
+          {destination && (
+            <span className="inline-flex items-center gap-1 text-sm text-white/90 font-medium mb-2">
+              <MapPin className="w-4 h-4" />{destination}
+            </span>
           )}
+          <h1 className="text-2xl md:text-4xl font-bold text-white leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+            {article.title}
+          </h1>
         </div>
-      )}
+        {heroImageUrl && article.cover_image_attribution && (
+          <span className="absolute bottom-2 right-3 text-[10px] text-white/50">{article.cover_image_attribution}</span>
+        )}
+      </div>
 
       <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">

@@ -75,7 +75,7 @@ export async function fetchUnsplashPhotos(query: string, count: number): Promise
       `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=${count}&orientation=landscape`,
       {
         headers: { Authorization: `Client-ID ${key}` },
-        next: { revalidate: 86400 },
+        next: { revalidate: 3600 },
       },
     )
     if (!res.ok) return []
@@ -98,7 +98,7 @@ export async function fetchUnsplashPhoto(query: string): Promise<UnsplashPhoto |
       `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=1&orientation=landscape`,
       {
         headers: { Authorization: `Client-ID ${key}` },
-        next: { revalidate: 86400 }, // 24시간 Next.js 캐시
+        next: { revalidate: 3600 }, // 1시간 캐시 (rate limit 리셋 주기 맞춤)
       },
     )
     if (!res.ok) return null
