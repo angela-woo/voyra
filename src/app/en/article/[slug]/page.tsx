@@ -23,6 +23,8 @@ import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
 import ESimBanner from '@/components/widgets/ESimBanner'
 import ShareButtons from '@/components/ui/ShareButtons'
+import Breadcrumb from '@/components/ui/Breadcrumb'
+import RelatedContent from '@/components/article/RelatedContent'
 
 export const dynamic = 'force-dynamic'
 
@@ -211,6 +213,13 @@ export default async function EnArticlePage({ params }: PageProps) {
         )}
       </div>
 
+      <Breadcrumb items={[
+        { label: 'Home', href: '/en' },
+        { label: 'Travel Guides', href: '/en/articles' },
+        ...(article.country ? [{ label: article.country }] : []),
+        { label: article.title },
+      ]} />
+
       <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
           <article>
@@ -354,6 +363,12 @@ export default async function EnArticlePage({ params }: PageProps) {
           </aside>
         </div>
       </div>
+      <RelatedContent
+        city={article.city}
+        country={article.country}
+        currentSlug={article.slug}
+        language="en"
+      />
     </div>
   )
 }

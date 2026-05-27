@@ -11,6 +11,8 @@ import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
 import ESimBanner from '@/components/widgets/ESimBanner'
 import ShareButtons from '@/components/ui/ShareButtons'
+import Breadcrumb from '@/components/ui/Breadcrumb'
+import RelatedContent from '@/components/article/RelatedContent'
 import { toPlanUrl } from '@/lib/location'
 import { getCityCoordinates } from '@/lib/utils/cityCoordinates'
 import { getKlookUrl } from '@/lib/utils/klookUrl'
@@ -189,7 +191,9 @@ export default async function TravelPlanPage({ params }: PageProps) {
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: '홈', item: 'https://kiravoy.com' },
         { '@type': 'ListItem', position: 2, name: '여행 일정', item: 'https://kiravoy.com/destinations' },
-        { '@type': 'ListItem', position: 3, name: plan.city, item: planFullUrl },
+        { '@type': 'ListItem', position: 3, name: plan.country, item: `https://kiravoy.com/destinations/${country}` },
+        { '@type': 'ListItem', position: 4, name: plan.city, item: `https://kiravoy.com/destinations/${country}/${city}` },
+        { '@type': 'ListItem', position: 5, name: plan.title, item: planFullUrl },
       ],
     },
   ]
@@ -219,6 +223,17 @@ export default async function TravelPlanPage({ params }: PageProps) {
           </h1>
         </div>
       </section>
+
+      <Breadcrumb
+        includeJsonLd={false}
+        items={[
+          { label: '홈', href: '/' },
+          { label: '여행 일정', href: '/destinations' },
+          { label: plan.country, href: `/destinations/${country}` },
+          { label: plan.city, href: `/destinations/${country}/${city}` },
+          { label: plan.title },
+        ]}
+      />
 
       <div className="max-w-5xl mx-auto px-4 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -577,6 +592,13 @@ export default async function TravelPlanPage({ params }: PageProps) {
           </div>
         </div>
       </div>
+      <RelatedContent
+        city={plan.city}
+        country={plan.country}
+        currentSlug={plan.slug}
+        language="ko"
+        showPlans={false}
+      />
     </div>
   )
 }

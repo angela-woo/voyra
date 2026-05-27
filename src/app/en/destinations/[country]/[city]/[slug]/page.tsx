@@ -13,6 +13,8 @@ import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
 import ESimBanner from '@/components/widgets/ESimBanner'
 import ShareButtons from '@/components/ui/ShareButtons'
+import Breadcrumb from '@/components/ui/Breadcrumb'
+import RelatedContent from '@/components/article/RelatedContent'
 import { getKlookUrl } from '@/lib/utils/klookUrl'
 import { getBookingUrl } from '@/lib/utils/bookingUrl'
 
@@ -200,6 +202,17 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
           </h1>
         </div>
       </section>
+
+      <Breadcrumb
+        includeJsonLd={false}
+        items={[
+          { label: 'Home', href: '/en' },
+          { label: 'Itineraries', href: '/en/destinations' },
+          { label: plan.country, href: `/destinations/${country}` },
+          { label: plan.city, href: `/destinations/${country}/${city}` },
+          { label: plan.title },
+        ]}
+      />
 
       <div className="max-w-5xl mx-auto px-4 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -551,6 +564,13 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
           </div>
         </div>
       </div>
+      <RelatedContent
+        city={plan.city}
+        country={plan.country}
+        currentSlug={plan.slug}
+        language="en"
+        showPlans={false}
+      />
     </div>
   )
 }

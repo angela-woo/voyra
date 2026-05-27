@@ -38,7 +38,42 @@ export default function Footer({ siteName }: { siteName: string }) {
           </div>
         </div>
 
-        <div className="border-t border-white/10 mt-10 pt-6 text-center text-xs text-gray-600">
+        {/* 인기 여행지 & 테마 */}
+        <div className="border-t border-white/10 mt-10 pt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h4 className="text-white font-semibold text-xs mb-3 uppercase tracking-wider">인기 여행지</h4>
+            <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+              {[
+                { name: '도쿄', href: '/destinations/japan/tokyo' },
+                { name: '오사카', href: '/destinations/japan/osaka' },
+                { name: '파리', href: '/destinations/france/paris' },
+                { name: '발리', href: '/destinations/indonesia/bali' },
+                { name: '방콕', href: '/destinations/thailand/bangkok' },
+                { name: '다낭', href: '/destinations/vietnam/da-nang' },
+                { name: '싱가포르', href: '/destinations/singapore/singapore' },
+                { name: '서울', href: '/destinations/korea/seoul' },
+              ].map(c => (
+                <Link key={c.name} href={c.href} className="hover:text-white transition-colors">{c.name}</Link>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h4 className="text-white font-semibold text-xs mb-3 uppercase tracking-wider">인기 여행 테마</h4>
+            <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+              {[
+                { name: '커플여행', href: '/destinations?type=couple' },
+                { name: '가족여행', href: '/destinations?type=family' },
+                { name: '혼자여행', href: '/destinations?type=solo' },
+                { name: '친구여행', href: '/destinations?type=friends' },
+                { name: '허니문', href: '/destinations?type=couple' },
+              ].map(t => (
+                <Link key={t.name} href={t.href} className="hover:text-white transition-colors">{t.name}</Link>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-white/10 mt-8 pt-6 text-center text-xs text-gray-600">
           © 2025 {siteName}. All rights reserved.
         </div>
       </div>

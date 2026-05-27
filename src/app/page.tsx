@@ -221,6 +221,34 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── 2-b. 인기 도시 바로가기 ─────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 pb-8">
+        <div className="flex flex-wrap gap-2">
+          {[
+            { name: '도쿄', href: '/destinations/japan/tokyo' },
+            { name: '오사카', href: '/destinations/japan/osaka' },
+            { name: '교토', href: '/destinations/japan/kyoto' },
+            { name: '파리', href: '/destinations/france/paris' },
+            { name: '발리', href: '/destinations/indonesia/bali' },
+            { name: '방콕', href: '/destinations/thailand/bangkok' },
+            { name: '다낭', href: '/destinations/vietnam/da-nang' },
+            { name: '싱가포르', href: '/destinations/singapore/singapore' },
+            { name: '세부', href: '/destinations/philippines/cebu' },
+            { name: '타이베이', href: '/destinations/taiwan/taipei' },
+            { name: '런던', href: '/destinations/uk/london' },
+            { name: '이스탄불', href: '/destinations/turkey/istanbul' },
+          ].map(city => (
+            <Link
+              key={city.name}
+              href={city.href}
+              className="px-4 py-2 rounded-full text-sm font-medium border border-gray-200 hover:border-[#FF5722] hover:text-[#FF5722] transition-all bg-white"
+            >
+              {city.name}
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* ── 3. Trending ─────────────────────────────────────────── */}
       {travelPlans.length > 0 && (
         <section className="py-16" style={{ backgroundColor: '#FFF8F6' }}>
