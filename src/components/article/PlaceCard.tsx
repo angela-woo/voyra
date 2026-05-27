@@ -1,9 +1,8 @@
 import Image from 'next/image'
 import { MapPin, Star, Map, Building2, Ticket } from 'lucide-react'
 import { fetchUnsplashPhoto, toEnglishCity } from '@/lib/unsplash'
-
-const AWIN_AID = '2892557'
-const KLOOK_AFF_ID = '121117'
+import { getKlookUrl } from '@/lib/utils/klookUrl'
+import { getBookingUrl } from '@/lib/utils/bookingUrl'
 
 const CATEGORY_QUERIES: Record<string, string> = {
   hotel: 'luxury hotel lobby room',
@@ -44,13 +43,12 @@ function isAttractionOrRestaurant(category: string | null): boolean {
   return c === 'attraction' || c === 'restaurant' || c === 'cafe'
 }
 
-function buildBookingUrl(place: Place, city: string | null | undefined): string {
+function buildBookingUrl(place: Place, city: string | null | undefined, locale: 'ko' | 'en'): string {
   if (place.booking_url) return place.booking_url
-  const ss = encodeURIComponent(city || place.name)
-  return `https://www.booking.com/searchresults.html?aid=${AWIN_AID}&ss=${ss}`
+  return getBookingUrl(city || place.name, locale)
 }
 
-export default async function PlaceCard({ place, city }: { place: Place; city?: string | null }) {
+export default async function PlaceCard({ place, city, locale = 'ko' }: { place: Place; city?: string | null; locale?: 'ko' | 'en' }) {
   const hotel = isHotel(place.category)
   const attractionOrRestaurant = isAttractionOrRestaurant(place.category)
   const cat = place.category?.toLowerCase() ?? ''
@@ -116,7 +114,7 @@ export default async function PlaceCard({ place, city }: { place: Place; city?: 
           )}
           {hotel && (
             <a
-              href={buildBookingUrl(place, city)}
+              href={buildBookingUrl(place, city, locale)}
               target="_blank"
               rel="noopener noreferrer sponsored"
               className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-lg text-white font-medium transition-opacity hover:opacity-90"
@@ -127,7 +125,7 @@ export default async function PlaceCard({ place, city }: { place: Place; city?: 
           )}
           {attractionOrRestaurant && (
             <a
-              href={place.klook_url ?? `https://www.klook.com/search/?query=${encodeURIComponent(place.name)}&aff_id=${KLOOK_AFF_ID}`}
+              href={getKlookUrl(place.name, locale)}
               target="_blank"
               rel="noopener noreferrer sponsored"
               className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-lg text-white font-medium transition-opacity hover:opacity-90"

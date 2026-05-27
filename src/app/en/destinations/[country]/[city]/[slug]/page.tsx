@@ -11,11 +11,10 @@ import WeatherWidget from '@/components/widgets/WeatherWidget'
 import { MapPin, Clock, DollarSign, Thermometer, Info, ExternalLink, ChevronRight, Landmark, UtensilsCrossed, Coffee, Hotel, Map, Ticket, Plane, Building2, Coins } from 'lucide-react'
 import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
+import { getKlookUrl } from '@/lib/utils/klookUrl'
+import { getBookingUrl } from '@/lib/utils/bookingUrl'
 
 export const dynamic = 'force-dynamic'
-
-const KLOOK_AFF_ID = '121117'
-const AWIN_AID = '2892557'
 
 
 interface PageProps {
@@ -269,7 +268,7 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>Where to Stay</h2>
                 <a
-                  href={`https://www.booking.com/searchresults.html?aid=${AWIN_AID}&ss=${encodeURIComponent(cityEn)}`}
+                  href={getBookingUrl(cityEn, 'en')}
                   target="_blank"
                   rel="noopener noreferrer sponsored"
                   className="text-xs text-[var(--primary)] hover:underline flex items-center gap-1"
@@ -287,7 +286,7 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
                   ].map((hotel, i) => (
                     <a
                       key={i}
-                      href={`https://www.booking.com/searchresults.html?aid=${AWIN_AID}&ss=${encodeURIComponent(cityEn)}`}
+                      href={getBookingUrl(cityEn, 'en')}
                       target="_blank"
                       rel="noopener noreferrer sponsored"
                       className="w-48 shrink-0 bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
@@ -384,7 +383,7 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
                                   )}
                                   {place.category === 'attraction' && (
                                     <a
-                                      href={place.klook_url ?? `https://www.klook.com/search/?query=${encodeURIComponent(place.name)}&aff_id=${KLOOK_AFF_ID}`}
+                                      href={getKlookUrl(place.name, 'en')}
                                       target="_blank"
                                       rel="noopener noreferrer sponsored"
                                       className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded text-white font-medium"
@@ -410,7 +409,7 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>Popular Tours &amp; Activities</h2>
                 <a
-                  href={`https://www.klook.com/search/?query=${encodeURIComponent(cityEn + ' tour')}&aff_id=${KLOOK_AFF_ID}`}
+                  href={getKlookUrl(cityEn + ' tour', 'en')}
                   target="_blank"
                   rel="noopener noreferrer sponsored"
                   className="text-xs text-[var(--primary)] hover:underline flex items-center gap-1"
@@ -428,7 +427,7 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
                   ].map((tour, i) => (
                     <a
                       key={i}
-                      href={`https://www.klook.com/search/?query=${encodeURIComponent(cityEn + ' tour')}&aff_id=${KLOOK_AFF_ID}`}
+                      href={getKlookUrl(cityEn + ' tour', 'en')}
                       target="_blank"
                       rel="noopener noreferrer sponsored"
                       className="w-48 shrink-0 bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
@@ -520,7 +519,7 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
             </div>
 
             <a
-              href={`https://www.booking.com/searchresults.html?aid=${AWIN_AID}&ss=${encodeURIComponent(cityEn)}`}
+              href={getBookingUrl(cityEn, 'en')}
               target="_blank"
               rel="noopener noreferrer sponsored"
               className="flex items-center justify-center gap-2 w-full py-3 rounded-[var(--radius)] text-white text-sm font-semibold hover:opacity-90 transition-opacity"
@@ -530,7 +529,7 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
             </a>
 
             <a
-              href={`https://www.klook.com/search/?query=${encodeURIComponent(cityEn + ' tour')}&aff_id=${KLOOK_AFF_ID}`}
+              href={getKlookUrl(cityEn + ' tour', 'en')}
               target="_blank"
               rel="noopener noreferrer sponsored"
               className="flex items-center justify-center gap-2 w-full py-3 rounded-[var(--radius)] text-white text-sm font-semibold hover:opacity-90 transition-opacity"

@@ -15,6 +15,7 @@ import ImageCarousel from '@/components/ui/ImageCarousel'
 import PlaceCard from '@/components/article/PlaceCard'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
 import BudgetCalculator from '@/components/widgets/BudgetCalculator'
+import { getKlookUrl } from '@/lib/utils/klookUrl'
 import { Calendar, MapPin, Ticket, UtensilsCrossed, Moon, Bus, Landmark } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { enUS } from 'date-fns/locale'
@@ -296,7 +297,7 @@ export default async function EnArticlePage({ params }: PageProps) {
                     ].map((tour, i) => (
                       <a
                         key={i}
-                        href={`https://www.klook.com/search/?query=${encodeURIComponent((article.city ?? '') + ' ' + tour.label)}&aff_id=121117`}
+                        href={getKlookUrl((article.city ?? '') + ' ' + tour.label, 'en')}
                         target="_blank"
                         rel="noopener noreferrer sponsored"
                         className="flex items-center gap-2.5 px-4 py-3 rounded-2xl border text-sm font-medium shrink-0 hover:border-[#FF5722] hover:text-[#FF5722] transition-all"
@@ -320,7 +321,7 @@ export default async function EnArticlePage({ params }: PageProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {places.map((place: { id: string }) => (
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    <PlaceCard key={place.id} place={place as any} city={article.city} />
+                    <PlaceCard key={place.id} place={place as any} city={article.city} locale="en" />
                   ))}
                 </div>
               </div>
