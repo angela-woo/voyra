@@ -112,6 +112,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
+        <Script
+          src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <Toaster position="top-right" />
         <Header siteName={siteName} />
         <main className="flex-1">{children}</main>

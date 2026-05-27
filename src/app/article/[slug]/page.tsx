@@ -21,6 +21,7 @@ import { ko } from 'date-fns/locale'
 import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
 import ESimBanner from '@/components/widgets/ESimBanner'
+import ShareButtons from '@/components/ui/ShareButtons'
 
 export const dynamic = 'force-dynamic'
 
@@ -122,6 +123,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       publishedTime: article.created_at ?? undefined,
       modifiedTime: article.updated_at ?? undefined,
     },
+    other: { 'pinterest-rich-pin': 'true' },
   }
 }
 
@@ -241,6 +243,12 @@ export default async function ArticlePage({ params }: PageProps) {
               {article.category && (
                 <span className="inline-block text-xs px-3 py-1 rounded-full font-medium" style={{ backgroundColor: '#FFF3F0', color: '#FF5722' }}>{article.category}</span>
               )}
+              <ShareButtons
+                url={`https://kiravoy.com/article/${article.slug}`}
+                title={article.title}
+                description={article.meta_description}
+                locale="ko"
+              />
             </div>
 
             {/* 본문 */}

@@ -12,6 +12,7 @@ import { MapPin, Clock, DollarSign, Thermometer, Info, ExternalLink, ChevronRigh
 import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
 import ESimBanner from '@/components/widgets/ESimBanner'
+import ShareButtons from '@/components/ui/ShareButtons'
 import { getKlookUrl } from '@/lib/utils/klookUrl'
 import { getBookingUrl } from '@/lib/utils/bookingUrl'
 
@@ -118,6 +119,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         ? [{ url: plan.cover_image_url, width: 1200, height: 630, alt: plan.title }]
         : [{ url: 'https://kiravoy.com/og-image.jpg', width: 1200, height: 630 }],
     },
+    other: { 'pinterest-rich-pin': 'true' },
   }
 }
 
@@ -204,6 +206,12 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
           <div className="lg:col-span-2 space-y-10">
 
             <ESimBanner locale="en" city={plan.city} />
+            <ShareButtons
+              url={enPlanFullUrl}
+              title={plan.title}
+              description={plan.meta_description}
+              locale="en"
+            />
 
             {/* Overview */}
             {plan.overview && (
