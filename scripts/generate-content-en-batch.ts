@@ -6,11 +6,13 @@
  */
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
+import ws from 'ws'
 import { topicsEn } from './topics-en'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  { realtime: { transport: ws } },
 )
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
