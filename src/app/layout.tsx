@@ -112,6 +112,20 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
+        <Script
+          id="travelpayouts-drive"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function () {
+                var script = document.createElement("script");
+                script.async = 1;
+                script.src = 'https://emrldtp.cc/NTMzMzkx.js?t=533391';
+                document.head.appendChild(script);
+              })();
+            `
+          }}
+        />
         <Toaster position="top-right" />
         <Header siteName={siteName} />
         <main className="flex-1">{children}</main>
