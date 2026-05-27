@@ -25,6 +25,7 @@ import ESimBanner from '@/components/widgets/ESimBanner'
 import ShareButtons from '@/components/ui/ShareButtons'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 import RelatedContent from '@/components/article/RelatedContent'
+import FlightSearchWidget from '@/components/widgets/FlightSearchWidget'
 
 export const dynamic = 'force-dynamic'
 
@@ -224,6 +225,7 @@ export default async function EnArticlePage({ params }: PageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
           <article>
             <ESimBanner locale="en" city={article.city} />
+            <FlightSearchWidget city={article.city ?? ''} cityEn={cityEnglish} locale="en" />
             <div className="mb-8">
               {article.meta_description && <p className="text-lg text-gray-500 mb-4">{article.meta_description}</p>}
               {timeAgo && (

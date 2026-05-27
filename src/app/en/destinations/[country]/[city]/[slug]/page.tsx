@@ -15,6 +15,7 @@ import ESimBanner from '@/components/widgets/ESimBanner'
 import ShareButtons from '@/components/ui/ShareButtons'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 import RelatedContent from '@/components/article/RelatedContent'
+import FlightSearchWidget from '@/components/widgets/FlightSearchWidget'
 import { getKlookUrl } from '@/lib/utils/klookUrl'
 import { getBookingUrl } from '@/lib/utils/bookingUrl'
 
@@ -219,6 +220,7 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
           <div className="lg:col-span-2 space-y-10">
 
             <ESimBanner locale="en" city={plan.city} />
+            <FlightSearchWidget city={plan.city} cityEn={cityEn} locale="en" />
             <ShareButtons
               url={enPlanFullUrl}
               title={plan.title}

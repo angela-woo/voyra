@@ -13,6 +13,7 @@ import ESimBanner from '@/components/widgets/ESimBanner'
 import ShareButtons from '@/components/ui/ShareButtons'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 import RelatedContent from '@/components/article/RelatedContent'
+import FlightSearchWidget from '@/components/widgets/FlightSearchWidget'
 import { toPlanUrl } from '@/lib/location'
 import { getCityCoordinates } from '@/lib/utils/cityCoordinates'
 import { getKlookUrl } from '@/lib/utils/klookUrl'
@@ -241,6 +242,7 @@ export default async function TravelPlanPage({ params }: PageProps) {
           <div className="lg:col-span-2 space-y-10">
 
             <ESimBanner locale="ko" city={plan.city} />
+            <FlightSearchWidget city={plan.city} cityEn={cityEn} locale="ko" />
             <ShareButtons
               url={planFullUrl}
               title={plan.title}

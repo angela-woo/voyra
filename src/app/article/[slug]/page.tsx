@@ -24,6 +24,7 @@ import ESimBanner from '@/components/widgets/ESimBanner'
 import ShareButtons from '@/components/ui/ShareButtons'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 import RelatedContent from '@/components/article/RelatedContent'
+import FlightSearchWidget from '@/components/widgets/FlightSearchWidget'
 
 export const dynamic = 'force-dynamic'
 
@@ -231,6 +232,7 @@ export default async function ArticlePage({ params }: PageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
           <article>
             <ESimBanner locale="ko" city={article.city} />
+            <FlightSearchWidget city={article.city ?? ''} cityEn={cityEnglish} locale="ko" />
             {/* 메타 */}
             <div className="mb-8">
               {!heroImageUrl && destination && (
