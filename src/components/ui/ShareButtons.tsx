@@ -15,19 +15,28 @@ const OG_IMAGE = 'https://kiravoy.com/og-image.jpg'
 export default function ShareButtons({ url, title, description, locale = 'ko' }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false)
 
-  const shareKakao = () => {
-    const kakaoShareUrl = `https://sharer.kakao.com/talk/friends/picker/easylink?app_key=176d06905442e2b273aa94855f5e2f24&appver=2.7.2&linkver=4.0&template_id=&template_json=${encodeURIComponent(JSON.stringify({
-      object_type: 'feed',
-      content: {
-        title,
-        description: description ?? '',
-        image_url: OG_IMAGE,
-        image_width: 1200,
-        image_height: 630,
-        link: { web_url: url, mobile_web_url: url },
-      },
-    }))}`
-    window.open(kakaoShareUrl, '_blank', 'width=500,height=600')
+  const shareKakao = async () => {
+    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent)
+    if (isMobile) {
+      // 모바일: 카카오톡 앱 딥링크
+      window.location.href = `kakaolink://send?text=${encodeURIComponent(`${title}\n${url}`)}`
+    } else {
+      // PC: 링크 복사 후 안내
+      try {
+        await navigator.clipboard.writeText(url)
+      } catch {
+        // clipboard API 실패 시 fallback
+        const el = document.createElement('textarea')
+        el.value = url
+        document.body.appendChild(el)
+        el.select()
+        document.execCommand('copy')
+        document.body.removeChild(el)
+      }
+      alert(locale === 'ko'
+        ? '링크가 복사됐어요! 카카오톡에 붙여넣기 하세요.'
+        : 'Link copied! Paste it in KakaoTalk.')
+    }
   }
 
   const shareX = () => {
