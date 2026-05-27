@@ -1,0 +1,65 @@
+name: Daily Content Generation
+
+on:
+  schedule:
+    - cron: '0 1 * * *'  # 매일 한국시간 오전 10시 (UTC 01:00)
+  workflow_dispatch:       # 수동 실행
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Korean articles (5/day)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_UNSPLASH_ACCESS_KEY: ${{ secrets.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY }}
+        run: npx tsx scripts/generate-content-ko-batch.ts --limit 5
+
+      - name: Wait between batches
+        run: sleep 30
+
+      - name: Generate English articles (5/day)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_UNSPLASH_ACCESS_KEY: ${{ secrets.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY }}
+        run: npx tsx scripts/generate-content-en-batch.ts --limit 5
+
+      - name: Backfill cover images
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_UNSPLASH_ACCESS_KEY: ${{ secrets.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY }}
+        run: npx tsx scripts/fix-article-images.ts
+
+      - name: Update coordinates
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/update-coordinates.ts
+
+      - name: Validate content quality
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/validate-content.ts
+
+      - name: Report results
+        run: echo "✅ Daily content generation completed"
