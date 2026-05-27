@@ -20,6 +20,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
+import ESimBanner from '@/components/widgets/ESimBanner'
 
 export const dynamic = 'force-dynamic'
 
@@ -218,6 +219,7 @@ export default async function ArticlePage({ params }: PageProps) {
       <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
           <article>
+            <ESimBanner locale="ko" city={article.city} />
             {/* 메타 */}
             <div className="mb-8">
               {!heroImageUrl && destination && (

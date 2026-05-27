@@ -21,6 +21,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { enUS } from 'date-fns/locale'
 import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
+import ESimBanner from '@/components/widgets/ESimBanner'
 
 export const dynamic = 'force-dynamic'
 
@@ -211,6 +212,7 @@ export default async function EnArticlePage({ params }: PageProps) {
       <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
           <article>
+            <ESimBanner locale="en" city={article.city} />
             <div className="mb-8">
               {article.meta_description && <p className="text-lg text-gray-500 mb-4">{article.meta_description}</p>}
               {timeAgo && (

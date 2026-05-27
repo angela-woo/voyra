@@ -11,6 +11,7 @@ import WeatherWidget from '@/components/widgets/WeatherWidget'
 import { MapPin, Clock, DollarSign, Thermometer, Info, ExternalLink, ChevronRight, Landmark, UtensilsCrossed, Coffee, Hotel, Map, Ticket, Plane, Building2, Coins } from 'lucide-react'
 import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
+import ESimBanner from '@/components/widgets/ESimBanner'
 import { getKlookUrl } from '@/lib/utils/klookUrl'
 import { getBookingUrl } from '@/lib/utils/bookingUrl'
 
@@ -201,6 +202,8 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
       <div className="max-w-5xl mx-auto px-4 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-10">
+
+            <ESimBanner locale="en" city={plan.city} />
 
             {/* Overview */}
             {plan.overview && (

@@ -9,6 +9,7 @@ import WeatherWidget from '@/components/widgets/WeatherWidget'
 import { MapPin, Clock, DollarSign, Thermometer, Info, ExternalLink, ChevronRight, Landmark, UtensilsCrossed, Coffee, Hotel, Map, Ticket, Plane, Building2, Coins } from 'lucide-react'
 import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
+import ESimBanner from '@/components/widgets/ESimBanner'
 import { toPlanUrl } from '@/lib/location'
 import { getCityCoordinates } from '@/lib/utils/cityCoordinates'
 import { getKlookUrl } from '@/lib/utils/klookUrl'
@@ -221,6 +222,8 @@ export default async function TravelPlanPage({ params }: PageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main content */}
           <div className="lg:col-span-2 space-y-10">
+
+            <ESimBanner locale="ko" city={plan.city} />
 
             {/* Overview */}
             {plan.overview && (
