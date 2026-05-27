@@ -118,6 +118,23 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
+        <Script
+          id="kakao-init"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              function initKakao() {
+                if (window.Kakao && !window.Kakao.isInitialized()) {
+                  window.Kakao.init('176d06905442e2b273aa94855f5e2f24');
+                  console.log('Kakao initialized:', window.Kakao.isInitialized());
+                } else if (!window.Kakao) {
+                  setTimeout(initKakao, 500);
+                }
+              }
+              setTimeout(initKakao, 1000);
+            `,
+          }}
+        />
         <Toaster position="top-right" />
         <Header siteName={siteName} />
         <main className="flex-1">{children}</main>
