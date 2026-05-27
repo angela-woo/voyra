@@ -6,14 +6,21 @@
  */
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
-import ws from 'ws'
 import { topicsKo } from './topics-ko'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { realtime: { transport: ws } },
-)
+// 환경변수 검증 및 디버깅
+const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').replace(/\/$/, '')
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''
+console.log('SUPABASE_URL:', supabaseUrl.substring(0, 40) || '(empty)')
+console.log('SERVICE_KEY exists:', supabaseKey.length > 0)
+console.log('ANTHROPIC_KEY exists:', !!process.env.ANTHROPIC_API_KEY)
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('❌ 필수 환경변수 누락 — NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY')
+  process.exit(1)
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey)
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
 const limitArg = process.argv.indexOf('--limit')
