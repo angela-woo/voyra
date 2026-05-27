@@ -104,7 +104,13 @@ async function generatePlan(dest: typeof DESTINATIONS[0], theme: typeof THEMES[0
 - 관광지만 klook_url 포함
 - 실제 존재하는 장소 사용
 - description은 1문장으로 짧게
-- google_maps_url은 https://www.google.com/maps/search/?api=1&query=장소명 형식`,
+- google_maps_url은 https://www.google.com/maps/search/?api=1&query=장소명 형식
+
+[가격 표기 필수 규칙]
+- 현지 통화만 표기 (엔, 바트, 유로, 달러, 파운드 등)
+- 원화(₩, 원) 표기 절대 금지 — 환율 변동으로 정보가 부정확해짐
+- 올바른 예시: "500엔", "¥500", "150바트", "€12", "무료"
+- 잘못된 예시: "₩1,700 (500엔)", "500엔(약 5,000원)", "₩15,000~"`,
     }],
   })
 
