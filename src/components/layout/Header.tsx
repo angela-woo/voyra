@@ -4,12 +4,13 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Menu, X, Globe, Home, BookOpen, MapPin, Users, LogIn, LogOut, UserCircle, UserPlus } from 'lucide-react'
+import { Menu, X, Globe, Home, BookOpen, MapPin, Users, LogIn, LogOut, UserCircle, UserPlus, Loader2 } from 'lucide-react'
 import type { User } from '@supabase/supabase-js'
 
 export default function Header({ siteName }: { siteName: string }) {
   const [user, setUser] = useState<User | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [langLoading, setLangLoading] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
@@ -24,12 +25,64 @@ export default function Header({ siteName }: { siteName: string }) {
     { href: '/community', label: isEn ? 'Community' : '커뮤니티', icon: Users },
   ]
 
-  function toggleLang() {
-    if (isEn) {
-      const ko = pathname.slice(3) || '/'
-      router.push(ko)
-    } else {
-      router.push('/en' + (pathname === '/' ? '' : pathname))
+  async function toggleLang() {
+    if (langLoading) return
+    setLangLoading(true)
+    try {
+      // Article detail pages
+      const articleKoMatch = pathname.match(/^\/article\/([^/]+)$/)
+      const articleEnMatch = pathname.match(/^\/en\/article\/([^/]+)$/)
+      // Plan detail pages
+      const planKoMatch = pathname.match(/^\/destinations\/([^/]+)\/([^/]+)\/([^/]+)$/)
+      const planEnMatch = pathname.match(/^\/en\/destinations\/([^/]+)\/([^/]+)\/([^/]+)$/)
+
+      if (articleKoMatch || articleEnMatch) {
+        const slug = (articleKoMatch ?? articleEnMatch)![1]
+        const targetLang = articleKoMatch ? 'en' : 'ko'
+        const { data: current } = await supabase.from('articles').select('city').eq('slug', slug).maybeSingle()
+        if (current?.city) {
+          const { data: paired } = await supabase
+            .from('articles').select('slug')
+            .eq('city', current.city).eq('language', targetLang).eq('published', true)
+            .limit(1).maybeSingle()
+          if (paired?.slug) {
+            router.push(targetLang === 'en' ? `/en/article/${paired.slug}` : `/article/${paired.slug}`)
+            return
+          }
+        }
+        router.push(targetLang === 'en' ? '/en/articles' : '/articles')
+        return
+      }
+
+      if (planKoMatch || planEnMatch) {
+        const match = planKoMatch ?? planEnMatch!
+        const [, country, city, slug] = match
+        const targetLang = planKoMatch ? 'en' : 'ko'
+        const { data: current } = await supabase.from('travel_plans').select('city, country').eq('slug', slug).maybeSingle()
+        if (current) {
+          const { data: paired } = await supabase
+            .from('travel_plans').select('slug')
+            .eq('city', current.city).eq('country', current.country).eq('language', targetLang).eq('published', true)
+            .limit(1).maybeSingle()
+          if (paired?.slug) {
+            const prefix = targetLang === 'en' ? '/en' : ''
+            router.push(`${prefix}/destinations/${country}/${city}/${paired.slug}`)
+            return
+          }
+        }
+        const prefix = targetLang === 'en' ? '/en' : ''
+        router.push(`${prefix}/destinations/${country}/${city}`)
+        return
+      }
+
+      // Default: toggle /en prefix
+      if (isEn) {
+        router.push(pathname.slice(3) || '/')
+      } else {
+        router.push('/en' + (pathname === '/' ? '' : pathname))
+      }
+    } finally {
+      setLangLoading(false)
     }
   }
 
@@ -99,10 +152,12 @@ export default function Header({ siteName }: { siteName: string }) {
           )}
           <button
             onClick={toggleLang}
-            className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 hover:border-[var(--primary)] transition-colors duration-200 flex items-center gap-1.5 font-medium text-gray-600 hover:text-[var(--primary)]"
+            disabled={langLoading}
+            className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 hover:border-[var(--primary)] transition-colors duration-200 flex items-center gap-1.5 font-medium text-gray-600 hover:text-[var(--primary)] disabled:opacity-50"
             title={isEn ? '한국어로 보기' : 'View in English'}
           >
-            <Globe className="w-4 h-4" />{isEn ? 'KO' : 'EN'}
+            {langLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />}
+            {isEn ? 'KO' : 'EN'}
           </button>
         </div>
 
@@ -148,9 +203,11 @@ export default function Header({ siteName }: { siteName: string }) {
           )}
           <button
             onClick={() => { toggleLang(); setMenuOpen(false) }}
-            className="flex items-center gap-2 text-sm font-medium text-gray-700 text-left"
+            disabled={langLoading}
+            className="flex items-center gap-2 text-sm font-medium text-gray-700 text-left disabled:opacity-50"
           >
-            <Globe className="w-4 h-4" />{isEn ? '한국어로 보기' : 'View in English'}
+            {langLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />}
+            {isEn ? '한국어로 보기' : 'View in English'}
           </button>
         </div>
       )}
