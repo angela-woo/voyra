@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link2, Check } from 'lucide-react'
 
 interface ShareButtonsProps {
@@ -14,17 +14,35 @@ const OG_IMAGE = 'https://kiravoy.com/og-image.jpg'
 
 export default function ShareButtons({ url, title, description, locale = 'ko' }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false)
+  const [kakaoReady, setKakaoReady] = useState(false)
+
+  useEffect(() => {
+    const check = setInterval(() => {
+      if (typeof window !== 'undefined' && window.Kakao) {
+        if (!window.Kakao.isInitialized()) {
+          window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_APP_KEY!)
+        }
+        setKakaoReady(true)
+        clearInterval(check)
+      }
+    }, 100)
+    return () => clearInterval(check)
+  }, [])
 
   const shareKakao = useCallback(() => {
-    if (typeof window === 'undefined' || !window.Kakao) return
-    if (!window.Kakao.isInitialized()) {
-      window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_APP_KEY ?? '')
+    if (!kakaoReady || !window.Kakao) {
+      window.open(
+        `https://story.kakao.com/share?url=${encodeURIComponent(url)}`,
+        '_blank',
+        'width=500,height=600',
+      )
+      return
     }
     window.Kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
         title,
-        description: description ?? undefined,
+        description: description ?? '',
         imageUrl: OG_IMAGE,
         link: { mobileWebUrl: url, webUrl: url },
       },
@@ -35,7 +53,7 @@ export default function ShareButtons({ url, title, description, locale = 'ko' }:
         },
       ],
     })
-  }, [url, title, description, locale])
+  }, [kakaoReady, url, title, description, locale])
 
   const shareX = () => {
     const text = encodeURIComponent(`${title}\n${url}`)
