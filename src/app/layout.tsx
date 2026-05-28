@@ -41,6 +41,9 @@ export const metadata: Metadata = {
     canonical: 'https://kiravoy.com',
     languages: { ko: 'https://kiravoy.com', en: 'https://kiravoy.com/en' },
   },
+  other: {
+    'agd-partner-manual-verification': '',
+  },
 }
 
 interface SiteSettings {
