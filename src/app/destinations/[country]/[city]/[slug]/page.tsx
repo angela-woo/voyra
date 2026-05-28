@@ -6,7 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { fetchUnsplashPhoto, fetchUnsplashPhotos, toEnglishCity } from '@/lib/unsplash'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
-import { MapPin, Clock, DollarSign, Thermometer, Info, ExternalLink, ChevronRight, Landmark, UtensilsCrossed, Coffee, Hotel, Map, Ticket, Plane, Building2, Coins } from 'lucide-react'
+import { MapPin, Clock, Thermometer, Info, ExternalLink, ChevronRight, Landmark, UtensilsCrossed, Coffee, Hotel, Map, Ticket, Plane, Building2, Coins } from 'lucide-react'
 import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
 import ESimBanner from '@/components/widgets/ESimBanner'
@@ -261,15 +261,6 @@ export default async function TravelPlanPage({ params }: PageProps) {
                       <div>
                         <p className="text-xs font-semibold text-gray-500 mb-0.5">날씨</p>
                         <p className="text-sm text-gray-700">{plan.overview.weather}</p>
-                      </div>
-                    </div>
-                  )}
-                  {plan.overview.currency && (
-                    <div className="flex gap-3">
-                      <DollarSign className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-xs font-semibold text-gray-500 mb-0.5">화폐 / 환율</p>
-                        <p className="text-sm text-gray-700">{plan.overview.currency}</p>
                       </div>
                     </div>
                   )}

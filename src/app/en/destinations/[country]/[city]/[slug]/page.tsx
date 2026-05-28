@@ -8,7 +8,7 @@ import { fetchUnsplashPhoto, fetchUnsplashPhotos, toEnglishCity } from '@/lib/un
 import { toPlanUrl } from '@/lib/location'
 import { getCityCoordinates } from '@/lib/utils/cityCoordinates'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
-import { MapPin, Clock, DollarSign, Thermometer, Info, ExternalLink, ChevronRight, Landmark, UtensilsCrossed, Coffee, Hotel, Map, Ticket, Plane, Building2, Coins } from 'lucide-react'
+import { MapPin, Clock, Thermometer, Info, ExternalLink, ChevronRight, Landmark, UtensilsCrossed, Coffee, Hotel, Map, Ticket, Plane, Building2, Coins } from 'lucide-react'
 import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
 import ESimBanner from '@/components/widgets/ESimBanner'
@@ -239,15 +239,6 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
                       <div>
                         <p className="text-xs font-semibold text-gray-500 mb-0.5">Weather</p>
                         <p className="text-sm text-gray-700">{plan.overview.weather}</p>
-                      </div>
-                    </div>
-                  )}
-                  {plan.overview.currency && (
-                    <div className="flex gap-3">
-                      <DollarSign className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-xs font-semibold text-gray-500 mb-0.5">Currency</p>
-                        <p className="text-sm text-gray-700">{plan.overview.currency}</p>
                       </div>
                     </div>
                   )}
