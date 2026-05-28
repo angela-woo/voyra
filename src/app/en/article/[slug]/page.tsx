@@ -224,8 +224,6 @@ export default async function EnArticlePage({ params }: PageProps) {
       <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
           <article>
-            <ESimBanner locale="en" city={article.city} />
-            <FlightSearchWidget city={article.city ?? ''} cityEn={cityEnglish} locale="en" />
             <div className="mb-8">
               {article.meta_description && <p className="text-lg text-gray-500 mb-4">{article.meta_description}</p>}
               {timeAgo && (
@@ -349,6 +347,9 @@ export default async function EnArticlePage({ params }: PageProps) {
             )}
 
             <AdUnit slot="7384920165" />
+
+            <ESimBanner locale="en" city={article.city} />
+            <FlightSearchWidget city={article.city ?? ''} cityEn={cityEnglish} locale="en" />
 
             <div className="mt-8 pt-4 border-t border-gray-100">
               <Link href="/en/articles" className="text-sm font-medium hover:underline" style={{ color: '#FF5722' }}>

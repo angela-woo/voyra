@@ -231,8 +231,6 @@ export default async function ArticlePage({ params }: PageProps) {
       <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
           <article>
-            <ESimBanner locale="ko" city={article.city} />
-            <FlightSearchWidget city={article.city ?? ''} cityEn={cityEnglish} locale="ko" />
             {/* 메타 */}
             <div className="mb-8">
               {!heroImageUrl && destination && (
@@ -374,6 +372,9 @@ export default async function ArticlePage({ params }: PageProps) {
             )}
 
             <AdUnit slot="7384920165" />
+
+            <ESimBanner locale="ko" city={article.city} />
+            <FlightSearchWidget city={article.city ?? ''} cityEn={cityEnglish} locale="ko" />
           </article>
 
           {/* 사이드바 */}
