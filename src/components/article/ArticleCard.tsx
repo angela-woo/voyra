@@ -18,6 +18,20 @@ interface Article {
   cover_image_attribution?: string | null
 }
 
+const GRADIENTS = [
+  'from-blue-400 to-purple-500',
+  'from-orange-400 to-red-500',
+  'from-green-400 to-teal-500',
+  'from-yellow-400 to-orange-500',
+  'from-pink-400 to-rose-500',
+  'from-indigo-400 to-blue-500',
+]
+
+function slugGradient(slug: string): string {
+  const idx = slug.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % GRADIENTS.length
+  return GRADIENTS[idx]
+}
+
 export default async function ArticleCard({ article, locale = 'ko' }: { article: Article; locale?: 'ko' | 'en' }) {
   const timeAgo = article.created_at
     ? formatDistanceToNow(new Date(article.created_at), { addSuffix: true, locale: locale === 'en' ? enUS : ko })
@@ -35,11 +49,12 @@ export default async function ArticleCard({ article, locale = 'ko' }: { article:
   }
 
   const href = locale === 'en' ? `/en/article/${article.slug}` : `/article/${article.slug}`
+  const gradient = slugGradient(article.slug)
 
   return (
     <Link href={href} className="group block bg-white rounded-[var(--radius)] overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
       {/* Cover image */}
-      <div className="h-48 bg-gradient-to-br from-blue-50 to-indigo-100 relative overflow-hidden">
+      <div className={`h-48 bg-gradient-to-br ${gradient} relative overflow-hidden`}>
         {photo ? (
           <>
             <Image
@@ -58,7 +73,7 @@ export default async function ArticleCard({ article, locale = 'ko' }: { article:
           </>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
-            <MapPin className="w-10 h-10 text-blue-300" />
+            <MapPin className="w-10 h-10 text-white/60" />
           </div>
         )}
         {destination && (
