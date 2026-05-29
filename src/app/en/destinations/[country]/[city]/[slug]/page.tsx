@@ -8,7 +8,7 @@ import { fetchUnsplashPhoto, fetchUnsplashPhotos, toEnglishCity } from '@/lib/un
 import { toPlanUrl } from '@/lib/location'
 import { getCityCoordinates } from '@/lib/utils/cityCoordinates'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
-import { MapPin, Clock, Thermometer, Info, ExternalLink, ChevronRight, Landmark, UtensilsCrossed, Coffee, Hotel, Map, Ticket, Plane, Building2, Coins } from 'lucide-react'
+import { MapPin, Clock, Thermometer, Info, ExternalLink, ChevronRight, Landmark, UtensilsCrossed, Coffee, Hotel, Map, Ticket, Building2, Coins } from 'lucide-react'
 import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
 import ESimBanner from '@/components/widgets/ESimBanner'
@@ -218,15 +218,6 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
       <div className="max-w-5xl mx-auto px-4 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-10">
-
-            <ESimBanner locale="en" city={plan.city} />
-            <FlightSearchWidget city={plan.city} cityEn={cityEn} locale="en" />
-            <ShareButtons
-              url={enPlanFullUrl}
-              title={plan.title}
-              description={plan.meta_description}
-              locale="en"
-            />
 
             {/* Overview */}
             {plan.overview && (
@@ -473,19 +464,14 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
 
             <AdUnit slot="6174829350" />
 
-            {/* Flight */}
-            <section className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-[var(--radius)] p-6 border border-sky-100">
-              <h2 className="text-lg font-bold mb-2 flex items-center gap-2" style={{ fontFamily: 'var(--font-heading)' }}><Plane className="w-5 h-5 text-sky-500" />Search Flights</h2>
-              <p className="text-sm text-gray-600 mb-4">Find the cheapest flights on Skyscanner.</p>
-              <a
-                href={`https://www.skyscanner.com/flights/sel/${(plan.country_code ?? 'TYO').toLowerCase()}/`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0770E3] text-white text-sm font-semibold rounded-[var(--radius)] hover:opacity-90 transition-opacity"
-              >
-                Search on Skyscanner <ExternalLink className="w-4 h-4" />
-              </a>
-            </section>
+            <ShareButtons
+              url={enPlanFullUrl}
+              title={plan.title}
+              description={plan.meta_description}
+              locale="en"
+            />
+            <ESimBanner locale="en" city={plan.city} />
+            <FlightSearchWidget city={plan.city} cityEn={cityEn} locale="en" />
 
             {/* Related */}
             {related.length > 0 && (

@@ -6,7 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { fetchUnsplashPhoto, fetchUnsplashPhotos, toEnglishCity } from '@/lib/unsplash'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
-import { MapPin, Clock, Thermometer, Info, ExternalLink, ChevronRight, Landmark, UtensilsCrossed, Coffee, Hotel, Map, Ticket, Plane, Building2, Coins } from 'lucide-react'
+import { MapPin, Clock, Thermometer, Info, ExternalLink, ChevronRight, Landmark, UtensilsCrossed, Coffee, Hotel, Map, Ticket, Building2, Coins } from 'lucide-react'
 import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
 import ESimBanner from '@/components/widgets/ESimBanner'
@@ -240,15 +240,6 @@ export default async function TravelPlanPage({ params }: PageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main content */}
           <div className="lg:col-span-2 space-y-10">
-
-            <ESimBanner locale="ko" city={plan.city} />
-            <FlightSearchWidget city={plan.city} cityEn={cityEn} locale="ko" />
-            <ShareButtons
-              url={planFullUrl}
-              title={plan.title}
-              description={plan.meta_description}
-              locale="ko"
-            />
 
             {/* Overview */}
             {plan.overview && (
@@ -501,19 +492,14 @@ export default async function TravelPlanPage({ params }: PageProps) {
 
             <AdUnit slot="6174829350" />
 
-            {/* Flight search */}
-            <section className="bg-gradient-to-br from-sky-50 to-blue-50 rounded-[var(--radius)] p-6 border border-sky-100">
-              <h2 className="text-lg font-bold mb-2 flex items-center gap-2" style={{ fontFamily: 'var(--font-heading)' }}><Plane className="w-5 h-5 text-sky-500" />항공권 검색</h2>
-              <p className="text-sm text-gray-600 mb-4">Skyscanner에서 최저가 항공권을 찾아보세요.</p>
-              <a
-                href={`https://www.skyscanner.co.kr/flights/sel/${(plan.country_code ?? 'TYO').toLowerCase()}/`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0770E3] text-white text-sm font-semibold rounded-[var(--radius)] hover:opacity-90 transition-opacity"
-              >
-                Skyscanner에서 검색 <ExternalLink className="w-4 h-4" />
-              </a>
-            </section>
+            <ShareButtons
+              url={planFullUrl}
+              title={plan.title}
+              description={plan.meta_description}
+              locale="ko"
+            />
+            <ESimBanner locale="ko" city={plan.city} />
+            <FlightSearchWidget city={plan.city} cityEn={cityEn} locale="ko" />
 
             {/* Related plans */}
             {related.length > 0 && (
