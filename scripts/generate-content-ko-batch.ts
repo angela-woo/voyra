@@ -22,9 +22,66 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey)
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const UNSPLASH_KEY = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY ?? ''
 
 const limitArg = process.argv.indexOf('--limit')
 const LIMIT = limitArg !== -1 ? parseInt(process.argv[limitArg + 1]) : Infinity
+
+const TYPE_KEYWORD_MAP: Array<[string, string]> = [
+  ['cherry-blossom', 'cherry blossom sakura spring'],
+  ['snow-festival', 'snow festival winter lights'],
+  ['day-trip', 'scenic day trip landscape'],
+  ['street-food', 'street food night market'],
+  ['best-restaurants', 'restaurant dining gourmet food'],
+  ['shopping-guide', 'shopping street mall market'],
+  ['complete-guide', 'famous landmark city skyline'],
+  ['travel-guide', 'city travel iconic landmark'],
+  ['temples-guide', 'temple shrine ancient architecture'],
+  ['kimono', 'kimono traditional Japan culture'],
+  ['dotonbori', 'Dotonbori neon canal'],
+  ['usj', 'Universal Studios theme park'],
+  ['shinjuku', 'Shinjuku neon nightlife'],
+  ['shibuya', 'Shibuya crossing crowd'],
+  ['asakusa', 'Asakusa temple traditional'],
+  ['harajuku', 'Harajuku street fashion colorful'],
+  ['ginza', 'Ginza luxury shopping'],
+  ['beach', 'beach ocean tropical sunset'],
+  ['winter', 'winter snow cold mountain'],
+  ['resort', 'luxury resort pool infinity'],
+  ['night', 'city night lights skyline'],
+  ['cafe', 'cafe coffee cozy interior'],
+  ['museum', 'museum art culture gallery'],
+  ['hiking', 'hiking mountain trail'],
+  ['food', 'food cuisine restaurant'],
+  ['restaurant', 'restaurant dining food'],
+  ['shopping', 'shopping street market'],
+  ['temple', 'temple shrine ancient'],
+  ['guide', 'city landmark famous attraction'],
+]
+
+async function fetchCoverImage(cityEn: string, type: string): Promise<{ url: string; author: string } | null> {
+  if (!UNSPLASH_KEY) return null
+  const lower = type.toLowerCase()
+  let query = `${cityEn} travel`
+  for (const [key, kw] of TYPE_KEYWORD_MAP) {
+    if (lower.includes(key)) { query = `${cityEn} ${kw}`; break }
+  }
+  try {
+    const page = (type.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % 8) + 1
+    const res = await fetch(
+      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=5&page=${page}&orientation=landscape`,
+      { headers: { Authorization: `Client-ID ${UNSPLASH_KEY}` } },
+    )
+    if (!res.ok) return null
+    const data = await res.json()
+    const results = data.results ?? []
+    if (results.length === 0) return null
+    const photo = results[Math.floor(Math.random() * Math.min(results.length, 3))]
+    return { url: photo.urls.regular, author: photo.user.name }
+  } catch {
+    return null
+  }
+}
 
 function makeSlug(citySlug: string, type: string): string {
   return `${citySlug}-${type}-ko`
@@ -117,12 +174,21 @@ async function main() {
     process.stdout.write(`  [${i + 1}/${targets.length}] ${topic.city} — ${topic.keyword}... `)
 
     try {
-      const article = await generateArticle(topic)
+      const [article, coverImage] = await Promise.all([
+        generateArticle(topic),
+        fetchCoverImage(topic.citySlug.replace(/-/g, ' '), topic.type),
+      ])
       const { places, ...articleData } = article as Record<string, unknown>
 
       const { data: inserted, error } = await supabase
         .from('articles')
-        .insert({ ...articleData, slug, published: true, section_images: (article.section_images ?? {}) })
+        .insert({
+          ...articleData,
+          slug,
+          published: true,
+          section_images: (article.section_images ?? {}),
+          ...(coverImage ? { cover_image_url: coverImage.url, cover_image_attribution: coverImage.author } : {}),
+        })
         .select('id')
         .single()
 

@@ -115,6 +115,55 @@ export async function fetchUnsplashPhoto(query: string): Promise<UnsplashPhoto |
   }
 }
 
+const ARTICLE_TYPE_KEYWORDS: Array<[string, string]> = [
+  ['cherry-blossom', 'cherry blossom sakura spring'],
+  ['snow-festival', 'snow festival winter lights'],
+  ['day-trip', 'scenic day trip landscape'],
+  ['street-food', 'street food night market stalls'],
+  ['best-restaurants', 'restaurant dining gourmet food'],
+  ['shopping-guide', 'shopping street mall market'],
+  ['complete-guide', 'famous landmark city skyline'],
+  ['travel-guide', 'city travel iconic landmark'],
+  ['temples-guide', 'temple shrine ancient architecture'],
+  ['kimono', 'kimono traditional Japan culture'],
+  ['dotonbori', 'Dotonbori neon canal'],
+  ['usj', 'Universal Studios theme park'],
+  ['shinjuku', 'Shinjuku neon nightlife street'],
+  ['shibuya', 'Shibuya crossing crowd street'],
+  ['asakusa', 'Asakusa temple traditional lantern'],
+  ['harajuku', 'Harajuku street fashion colorful'],
+  ['ginza', 'Ginza luxury shopping boutique'],
+  ['beach', 'beach ocean tropical sunset'],
+  ['winter', 'winter snow cold mountain'],
+  ['resort', 'luxury resort pool infinity'],
+  ['night', 'city night lights skyline'],
+  ['cafe', 'cafe coffee cozy interior'],
+  ['museum', 'museum art culture gallery'],
+  ['hiking', 'hiking mountain trail scenic'],
+  ['nature', 'nature landscape scenic outdoors'],
+  ['food', 'food cuisine restaurant dish'],
+  ['restaurant', 'restaurant dining food'],
+  ['shopping', 'shopping street market district'],
+  ['temple', 'temple shrine ancient peaceful'],
+  ['guide', 'city landmark famous attraction'],
+]
+
+export async function fetchArticleImage(slug: string, cityEn: string): Promise<UnsplashPhoto | null> {
+  const lower = slug.toLowerCase()
+  let typeKeyword = `${cityEn} travel`
+  for (const [key, kw] of ARTICLE_TYPE_KEYWORDS) {
+    if (lower.includes(key)) {
+      typeKeyword = `${cityEn} ${kw}`
+      break
+    }
+  }
+  const page = (slug.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % 10) + 1
+  const photo = await fetchUnsplashPhoto(typeKeyword)
+  if (photo) return photo
+  const photos = await fetchUnsplashPhotos(typeKeyword, 3, page)
+  return photos[0] ?? null
+}
+
 export function categoryFallbackQuery(category: string | null): string {
   return CATEGORY_FALLBACK[category?.toLowerCase() ?? ''] ?? 'travel destination'
 }
