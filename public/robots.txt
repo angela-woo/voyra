@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Google AdSense crawler
+User-agent: Mediapartners-Google
+Allow: /
+
+# Sitemap
+Sitemap: https://kiravoy.com/sitemap.xml

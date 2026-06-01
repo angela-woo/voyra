@@ -115,8 +115,24 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-bold mb-3">제9조 쿠키 사용</h2>
-          <p>로그인 세션 유지를 위해 쿠키를 사용합니다. 브라우저 설정에서 쿠키를 거부할 수 있으나, 로그인 기능 이용이 제한될 수 있습니다.</p>
+          <h2 className="text-lg font-bold mb-3">제9조 광고 서비스 및 쿠키 사용</h2>
+          <p className="mb-3">
+            본 사이트는 <strong>Google AdSense</strong>를 사용하여 광고를 게재합니다.
+            Google은 쿠키를 사용하여 이용자의 이전 방문 기록을 기반으로 맞춤형 광고를 표시합니다.
+          </p>
+          <ul className="list-disc pl-5 space-y-1 mb-3">
+            <li>Google의 광고 쿠키 사용을 통해 이용자가 관심 있을 수 있는 광고가 제공됩니다.</li>
+            <li>Google의 개인정보 보호 정책은 <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-[var(--primary)] underline">https://policies.google.com/privacy</a>에서 확인할 수 있습니다.</li>
+            <li>이용자는 <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-[var(--primary)] underline">Google 광고 설정</a>에서 맞춤 광고를 비활성화할 수 있습니다.</li>
+          </ul>
+          <p className="mb-3">
+            본 사이트는 또한 <strong>Booking.com</strong>, <strong>Klook</strong> 등 제3자 제휴 서비스의 링크를 포함할 수 있으며,
+            해당 서비스들도 자체적인 쿠키 정책을 운용합니다.
+          </p>
+          <p>
+            <strong>쿠키 사용:</strong> 로그인 세션 유지 및 광고 최적화를 위해 쿠키를 사용합니다.
+            브라우저 설정에서 쿠키를 거부할 수 있으나, 로그인 기능 이용이 제한될 수 있습니다.
+          </p>
         </section>
 
         <section>

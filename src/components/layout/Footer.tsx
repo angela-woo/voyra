@@ -31,6 +31,7 @@ export default function Footer({ siteName }: { siteName: string }) {
           <div>
             <h4 className="text-white font-semibold text-sm mb-4 uppercase tracking-wider">안내</h4>
             <ul className="space-y-2.5 text-sm">
+              <li><Link href="/about" className="hover:text-white transition-colors">서비스 소개</Link></li>
               <li><Link href="/terms" className="hover:text-white transition-colors">이용약관</Link></li>
               <li><Link href="/privacy" className="hover:text-white transition-colors">개인정보처리방침</Link></li>
               <li><Link href="/contact" className="hover:text-white transition-colors">문의하기</Link></li>
@@ -73,8 +74,9 @@ export default function Footer({ siteName }: { siteName: string }) {
           </div>
         </div>
 
-        <div className="border-t border-white/10 mt-8 pt-6 text-center text-xs text-gray-600">
-          © 2025 {siteName}. All rights reserved.
+        <div className="border-t border-white/10 mt-8 pt-6 text-center text-xs text-gray-600 space-y-2">
+          <p>본 사이트는 Google AdSense 광고를 사용합니다. 일부 링크는 제휴 링크로, 구매 시 소정의 수수료를 받을 수 있습니다.</p>
+          <p>© 2026 {siteName}. All rights reserved.</p>
         </div>
       </div>
     </footer>
