@@ -16,27 +16,52 @@ export default function ShareButtons({ url, title, description, locale = 'ko' }:
   const [copied, setCopied] = useState(false)
 
   const shareKakao = async () => {
-    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent)
-    if (isMobile) {
-      // 모바일: 카카오톡 앱 딥링크
-      window.location.href = `kakaolink://send?text=${encodeURIComponent(`${title}\n${url}`)}`
-    } else {
-      // PC: 링크 복사 후 안내
+    // 방법 1: navigator.clipboard (HTTPS + 최신 브라우저)
+    if (navigator.clipboard && window.isSecureContext) {
       try {
         await navigator.clipboard.writeText(url)
+        alert(locale === 'ko'
+          ? '링크가 복사됐어요! 카카오톡에 붙여넣기 하세요.'
+          : 'Link copied! Share it on KakaoTalk.')
+        return
       } catch {
-        // clipboard API 실패 시 fallback
-        const el = document.createElement('textarea')
-        el.value = url
-        document.body.appendChild(el)
-        el.select()
-        document.execCommand('copy')
-        document.body.removeChild(el)
+        // 권한 거부 또는 미지원 → fallback으로 진행
       }
-      alert(locale === 'ko'
-        ? '링크가 복사됐어요! 카카오톡에 붙여넣기 하세요.'
-        : 'Link copied! Paste it in KakaoTalk.')
     }
+
+    // 방법 2: execCommand fallback (구형 모바일 브라우저)
+    try {
+      const textArea = document.createElement('textarea')
+      textArea.value = url
+      textArea.style.position = 'fixed'
+      textArea.style.left = '-999999px'
+      textArea.style.top = '-999999px'
+      document.body.appendChild(textArea)
+      textArea.focus()
+      textArea.select()
+      const success = document.execCommand('copy')
+      document.body.removeChild(textArea)
+      if (success) {
+        alert(locale === 'ko'
+          ? '링크가 복사됐어요! 카카오톡에 붙여넣기 하세요.'
+          : 'Link copied! Share it on KakaoTalk.')
+        return
+      }
+    } catch {
+      // execCommand도 실패 → 카카오 딥링크 시도
+    }
+
+    // 방법 3: 카카오톡 앱 딥링크 (모바일 앱 설치 시)
+    window.location.href = `kakaolink://send?text=${encodeURIComponent(`${title} ${url}`)}`
+    // 앱 없으면 prompt로 URL 직접 표시
+    setTimeout(() => {
+      prompt(
+        locale === 'ko'
+          ? '이 링크를 복사해서 카카오톡에 공유하세요:'
+          : 'Copy this link and share on KakaoTalk:',
+        url,
+      )
+    }, 500)
   }
 
   const shareX = () => {
@@ -61,9 +86,31 @@ export default function ShareButtons({ url, title, description, locale = 'ko' }:
   }
 
   const copyLink = async () => {
-    await navigator.clipboard.writeText(url)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    let success = false
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(url)
+        success = true
+      } catch { /* fallback */ }
+    }
+    if (!success) {
+      try {
+        const textArea = document.createElement('textarea')
+        textArea.value = url
+        textArea.style.position = 'fixed'
+        textArea.style.left = '-999999px'
+        textArea.style.top = '-999999px'
+        document.body.appendChild(textArea)
+        textArea.focus()
+        textArea.select()
+        success = document.execCommand('copy')
+        document.body.removeChild(textArea)
+      } catch { /* give up */ }
+    }
+    if (success) {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
   }
 
   return (
