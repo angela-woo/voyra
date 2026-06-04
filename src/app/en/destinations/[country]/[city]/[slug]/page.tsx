@@ -271,6 +271,8 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
               </section>
             )}
 
+            <AdUnit slot="1936618959" />
+
             {/* Hotel Carousel */}
             <section>
               <div className="flex items-center justify-between mb-4">
@@ -321,8 +323,6 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
               </div>
             </section>
 
-            <AdUnit slot="3920184756" />
-
             {/* Day-by-day */}
             {days_data.length > 0 && (
               <section>
@@ -330,6 +330,7 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
                 <div className="space-y-8">
                   {days_data.map((day) => (
                     <div key={day.day}>
+                      {day.day === 2 && <AdUnit slot="6933794765" />}
                       <div className="flex items-center gap-3 mb-4">
                         <span className="w-8 h-8 rounded-full bg-[var(--primary)] text-white text-sm font-bold flex items-center justify-center shrink-0">
                           {day.day}
@@ -462,7 +463,7 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
               </div>
             </section>
 
-            <AdUnit slot="6174829350" />
+            <AdUnit slot="9176814723" />
 
             <ShareButtons
               url={enPlanFullUrl}

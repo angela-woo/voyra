@@ -315,7 +315,7 @@ export default async function HomePage() {
 
       {/* ── AdUnit ──────────────────────────────────────────────── */}
       <div className="max-w-4xl mx-auto px-4">
-        <AdUnit slot="8261047593" />
+        <AdUnit slot="6933794765" />
       </div>
 
       {/* ── 5. 인기 여행 일정 ───────────────────────────────────── */}

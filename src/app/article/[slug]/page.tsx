@@ -264,7 +264,7 @@ export default async function ArticlePage({ params }: PageProps) {
             <div className="prose prose-gray max-w-none prose-headings:font-bold prose-a:text-[var(--primary)]">
               {globalIntro && <div dangerouslySetInnerHTML={{ __html: globalIntroHtml as string }} />}
 
-              <AdUnit slot="2847391056" />
+              <AdUnit slot="1936618959" />
 
               {processedSections.map(section => (
                 <div key={section.heading}>
@@ -320,7 +320,7 @@ export default async function ArticlePage({ params }: PageProps) {
               ))}
             </div>
 
-            <AdUnit slot="5193847261" />
+            <AdUnit slot="6933794765" />
 
             {/* Klook 투어 캐러셀 */}
             {article.city && (
@@ -371,7 +371,7 @@ export default async function ArticlePage({ params }: PageProps) {
               </div>
             )}
 
-            <AdUnit slot="7384920165" />
+            <AdUnit slot="9176814723" />
 
             <ESimBanner locale="ko" city={article.city} />
             <FlightSearchWidget city={article.city ?? ''} cityEn={cityEnglish} locale="ko" />

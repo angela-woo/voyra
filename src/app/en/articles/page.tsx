@@ -3,6 +3,7 @@ import ArticleCard from '@/components/article/ArticleCard'
 import Link from 'next/link'
 import { BookOpen, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Metadata } from 'next'
+import AdUnit from '@/components/ui/AdUnit'
 
 export const dynamic = 'force-dynamic'
 
@@ -88,9 +89,20 @@ export default async function EnArticlesPage({ searchParams }: PageProps) {
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {articles.map((article: any) => (
+              {articles.slice(0, 6).map((article: any) => (
                 <ArticleCard key={article.id} article={article} locale="en" />
               ))}
+              {articles.length > 6 && (
+                <>
+                  <div className="col-span-1 sm:col-span-2 lg:col-span-3">
+                    <AdUnit slot="6933794765" />
+                  </div>
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  {articles.slice(6).map((article: any) => (
+                    <ArticleCard key={article.id} article={article} locale="en" />
+                  ))}
+                </>
+              )}
             </div>
 
             {totalPages > 1 && (
