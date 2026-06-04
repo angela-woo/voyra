@@ -7,9 +7,9 @@ import {
   fetchItemImages,
   fetchSectionImages,
   itemToSearchQuery,
-  sectionToSearchQuery,
   toEnglishCity,
 } from '@/lib/unsplash'
+import { getSectionImageKeyword } from '@/lib/utils/sectionKeywords'
 import ImageCarousel from '@/components/ui/ImageCarousel'
 import PlaceCard from '@/components/article/PlaceCard'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
@@ -145,15 +145,14 @@ export default async function ArticlePage({ params }: PageProps) {
     s.items.map(item => ({ heading: item.heading, query: itemToSearchQuery(item.heading, cityEnglish) })),
   )
 
-  // 아이템 없는 섹션은 섹션 단위 이미지 (하위 호환)
-  const dbSectionImages: Record<string, string> = article.section_images ?? {}
+  // 아이템 없는 섹션: getSectionImageKeyword로 정확한 키워드 생성
   const sectionQueryList = sections
     .filter(s => s.items.length === 0)
-    .map(s => ({ heading: s.heading, query: dbSectionImages[s.heading] ?? sectionToSearchQuery(s.heading, cityEnglish) }))
+    .map(s => ({ heading: s.heading, query: getSectionImageKeyword(s.heading, cityEnglish) }))
 
   // 히어로 + 아이템 이미지 + 섹션 이미지 병렬 fetch
   const [heroPhoto, itemImages, sectionPhotos] = await Promise.all([
-    article.cover_image_url ? Promise.resolve(null) : fetchUnsplashPhoto(`${cityEnglish} travel`),
+    article.cover_image_url ? Promise.resolve(null) : fetchUnsplashPhoto(getSectionImageKeyword(article.title, cityEnglish)),
     fetchItemImages(allItemQueries),
     sectionQueryList.length > 0 ? fetchSectionImages(sectionQueryList) : Promise.resolve({} as Record<string, import('@/lib/unsplash').UnsplashPhoto | null>),
   ])

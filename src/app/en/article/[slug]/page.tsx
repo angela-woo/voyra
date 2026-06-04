@@ -8,9 +8,9 @@ import {
   fetchItemImages,
   fetchSectionImages,
   itemToSearchQuery,
-  sectionToSearchQuery,
   toEnglishCity,
 } from '@/lib/unsplash'
+import { getSectionImageKeyword } from '@/lib/utils/sectionKeywords'
 import ImageCarousel from '@/components/ui/ImageCarousel'
 import PlaceCard from '@/components/article/PlaceCard'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
@@ -142,13 +142,12 @@ export default async function EnArticlePage({ params }: PageProps) {
     s.items.map(item => ({ heading: item.heading, query: itemToSearchQuery(item.heading, cityEnglish) })),
   )
 
-  const dbSectionImages: Record<string, string> = article.section_images ?? {}
   const sectionQueryList = sections
     .filter(s => s.items.length === 0)
-    .map(s => ({ heading: s.heading, query: dbSectionImages[s.heading] ?? sectionToSearchQuery(s.heading, cityEnglish) }))
+    .map(s => ({ heading: s.heading, query: getSectionImageKeyword(s.heading, cityEnglish) }))
 
   const [heroPhoto, itemImages, sectionPhotos] = await Promise.all([
-    article.cover_image_url ? Promise.resolve(null) : fetchUnsplashPhoto(`${cityEnglish} travel`),
+    article.cover_image_url ? Promise.resolve(null) : fetchUnsplashPhoto(getSectionImageKeyword(article.title, cityEnglish)),
     fetchItemImages(allItemQueries),
     sectionQueryList.length > 0 ? fetchSectionImages(sectionQueryList) : Promise.resolve({} as Record<string, import('@/lib/unsplash').UnsplashPhoto | null>),
   ])
