@@ -8,26 +8,43 @@ import AdUnit from '@/components/ui/AdUnit'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata: Metadata = {
-  title: '해외여행 가이드 모음 | Kiravoy',
-  description: '도쿄, 파리, 발리 등 인기 여행지 가이드. 현지 맛집, 관광지, 교통, 숙소 정보까지 한번에.',
-  keywords: ['해외여행가이드', '여행정보', '여행가이드', '도쿄여행정보', '파리여행정보'],
-  alternates: {
-    canonical: 'https://kiravoy.com/articles',
-    languages: {
-      ko: 'https://kiravoy.com/articles',
-      en: 'https://kiravoy.com/en/articles',
-      'x-default': 'https://kiravoy.com/articles',
-    },
-  },
-  openGraph: {
+export async function generateMetadata(): Promise<Metadata> {
+  const supabase = await createClient()
+  const { count } = await supabase
+    .from('articles')
+    .select('id', { count: 'exact', head: true })
+    .eq('published', true)
+    .eq('language', 'ko')
+
+  const total = count ?? 0
+  const description = `도쿄, 파리, 발리 등 ${total > 0 ? `${total}개의 ` : ''}인기 여행지 가이드. 현지 맛집, 관광지, 교통, 숙소 정보까지 한번에.`
+
+  return {
     title: '해외여행 가이드 모음 | Kiravoy',
-    description: '도쿄, 파리, 발리 등 인기 여행지 가이드.',
-    url: 'https://kiravoy.com/articles',
-    siteName: 'Kiravoy',
-    locale: 'ko_KR',
-    type: 'website',
-  },
+    description,
+    keywords: ['해외여행가이드', '여행정보', '여행가이드', '도쿄여행정보', '파리여행정보'],
+    alternates: {
+      canonical: 'https://kiravoy.com/articles',
+      languages: {
+        ko: 'https://kiravoy.com/articles',
+        en: 'https://kiravoy.com/en/articles',
+        'x-default': 'https://kiravoy.com/articles',
+      },
+    },
+    openGraph: {
+      title: '해외여행 가이드 모음 | Kiravoy',
+      description,
+      url: 'https://kiravoy.com/articles',
+      siteName: 'Kiravoy',
+      locale: 'ko_KR',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: '해외여행 가이드 모음 | Kiravoy',
+      description,
+    },
+  }
 }
 
 const PER_PAGE = 12

@@ -7,26 +7,43 @@ import AdUnit from '@/components/ui/AdUnit'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata: Metadata = {
-  title: 'Travel Guides | Kiravoy',
-  description: 'Expert travel guides for top destinations worldwide. Find local tips, attractions, restaurants and transportation info.',
-  keywords: ['travel guide', 'travel tips', 'destination guide', 'travel information'],
-  alternates: {
-    canonical: 'https://kiravoy.com/en/articles',
-    languages: {
-      ko: 'https://kiravoy.com/articles',
-      en: 'https://kiravoy.com/en/articles',
-      'x-default': 'https://kiravoy.com/articles',
-    },
-  },
-  openGraph: {
+export async function generateMetadata(): Promise<Metadata> {
+  const supabase = await createClient()
+  const { count } = await supabase
+    .from('articles')
+    .select('id', { count: 'exact', head: true })
+    .eq('published', true)
+    .eq('language', 'en')
+
+  const total = count ?? 0
+  const description = `Expert travel guides for ${total > 0 ? `${total}+ ` : ''}top destinations worldwide. Find local tips, attractions, restaurants and transportation info.`
+
+  return {
     title: 'Travel Guides | Kiravoy',
-    description: 'Expert travel guides for top destinations worldwide.',
-    url: 'https://kiravoy.com/en/articles',
-    siteName: 'Kiravoy',
-    locale: 'en_US',
-    type: 'website',
-  },
+    description,
+    keywords: ['travel guide', 'travel tips', 'destination guide', 'travel information'],
+    alternates: {
+      canonical: 'https://kiravoy.com/en/articles',
+      languages: {
+        ko: 'https://kiravoy.com/articles',
+        en: 'https://kiravoy.com/en/articles',
+        'x-default': 'https://kiravoy.com/articles',
+      },
+    },
+    openGraph: {
+      title: 'Travel Guides | Kiravoy',
+      description,
+      url: 'https://kiravoy.com/en/articles',
+      siteName: 'Kiravoy',
+      locale: 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Travel Guides | Kiravoy',
+      description,
+    },
+  }
 }
 
 const PER_PAGE = 12

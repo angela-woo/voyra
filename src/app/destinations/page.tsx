@@ -4,26 +4,42 @@ import type { Metadata } from 'next'
 import { toCountryUrl } from '@/lib/location'
 import { getCountryFlag } from '@/lib/utils/countryFlags'
 
-export const metadata: Metadata = {
-  title: '여행 일정 추천 | Kiravoy',
-  description: '커플, 가족, 친구, 혼자 여행 맞춤 일정. 도쿄 3일, 파리 5일 등 검증된 여행 코스 추천.',
-  keywords: ['여행일정', '여행코스', '해외여행일정', '도쿄일정', '파리일정', '여행추천'],
-  alternates: {
-    canonical: 'https://kiravoy.com/destinations',
-    languages: {
-      ko: 'https://kiravoy.com/destinations',
-      en: 'https://kiravoy.com/en/destinations',
-      'x-default': 'https://kiravoy.com/destinations',
-    },
-  },
-  openGraph: {
+export async function generateMetadata(): Promise<Metadata> {
+  const supabase = await createClient()
+  const { count } = await supabase
+    .from('travel_plans')
+    .select('id', { count: 'exact', head: true })
+    .eq('published', true)
+
+  const total = count ?? 0
+  const description = `커플, 가족, 친구, 혼자 여행 맞춤 일정${total > 0 ? ` ${total}개` : ''}. 도쿄 3일, 파리 5일 등 검증된 여행 코스 추천.`
+
+  return {
     title: '여행 일정 추천 | Kiravoy',
-    description: '커플, 가족, 친구, 혼자 여행 맞춤 일정.',
-    url: 'https://kiravoy.com/destinations',
-    siteName: 'Kiravoy',
-    locale: 'ko_KR',
-    type: 'website',
-  },
+    description,
+    keywords: ['여행일정', '여행코스', '해외여행일정', '도쿄일정', '파리일정', '여행추천'],
+    alternates: {
+      canonical: 'https://kiravoy.com/destinations',
+      languages: {
+        ko: 'https://kiravoy.com/destinations',
+        en: 'https://kiravoy.com/en/destinations',
+        'x-default': 'https://kiravoy.com/destinations',
+      },
+    },
+    openGraph: {
+      title: '여행 일정 추천 | Kiravoy',
+      description,
+      url: 'https://kiravoy.com/destinations',
+      siteName: 'Kiravoy',
+      locale: 'ko_KR',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: '여행 일정 추천 | Kiravoy',
+      description,
+    },
+  }
 }
 
 export const dynamic = 'force-dynamic'

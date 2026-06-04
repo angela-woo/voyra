@@ -8,6 +8,7 @@ import { fetchUnsplashPhoto, fetchUnsplashPhotos, toEnglishCity } from '@/lib/un
 import WeatherWidget from '@/components/widgets/WeatherWidget'
 import { MapPin, Clock, Thermometer, Info, ExternalLink, ChevronRight, Landmark, UtensilsCrossed, Coffee, Hotel, Map, Ticket, Building2, Coins } from 'lucide-react'
 import type { Metadata } from 'next'
+import { generatePlanMetaDescription, getOgImageUrl } from '@/lib/utils/metaGenerator'
 import AdUnit from '@/components/ui/AdUnit'
 import ESimBanner from '@/components/widgets/ESimBanner'
 import ShareButtons from '@/components/ui/ShareButtons'
@@ -115,16 +116,29 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const plan = await getPlan(slug)
   if (!plan) return { title: 'Not Found' }
   const planUrl = toPlanUrl(plan)
+
+  const description = (plan.meta_description && plan.meta_description.length >= 50)
+    ? plan.meta_description
+    : generatePlanMetaDescription(
+        { city: plan.city, country: plan.country, days: plan.days, travel_type: plan.travel_type, slug: plan.slug, days_data: plan.days_data },
+        'ko',
+      )
+
+  const ogImage = getOgImageUrl(plan.cover_image_url)
+
   const keywords = [
     plan.city,
     plan.country,
     '여행일정',
     '여행코스',
     plan.city && plan.days ? `${plan.city}${plan.days}일` : null,
+    plan.city ? `${plan.city}여행` : null,
+    plan.city && plan.days ? `${plan.city}${plan.days}일코스` : null,
   ].filter(Boolean) as string[]
+
   return {
     title: `${plan.title} | Kiravoy`,
-    description: plan.meta_description ?? undefined,
+    description,
     keywords,
     alternates: {
       canonical: `https://kiravoy.com${planUrl}`,
@@ -136,14 +150,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     openGraph: {
       title: `${plan.title} | Kiravoy`,
-      description: plan.meta_description ?? undefined,
+      description,
       url: `https://kiravoy.com${planUrl}`,
       siteName: 'Kiravoy',
       locale: 'ko_KR',
       type: 'website',
-      images: plan.cover_image_url
-        ? [{ url: plan.cover_image_url, width: 1200, height: 630, alt: plan.title }]
-        : [{ url: 'https://kiravoy.com/og-image.jpg', width: 1200, height: 630 }],
+      images: [{ url: ogImage, width: 1200, height: 630, alt: plan.title }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${plan.title} | Kiravoy`,
+      description,
+      images: [ogImage],
     },
     other: { 'pinterest-rich-pin': 'true' },
   }

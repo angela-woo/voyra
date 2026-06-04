@@ -19,6 +19,7 @@ import { Calendar, MapPin, Ticket, UtensilsCrossed, Moon, Bus, Landmark } from '
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import type { Metadata } from 'next'
+import { generateMetaDescription, getOgImageUrl } from '@/lib/utils/metaGenerator'
 import AdUnit from '@/components/ui/AdUnit'
 import ESimBanner from '@/components/widgets/ESimBanner'
 import ShareButtons from '@/components/ui/ShareButtons'
@@ -94,16 +95,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params
   const article = await getArticle(slug)
   if (!article) return { title: 'Not Found' }
+
+  const description = (article.meta_description && article.meta_description.length >= 50)
+    ? article.meta_description
+    : generateMetaDescription(article.content ?? '', article.city ?? '', article.country ?? '', slug, 'ko')
+
+  const ogImage = getOgImageUrl(article.cover_image_url)
+
   const keywords = [
     article.city,
     article.country,
     '여행가이드',
     '여행정보',
     article.city ? `${article.city}여행` : null,
+    article.city ? `${article.city}여행코스` : null,
+    article.country ? `${article.country}여행` : null,
   ].filter(Boolean) as string[]
+
   return {
     title: `${article.title} | Kiravoy`,
-    description: article.meta_description ?? undefined,
+    description,
     keywords,
     alternates: {
       canonical: `https://kiravoy.com/article/${slug}`,
@@ -116,15 +127,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       type: 'article',
       title: `${article.title} | Kiravoy`,
-      description: article.meta_description ?? undefined,
+      description,
       url: `https://kiravoy.com/article/${slug}`,
       siteName: 'Kiravoy',
       locale: 'ko_KR',
-      images: article.cover_image_url
-        ? [{ url: article.cover_image_url, width: 1200, height: 630, alt: article.title }]
-        : [{ url: 'https://kiravoy.com/og-image.jpg', width: 1200, height: 630 }],
+      images: [{ url: ogImage, width: 1200, height: 630, alt: article.title }],
       publishedTime: article.created_at ?? undefined,
-      modifiedTime: article.updated_at ?? undefined,
+      modifiedTime: article.updated_at ?? article.created_at ?? undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${article.title} | Kiravoy`,
+      description,
+      images: [ogImage],
     },
     other: { 'pinterest-rich-pin': 'true' },
   }
