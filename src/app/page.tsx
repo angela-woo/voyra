@@ -177,7 +177,7 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-black/50" />
         </div>
         <div className="relative z-10 text-center px-4 w-full max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-2 leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+          <h1 className="font-bold text-white mb-2 leading-tight whitespace-nowrap" style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(1.8rem, 4vw, 3.2rem)' }}>
             해외여행 가이드 &amp; 여행 일정 추천
           </h1>
           <h2 className="text-xl md:text-2xl text-white/90 mb-3 font-medium">어디로 떠나고 싶으세요?</h2>
