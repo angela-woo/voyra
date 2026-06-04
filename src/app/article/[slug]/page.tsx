@@ -5,11 +5,11 @@ import Image from 'next/image'
 import {
   fetchUnsplashPhoto,
   fetchItemImages,
-  fetchSectionImages,
   itemToSearchQuery,
   toEnglishCity,
 } from '@/lib/unsplash'
 import { getSectionImageKeyword } from '@/lib/utils/sectionKeywords'
+import { getSectionImage } from '@/lib/images/sectionImageResolver'
 import ImageCarousel from '@/components/ui/ImageCarousel'
 import PlaceCard from '@/components/article/PlaceCard'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
@@ -155,22 +155,24 @@ export default async function ArticlePage({ params }: PageProps) {
   const cityEnglish = toEnglishCity(article.city ?? '')
   const { globalIntro, sections } = parseArticle(article.content ?? '')
 
-  // 아이템 이미지 쿼리 수집
+  // 아이템 이미지 쿼리 수집 (캐러셀용)
   const allItemQueries = sections.flatMap(s =>
     s.items.map(item => ({ heading: item.heading, query: itemToSearchQuery(item.heading, cityEnglish) })),
   )
 
-  // 아이템 없는 섹션: getSectionImageKeyword로 정확한 키워드 생성
-  const sectionQueryList = sections
-    .filter(s => s.items.length === 0)
-    .map(s => ({ heading: s.heading, query: getSectionImageKeyword(s.heading, cityEnglish) }))
-
-  // 히어로 + 아이템 이미지 + 섹션 이미지 병렬 fetch
-  const [heroPhoto, itemImages, sectionPhotos] = await Promise.all([
+  // 히어로 + 아이템 이미지 병렬 fetch
+  const [heroPhoto, itemImages] = await Promise.all([
     article.cover_image_url ? Promise.resolve(null) : fetchUnsplashPhoto(getSectionImageKeyword(article.title, cityEnglish)),
     fetchItemImages(allItemQueries),
-    sectionQueryList.length > 0 ? fetchSectionImages(sectionQueryList) : Promise.resolve({} as Record<string, import('@/lib/unsplash').UnsplashPhoto | null>),
   ])
+
+  // 아이템 없는 섹션: 엔티티 기반 이미지 (순차 실행으로 중복 URL 방지)
+  const sectionPhotos: Record<string, { url: string; authorName: string; authorUrl: string; sourceName: string }> = {}
+  const usedSectionUrls = new Set<string>(article.cover_image_url ? [article.cover_image_url] : [])
+  for (const s of sections.filter(sec => sec.items.length === 0)) {
+    const photo = await getSectionImage(s.heading, cityEnglish, usedSectionUrls)
+    if (photo) sectionPhotos[s.heading] = photo
+  }
 
   // 마크다운 → HTML (모두 병렬)
   const allMarkdown = [
@@ -325,7 +327,7 @@ export default async function ArticlePage({ params }: PageProps) {
                           <a href={sectionPhotos[section.heading]!.authorUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">
                             {sectionPhotos[section.heading]!.authorName}
                           </a>{' '}
-                          on Unsplash
+                          on {sectionPhotos[section.heading]!.sourceName}
                         </figcaption>
                       </figure>
                     )

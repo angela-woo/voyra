@@ -7,6 +7,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
 import { topicsKo } from './topics-ko'
+import { getEntityBasedImages } from '../src/lib/images/entityImageManager'
 
 // 환경변수 검증 및 디버깅
 const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').replace(/\/$/, '')
@@ -59,28 +60,56 @@ const TYPE_KEYWORD_MAP: Array<[string, string]> = [
   ['guide', 'city landmark famous attraction'],
 ]
 
-async function fetchCoverImage(cityEn: string, type: string): Promise<{ url: string; author: string } | null> {
+async function getUniqueImage(
+  slug: string,
+  cityEn: string,
+  usedUrls: Set<string>,
+): Promise<{ url: string; author: string } | null> {
   if (!UNSPLASH_KEY) return null
-  const lower = type.toLowerCase()
+  const lower = slug.toLowerCase()
   let query = `${cityEn} travel`
   for (const [key, kw] of TYPE_KEYWORD_MAP) {
     if (lower.includes(key)) { query = `${cityEn} ${kw}`; break }
   }
+
+  for (let page = 1; page <= 10; page++) {
+    try {
+      const res = await fetch(
+        `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=10&page=${page}&orientation=landscape`,
+        { headers: { Authorization: `Client-ID ${UNSPLASH_KEY}` } },
+      )
+      if (!res.ok) break
+      const data = await res.json()
+      for (const photo of (data.results ?? [])) {
+        if (!usedUrls.has(photo.urls.regular)) {
+          usedUrls.add(photo.urls.regular)
+          return { url: photo.urls.regular, author: photo.user.name }
+        }
+      }
+    } catch {
+      break
+    }
+    await new Promise(r => setTimeout(r, 200))
+  }
+
+  // Fallback: scenic photography
   try {
-    const page = (type.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % 8) + 1
     const res = await fetch(
-      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=5&page=${page}&orientation=landscape`,
+      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(cityEn + ' scenic photography')}&per_page=10&page=1&orientation=landscape`,
       { headers: { Authorization: `Client-ID ${UNSPLASH_KEY}` } },
     )
-    if (!res.ok) return null
-    const data = await res.json()
-    const results = data.results ?? []
-    if (results.length === 0) return null
-    const photo = results[Math.floor(Math.random() * Math.min(results.length, 3))]
-    return { url: photo.urls.regular, author: photo.user.name }
-  } catch {
-    return null
-  }
+    if (res.ok) {
+      const data = await res.json()
+      for (const photo of (data.results ?? [])) {
+        if (!usedUrls.has(photo.urls.regular)) {
+          usedUrls.add(photo.urls.regular)
+          return { url: photo.urls.regular, author: photo.user.name }
+        }
+      }
+    }
+  } catch {}
+
+  return null
 }
 
 function makeSlug(citySlug: string, type: string): string {
@@ -157,6 +186,16 @@ places 4~5개, section_images는 모든 ## 섹션에 하나씩.`,
 function sleep(ms: number) { return new Promise(r => setTimeout(r, ms)) }
 
 async function main() {
+  // 기존 이미지 URL 로드 (중복 방지)
+  const { data: existingImages } = await supabase
+    .from('articles')
+    .select('cover_image_url')
+    .not('cover_image_url', 'is', null)
+  const usedUrls = new Set<string>(
+    (existingImages ?? []).map((a: { cover_image_url: string }) => a.cover_image_url),
+  )
+  console.log(`📷 기존 이미지 ${usedUrls.size}개 로드 완료`)
+
   // 기존 슬러그 조회
   const { data: existing } = await supabase.from('articles').select('slug').eq('language', 'ko')
   const existingSlugs = new Set((existing ?? []).map(a => a.slug))
@@ -174,10 +213,7 @@ async function main() {
     process.stdout.write(`  [${i + 1}/${targets.length}] ${topic.city} — ${topic.keyword}... `)
 
     try {
-      const [article, coverImage] = await Promise.all([
-        generateArticle(topic),
-        fetchCoverImage(topic.citySlug.replace(/-/g, ' '), topic.type),
-      ])
+      const article = await generateArticle(topic)
       const { places, ...articleData } = article as Record<string, unknown>
 
       const { data: inserted, error } = await supabase
@@ -187,7 +223,6 @@ async function main() {
           slug,
           published: true,
           section_images: (article.section_images ?? {}),
-          ...(coverImage ? { cover_image_url: coverImage.url, cover_image_attribution: coverImage.author } : {}),
         })
         .select('id')
         .single()
@@ -211,7 +246,24 @@ async function main() {
         )
       }
 
-      console.log(`✅ "${article.title}"`)
+      // 엔티티 기반 이미지 결정 (커버 이미지 + 엔티티 매핑)
+      try {
+        const { coverImage } = await getEntityBasedImages(
+          slug,
+          String(article.title ?? ''),
+          String(article.content ?? ''),
+          topic.city,
+          topic.country,
+        )
+        if (coverImage) {
+          process.stdout.write(` 🖼️`)
+        }
+      } catch (imgErr) {
+        process.stdout.write(` ⚠️이미지오류`)
+        console.error('Image error:', imgErr)
+      }
+
+      console.log(` ✅ "${article.title}"`)
       success++
     } catch (e) {
       console.log(`❌ ${e instanceof Error ? e.message : e}`)
