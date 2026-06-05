@@ -158,20 +158,21 @@ const LOCATIONS = [
 const RESTAURANTS = [
   {
     category: '🍣 스시',
-    image: 'https://images.unsplash.com/photo-1553621042-f6e147245754?w=600',
     items: [
       {
         name: '히나스시',
+        image: 'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=600',
         menu: '오마카세 스시 코스',
-        price: '₩15,000~25,000',
+        price: '5,000~15,000엔',
         waiting: '예약 필수',
         location: '신주쿠',
         reason: '합리적인 가격의 신선한 오마카세 스시. 한국어 메뉴 있음',
       },
       {
         name: '츠지한',
+        image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600',
         menu: '카이센동 (시로)',
-        price: '₩18,000~30,000',
+        price: '2,000~4,000엔',
         waiting: '현장 대기 1-2시간',
         location: '니혼바시',
         reason: '줄 서서 먹는 가치 있는 카이센동. SNS 필수 방문 맛집',
@@ -180,28 +181,30 @@ const RESTAURANTS = [
   },
   {
     category: '🍜 라멘',
-    image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600',
     items: [
       {
         name: '이치란',
+        image: 'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=600',
         menu: '돈코츠 라멘',
-        price: '₩10,000~15,000',
+        price: '890엔~',
         waiting: '10-30분',
         location: '시부야, 신주쿠 등 다수',
         reason: '1인 칸막이 좌석의 집중 라멘 체험. 입문용 도쿄 라멘',
       },
       {
         name: '후운지',
+        image: 'https://images.unsplash.com/photo-1552611052-33e04de081de?w=600',
         menu: '츠케멘',
-        price: '₩12,000~18,000',
+        price: '1,100엔~',
         waiting: '30-60분',
         location: '신주쿠',
         reason: '도쿄 최고의 츠케멘. 진한 어패류 육수와 두꺼운 면이 절묘',
       },
       {
         name: '멘쇼 도쿄',
+        image: 'https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=600',
         menu: '포기드 포크 라멘',
-        price: '₩13,000~20,000',
+        price: '1,500엔~',
         waiting: '30-45분',
         location: '분쿄',
         reason: '혁신적인 파인 다이닝 라멘. 미슐랭 레스토랑 출신 셰프 운영',
@@ -210,34 +213,35 @@ const RESTAURANTS = [
   },
   {
     category: '🥩 돈카츠',
-    image: 'https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?w=600',
     items: [
       {
         name: '카츠젠',
+        image: 'https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?w=600',
         menu: '히레카츠 정식',
-        price: '₩15,000~22,000',
+        price: '2,500엔~',
         waiting: '예약 권장',
-        location: '신주쿠',
+        location: '긴자',
         reason: '부드러운 안심 돈카츠 전문. 정통 일본식 돈카츠의 진수',
       },
     ],
   },
   {
     category: '🥩 규카츠/소고기',
-    image: 'https://images.unsplash.com/photo-1558030006-450675393462?w=600',
     items: [
       {
         name: '규카츠 모토무라',
+        image: 'https://images.unsplash.com/photo-1558030006-450675393462?w=600',
         menu: '규카츠 정식',
-        price: '₩18,000~28,000',
+        price: '1,800엔~',
         waiting: '30-60분',
         location: '시부야, 신주쿠 등',
         reason: '레어로 구워 먹는 소고기 커틀릿. 한국인 최애 도쿄 음식',
       },
       {
         name: '레드락',
+        image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600',
         menu: '로스트비프 동',
-        price: '₩12,000~18,000',
+        price: '1,300엔~',
         waiting: '오픈 런 필수',
         location: '신주쿠',
         reason: '두툼한 로스트비프 덮밥. 가성비 최고의 도쿄 소고기 맛집',
@@ -246,12 +250,12 @@ const RESTAURANTS = [
   },
   {
     category: '🍡 디저트',
-    image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600',
     items: [
       {
         name: '나카무라토우카시텐',
+        image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600',
         menu: '화과자 세트',
-        price: '₩8,000~15,000',
+        price: '800엔~',
         waiting: '예약 필수',
         location: '기치조지',
         reason: '100년 전통 화과자 명장. 계절 한정 화과자가 예술 작품 수준',
@@ -619,7 +623,7 @@ export default function TokyoMagazinePage() {
                         <div key={r.name} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 flex">
                           <div className="relative w-28 shrink-0">
                             <Image
-                              src={group.image}
+                              src={r.image}
                               alt={r.name}
                               fill
                               className="object-cover"
