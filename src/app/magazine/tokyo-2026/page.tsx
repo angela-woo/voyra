@@ -124,7 +124,7 @@ const LOCATIONS = [
     number: '08',
     name: '오모테산도',
     japanese: '表参道',
-    image: 'https://images.unsplash.com/photo-1563502915-b4b8e08a2e55?w=800',
+    image: 'https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?w=800',
     tag: '갤러리·디자인',
     recommendTime: '2-3시간',
     instagramSpot: '오모테산도 힐즈',
