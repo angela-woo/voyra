@@ -6,6 +6,14 @@ const nextConfig = {
     ],
     formats: ['image/avif', 'image/webp'],
   },
+  async redirects() {
+    return [
+      { source: '/article/:slug/', destination: '/article/:slug', permanent: true },
+      { source: '/destinations/:country/:city/:slug/', destination: '/destinations/:country/:city/:slug', permanent: true },
+      { source: '/en/article/:slug/', destination: '/en/article/:slug', permanent: true },
+      { source: '/en/destinations/:country/:city/:slug/', destination: '/en/destinations/:country/:city/:slug', permanent: true },
+    ]
+  },
   async headers() {
     return [
       {
@@ -29,6 +37,30 @@ const nextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(self)' },
           { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+        ],
+      },
+      {
+        source: '/article/:slug',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=3600, stale-while-revalidate=86400' },
+        ],
+      },
+      {
+        source: '/en/article/:slug',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=3600, stale-while-revalidate=86400' },
+        ],
+      },
+      {
+        source: '/destinations/:country/:city/:slug',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=3600, stale-while-revalidate=86400' },
+        ],
+      },
+      {
+        source: '/en/destinations/:country/:city/:slug',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=3600, stale-while-revalidate=86400' },
         ],
       },
     ]

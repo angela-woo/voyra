@@ -40,6 +40,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://kiravoy.com',
     languages: { ko: 'https://kiravoy.com', en: 'https://kiravoy.com/en' },
+    types: {
+      'application/rss+xml': [
+        { url: 'https://kiravoy.com/feed.xml', title: 'Kiravoy 여행 가이드' },
+        { url: 'https://kiravoy.com/feed-en.xml', title: 'Kiravoy Travel Guides (EN)' },
+      ],
+    },
   },
   other: {
     'agd-partner-manual-verification': '',

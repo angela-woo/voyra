@@ -68,6 +68,36 @@ export default async function sitemap(): Promise<SitemapEntry[]> {
       priority: 0.9,
       alternates: { languages: { ko: `${BASE}/destinations`, en: `${BASE}/en/destinations`, 'x-default': `${BASE}/destinations` } },
     },
+    {
+      url: `${BASE}/latest-guides`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: `${BASE}/latest-itineraries`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: `${BASE}/trending`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: `${BASE}/magazine`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${BASE}/magazine/tokyo-2026`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
   ]
 
   // Articles — pair KO and EN slugs by slug value (same slug used for both languages)
