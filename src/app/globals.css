@@ -46,3 +46,18 @@ body {
 /* Orange scrollbar for horizontal carousels */
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Magazine scroll animations */
+.fade-up {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-up--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Magazine masonry grid */
+.masonry-grid { columns: 2; column-gap: 16px; }
+@media (min-width: 768px) { .masonry-grid { columns: 3; } }

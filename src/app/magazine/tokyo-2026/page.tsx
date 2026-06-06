@@ -1,644 +1,717 @@
-import type { Metadata } from 'next'
 import Image from 'next/image'
-import { Playfair_Display } from 'next/font/google'
+import Link from 'next/link'
+import { Playfair_Display, Cormorant_Garamond, Inter } from 'next/font/google'
+import type { Metadata } from 'next'
+import ScrollAnimator from './ScrollAnimator'
 import TOC from './TOC'
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
-  weight: ['400', '600', '700', '900'],
+  weight: ['400', '700', '900'],
   style: ['normal', 'italic'],
   variable: '--font-playfair',
-  display: 'swap',
+})
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['300', '400', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-cormorant',
+})
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['300', '400', '500'],
+  variable: '--font-inter',
 })
 
 export const metadata: Metadata = {
-  title: '2026 도쿄 여행 완벽 가이드 | Kiravoy 여행 매거진',
-  description: '한국인 20·30대가 가장 사랑하는 도쿄의 모든 것. 인기 지역 TOP 10, 한국인 맛집, 쇼핑 리스트 TOP 30, 4박5일 일정까지.',
-  alternates: {
-    canonical: 'https://kiravoy.com/magazine/tokyo-2026',
-  },
+  title: '도쿄 2026 — Voyra 매거진',
+  description: '2026년 도쿄를 가장 완벽하게 즐기는 법. 시부야부터 아사쿠사까지, 진짜 도쿄를 만나다.',
   openGraph: {
-    title: '2026 도쿄 여행 완벽 가이드 | Kiravoy 여행 매거진',
-    description: '한국인 20·30대가 가장 사랑하는 도쿄의 모든 것. 인기 지역 TOP 10, 한국인 맛집, 쇼핑 리스트 TOP 30, 4박5일 일정까지.',
-    url: 'https://kiravoy.com/magazine/tokyo-2026',
-    images: [
-      {
-        url: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1200',
-        width: 1200,
-        height: 630,
-        alt: '2026 도쿄 여행 완벽 가이드',
-      },
-    ],
+    title: '도쿄 2026 — Voyra 매거진',
+    description: '2026년 도쿄를 가장 완벽하게 즐기는 법.',
+    images: ['https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1200&q=90'],
   },
 }
 
-// ─── Data ────────────────────────────────────────────────────────────────────
-
 const TOC_SECTIONS = [
-  { id: 'section-1', label: '도쿄 인기 지역 TOP 10', number: '01' },
-  { id: 'section-2', label: '한국인 인기 맛집', number: '02' },
-  { id: 'section-3', label: '쇼핑 리스트 TOP 30', number: '03' },
-  { id: 'section-4', label: '4박 5일 추천 일정', number: '04' },
-  { id: 'section-5', label: 'SNS 트렌드 TOP 20', number: '05' },
+  { id: 'ch1', label: 'Tokyo Now', number: '01' },
+  { id: 'ch2', label: 'The Districts', number: '02' },
+  { id: 'ch3', label: 'Taste of Tokyo', number: '03' },
+  { id: 'ch4', label: 'Shopping Edit', number: '04' },
+  { id: 'ch5', label: '4 Days in Tokyo', number: '05' },
+  { id: 'ch6', label: 'Social Trend', number: '06' },
 ]
 
-const LOCATIONS = [
+const DISTRICTS = [
   {
-    number: '01',
     name: '시부야',
-    japanese: '渋谷',
-    image: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=800',
-    tag: '쇼핑·나이트라이프',
-    recommendTime: '3-4시간',
-    instagramSpot: '시부야 스크램블 교차로',
-    nearby: '하라주쿠, 다이칸야마',
-    desc: '세계에서 가장 유명한 스크램블 교차로와 다양한 쇼핑몰이 밀집된 도쿄의 심장부.',
+    nameEn: 'SHIBUYA',
+    tagline: '세계에서 가장 바쁜 교차로',
+    description: '하루 250만 명이 오가는 시부야 스크램블 교차로. 그 혼돈 속에 도쿄의 에너지가 있다. 2023년 개장한 시부야 스크램블 스퀘어 2기는 이 구역의 새로운 랜드마크.',
+    image: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=1400&q=90',
+    layout: 'fullscreen',
   },
   {
-    number: '02',
     name: '하라주쿠',
-    japanese: '原宿',
-    image: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=800',
-    tag: '패션·카페',
-    recommendTime: '2-3시간',
-    instagramSpot: '다케시타 거리',
-    nearby: '오모테산도, 요요기 공원',
-    desc: '독특한 일본 팝 컬처와 패션 문화의 발원지. 타케시타 거리의 크레이프와 패션 아이템이 유명.',
+    nameEn: 'HARAJUKU',
+    tagline: '서브컬처의 진원지',
+    description: '다케시타 도리의 크레이프와 캐릭터 숍, 오모테산도의 플래그십 부티크. 하라주쿠는 도쿄의 두 얼굴을 동시에 보여준다.',
+    image: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=1200&q=90',
+    layout: 'split',
   },
   {
-    number: '03',
-    name: '아사쿠사',
-    japanese: '浅草',
-    image: 'https://images.unsplash.com/photo-1570521462033-3015e76e7432?w=800',
-    tag: '전통·문화',
-    recommendTime: '3-4시간',
-    instagramSpot: '센소지 뇨닌도',
-    nearby: '우에노, 아키하바라',
-    desc: '도쿄에서 가장 오래된 사원인 센소지와 나카미세 쇼핑 거리로 전통 일본의 정취가 물씬.',
-  },
-  {
-    number: '04',
-    name: '신주쿠',
-    japanese: '新宿',
-    image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800',
-    tag: '먹방·엔터테인먼트',
-    recommendTime: '4-5시간',
-    instagramSpot: '신주쿠 고엔 / 골든가이',
-    nearby: '시부야, 하라주쿠',
-    desc: '낮에는 도쿄 도청 전망대, 밤에는 가부키초와 골든가이의 이자카야. 하루 종일 즐길 거리가 가득.',
-  },
-  {
-    number: '05',
     name: '나카메구로',
-    japanese: '中目黒',
-    image: 'https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=800',
-    tag: '힙·카페',
-    recommendTime: '2-3시간',
-    instagramSpot: '메구로 강변 산책로',
-    nearby: '다이칸야마, 지유가오카',
-    desc: '메구로 강변 카페와 독립 서점, 빈티지 숍이 즐비한 도쿄 감성의 끝판왕 동네.',
+    nameEn: 'NAKAMEGURO',
+    tagline: '목구로 강변의 낭만',
+    description: '메구로 강변을 따라 늘어선 카페와 빈티지 숍. 벚꽃 시즌의 나카메구로는 도쿄에서 가장 아름다운 풍경을 만들어낸다.',
+    image: 'https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=1200&q=90',
+    layout: 'centered',
   },
   {
-    number: '06',
+    name: '아사쿠사',
+    nameEn: 'ASAKUSA',
+    tagline: '에도의 숨결이 남은 곳',
+    description: '센소지 절의 카미나리몬에서 시작되는 나카미세 상점가. 700년 역사의 절과 현대 도쿄가 공존하는 유일한 동네.',
+    image: 'https://images.unsplash.com/photo-1570521462033-3015e76e7432?w=1200&q=90',
+    layout: 'split',
+  },
+  {
     name: '시모키타자와',
-    japanese: '下北沢',
-    image: 'https://images.unsplash.com/photo-1604928141064-207cea6f571f?w=800',
-    tag: '빈티지·라이브뮤직',
-    recommendTime: '2-3시간',
-    instagramSpot: '시모키타자와 역 광장',
-    nearby: '기치조지, 고엔지',
-    desc: '도쿄 서브컬처의 성지. 라이브 음악 클럽과 빈티지 옷가게, 독특한 카페가 가득한 힙스터 동네.',
-  },
-  {
-    number: '07',
-    name: '긴자',
-    japanese: '銀座',
-    image: 'https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?w=800',
-    tag: '명품·파인다이닝',
-    recommendTime: '2-3시간',
-    instagramSpot: '긴자 식스 루프탑',
-    nearby: '츠키지, 하마리큐',
-    desc: '도쿄 최고급 쇼핑가. 루이비통, 샤넬 등 명품 플래그십과 미슐랭 레스토랑이 집중된 지역.',
-  },
-  {
-    number: '08',
-    name: '오모테산도',
-    japanese: '表参道',
-    image: 'https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?w=800',
-    tag: '갤러리·디자인',
-    recommendTime: '2-3시간',
-    instagramSpot: '오모테산도 힐즈',
-    nearby: '하라주쿠, 아오야마',
-    desc: '유럽 분위기의 가로수길. 세계적인 건축가들이 설계한 명품 매장과 독특한 카페가 줄지어 있음.',
-  },
-  {
-    number: '09',
-    name: '이케부쿠로',
-    japanese: '池袋',
-    image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800',
-    tag: '애니·서브컬처',
-    recommendTime: '3-4시간',
-    instagramSpot: '선샤인 시티 전망대',
-    nearby: '메지로, 오오츠카',
-    desc: '애니메이션·만화 팬의 성지. 선샤인 시티와 다양한 오타쿠 문화 상점, 맛집이 가득한 서민적 지역.',
-  },
-  {
-    number: '10',
-    name: '팀랩 플래닛',
-    japanese: 'teamLab Planets',
-    image: 'https://images.unsplash.com/photo-1633113093730-47449a1a9c6e?w=800',
-    tag: '아트·체험',
-    recommendTime: '1.5-2시간',
-    instagramSpot: '몰입형 디지털 아트 공간',
-    nearby: '도요스, 오다이바',
-    desc: '세계 최고 수준의 몰입형 디지털 아트 뮤지엄. 사전 예약 필수, 인스타 감성 사진 명소.',
+    nameEn: 'SHIMOKITAZAWA',
+    tagline: '빈티지와 인디의 메카',
+    description: '도쿄의 가장 보헤미안한 동네. 골목마다 숨어있는 라이브 하우스, 고서점, 빈티지 의류점이 예술가들을 불러모은다.',
+    image: 'https://images.unsplash.com/photo-1604928141064-207cea6f571f?w=1200&q=90',
+    layout: 'fullscreen',
   },
 ]
 
 const RESTAURANTS = [
   {
-    category: '🍣 스시',
+    category: '스시',
+    categoryEn: 'OMAKASE SUSHI',
     items: [
       {
-        name: '히나스시',
-        image: 'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=600',
+        name: '하나스시',
+        image: 'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=800&q=85',
         menu: '오마카세 스시 코스',
         price: '5,000~15,000엔',
         waiting: '예약 필수',
         location: '신주쿠',
-        reason: '합리적인 가격의 신선한 오마카세 스시. 한국어 메뉴 있음',
+        reason: '제철 네타만 고집하는 장인의 스시. 쿠라마에 본점 분위기를 신주쿠에서.',
       },
       {
         name: '츠지한',
-        image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600',
-        menu: '카이센동 (시로)',
-        price: '2,000~4,000엔',
-        waiting: '현장 대기 1-2시간',
-        location: '니혼바시',
-        reason: '줄 서서 먹는 가치 있는 카이센동. SNS 필수 방문 맛집',
+        image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&q=85',
+        menu: '카이센동 시로',
+        price: '3,000엔~',
+        waiting: '웨이팅 2~3시간',
+        location: '닌교초',
+        reason: '두꺼운 참치와 연어, 성게가 넘치는 카이센동. 오픈 전부터 줄이 선다.',
       },
     ],
   },
   {
-    category: '🍜 라멘',
+    category: '라멘',
+    categoryEn: 'RAMEN',
     items: [
       {
-        name: '이치란',
-        image: 'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=600',
+        name: '이치란 라멘',
+        image: 'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=800&q=85',
         menu: '돈코츠 라멘',
-        price: '890엔~',
-        waiting: '10-30분',
-        location: '시부야, 신주쿠 등 다수',
-        reason: '1인 칸막이 좌석의 집중 라멘 체험. 입문용 도쿄 라멘',
+        price: '980엔~',
+        waiting: '15~30분',
+        location: '신주쿠·시부야',
+        reason: '1인 개별 칸막이석의 독특한 경험. 24시간 영업, 맛의 일관성.',
       },
       {
         name: '후운지',
-        image: 'https://images.unsplash.com/photo-1552611052-33e04de081de?w=600',
-        menu: '츠케멘',
-        price: '1,100엔~',
-        waiting: '30-60분',
+        image: 'https://images.unsplash.com/photo-1552611052-33e04de081de?w=800&q=85',
+        menu: '쓰케멘',
+        price: '1,000~1,500엔',
+        waiting: '30~60분',
         location: '신주쿠',
-        reason: '도쿄 최고의 츠케멘. 진한 어패류 육수와 두꺼운 면이 절묘',
-      },
-      {
-        name: '멘쇼 도쿄',
-        image: 'https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=600',
-        menu: '포기드 포크 라멘',
-        price: '1,500엔~',
-        waiting: '30-45분',
-        location: '분쿄',
-        reason: '혁신적인 파인 다이닝 라멘. 미슐랭 레스토랑 출신 셰프 운영',
+        reason: '일본 라멘 랭킹 최상위권의 진한 쓰케멘. 면과 수프의 농도가 예술.',
       },
     ],
   },
   {
-    category: '🥩 돈카츠',
+    category: '돈카츠',
+    categoryEn: 'TONKATSU',
     items: [
       {
         name: '카츠젠',
-        image: 'https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?w=600',
-        menu: '히레카츠 정식',
-        price: '2,500엔~',
-        waiting: '예약 권장',
-        location: '긴자',
-        reason: '부드러운 안심 돈카츠 전문. 정통 일본식 돈카츠의 진수',
+        image: 'https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?w=800&q=85',
+        menu: '로스카츠 정식',
+        price: '1,800~3,000엔',
+        waiting: '20~40분',
+        location: '아키하바라',
+        reason: '흑돼지를 사용한 바삭한 돈카츠. 샐러드와 된장국 리필 무제한.',
       },
     ],
   },
   {
-    category: '🥩 규카츠/소고기',
+    category: '규카츠',
+    categoryEn: 'GYU-KATSU',
     items: [
       {
         name: '규카츠 모토무라',
-        image: 'https://images.unsplash.com/photo-1558030006-450675393462?w=600',
+        image: 'https://images.unsplash.com/photo-1558030006-450675393462?w=800&q=85',
         menu: '규카츠 정식',
-        price: '1,800엔~',
-        waiting: '30-60분',
-        location: '시부야, 신주쿠 등',
-        reason: '레어로 구워 먹는 소고기 커틀릿. 한국인 최애 도쿄 음식',
+        price: '1,500~2,500엔',
+        waiting: '30~60분',
+        location: '시부야·신주쿠',
+        reason: '미디엄 레어로 튀긴 소고기 커틀릿. 돌판에 직접 굽는 재미까지.',
       },
       {
         name: '레드락',
-        image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600',
-        menu: '로스트비프 동',
-        price: '1,300엔~',
-        waiting: '오픈 런 필수',
+        image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=85',
+        menu: '로스트비프동',
+        price: '1,100엔~',
+        waiting: '1~2시간',
         location: '신주쿠',
-        reason: '두툼한 로스트비프 덮밥. 가성비 최고의 도쿄 소고기 맛집',
+        reason: '두툼한 로스트비프가 가득한 덮밥. SNS에서 항상 화제인 비주얼.',
       },
     ],
   },
   {
-    category: '🍡 디저트',
+    category: '디저트',
+    categoryEn: 'DESSERT',
     items: [
       {
-        name: '나카무라토우카시텐',
-        image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600',
-        menu: '화과자 세트',
-        price: '800엔~',
-        waiting: '예약 필수',
-        location: '기치조지',
-        reason: '100년 전통 화과자 명장. 계절 한정 화과자가 예술 작품 수준',
+        name: '나카무라 도킨',
+        image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=85',
+        menu: '말차 파르페',
+        price: '1,200~2,000엔',
+        waiting: '예약 권장',
+        location: '긴자',
+        reason: '100년 역사 말차 전문점의 파르페. 진한 교토 우지 말차의 풍미.',
       },
     ],
   },
 ]
 
-const SHOPPING_GROUPS = [
+const SHOPPING = [
   {
-    emoji: '💊',
-    label: '드럭스토어',
-    items: [
-      { num: 1, name: '마츠모토 키요시 스킨케어 세트', price: '¥2,000~5,000' },
-      { num: 2, name: '코세 클레어 비탈리 파운데이션', price: '¥1,500~3,000' },
-      { num: 3, name: '카네보 수분 크림 (하다비세이)', price: '¥1,800~4,000' },
-      { num: 4, name: '멘소레담 립크림', price: '¥500~800' },
-      { num: 5, name: '로토 쿨40 안약', price: '¥800~1,200' },
-      { num: 6, name: '오타이산 소화제', price: '¥1,000~1,500' },
-      { num: 7, name: '반도에이드 패치 (방수형)', price: '¥600~1,000' },
-      { num: 8, name: '비오레 선스틱 SPF50+', price: '¥900~1,400' },
-      { num: 9, name: '아네사 썬크림 (금병)', price: '¥1,200~2,000' },
-      { num: 10, name: 'DHC 딥 클렌징 오일', price: '¥1,000~1,800' },
+    label: 'ESSENTIALS',
+    title: '드럭스토어 필수템',
+    subtitle: '마쓰모토 키요시 & 코스모스',
+    description: '멜라논CC, 히루도이드, 쓰무라 한방약. 도쿄 드럭스토어는 한국인 여행자의 성지. 오사카 기준보다 1~2천엔 저렴한 경우도 많다.',
+    image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=1000&q=85',
+    tag: 'BEAUTY & HEALTH',
+  },
+  {
+    label: 'LIFESTYLE',
+    title: '무인양품의 철학',
+    subtitle: 'MUJI — 무지 긴자 플래그십',
+    description: '긴자 6층 플래그십 스토어에서만 만날 수 있는 한정 아이템들. 여행용품부터 인테리어까지, 단순함의 극치를 경험하라.',
+    image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1000&q=85',
+    tag: 'DESIGN & LIVING',
+  },
+  {
+    label: 'EXPERIENCE',
+    title: '돈키호테의 카오스',
+    subtitle: 'Don Quijote — 24시간의 보물창고',
+    description: '새벽 2시에도 열려있는 일본의 명물. 과자, 화장품, 의류, 가전이 뒤섞인 혼돈 속에서 의외의 보물을 발견하는 재미.',
+    image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1000&q=85',
+    tag: 'VARIETY & VALUE',
+  },
+]
+
+const ITINERARY = [
+  {
+    day: 'DAY 1',
+    theme: '시부야 & 하라주쿠',
+    color: '#C9A96E',
+    schedule: [
+      { time: '09:00', place: '메이지 신궁', desc: '고요한 숲 속 산책으로 도쿄 여행 시작' },
+      { time: '11:00', place: '다케시타 도리', desc: '하라주쿠 팝컬처 거리 탐방' },
+      { time: '13:00', place: '오모테산도', desc: '플래그십 숍과 카페에서 점심' },
+      { time: '16:00', place: '시부야 스크램블', desc: '스크램블 교차로의 골든아워' },
+      { time: '19:00', place: '시부야 스트림', desc: '루프탑 바에서 저녁과 야경' },
     ],
   },
   {
-    emoji: '🛒',
-    label: '돈키호테',
-    items: [
-      { num: 11, name: '기린 알코올 젤리 (하이볼)', price: '¥500~700' },
-      { num: 12, name: '칼피스 과자 세트', price: '¥800~1,200' },
-      { num: 13, name: '가나 초콜릿 대용량', price: '¥400~700' },
-      { num: 14, name: '산리오 한정 굿즈', price: '¥1,000~3,000' },
-      { num: 15, name: '마쓰야 황금 카레 루', price: '¥400~600' },
+    day: 'DAY 2',
+    theme: '아사쿠사 & 도쿄 스카이트리',
+    color: '#8B7355',
+    schedule: [
+      { time: '08:30', place: '센소지', desc: '이른 아침 카미나리몬과 나카미세 거리' },
+      { time: '11:00', place: '도쿄 스카이트리', desc: '634m 전망대에서 도쿄 전경 감상' },
+      { time: '14:00', place: '나카메구로', desc: '메구로 강변 카페와 빈티지 숍 탐방' },
+      { time: '18:00', place: '다이칸야마', desc: '츠타야 서점과 레스토랑 거리' },
+      { time: '20:00', place: '에비스', desc: '야에바루에서 오키나와 요리 디너' },
     ],
   },
   {
-    emoji: '🪴',
-    label: '무인양품 (MUJI)',
-    items: [
-      { num: 16, name: '무인양품 아로마 디퓨저', price: '¥3,000~5,000' },
-      { num: 17, name: '무인양품 여권 케이스', price: '¥1,500~2,500' },
-      { num: 18, name: '무인양품 습식 티슈 (대형)', price: '¥300~500' },
+    day: 'DAY 3',
+    theme: '팀랩 & 오다이바',
+    color: '#4A6741',
+    schedule: [
+      { time: '10:00', place: '팀랩 플래닛', desc: '몰입형 디지털 아트 체험 (사전예약 필수)' },
+      { time: '13:00', place: '오다이바', desc: '레인보우 브리지 전망과 쇼핑' },
+      { time: '16:00', place: '아키하바라', desc: '전자상가와 애니메이션 성지 방문' },
+      { time: '19:00', place: '우에노', desc: '아메요코 시장에서 저녁 식사' },
     ],
   },
   {
-    emoji: '👕',
-    label: '유니클로',
-    items: [
-      { num: 19, name: '유니클로 × 한정 콜라보 T셔츠', price: '¥1,500~2,000' },
-      { num: 20, name: '에어리즘 쿨넥 (일본 한정 색상)', price: '¥1,200~1,500' },
-      { num: 21, name: '히트텍 극한 (일본 전용 라인업)', price: '¥1,500~2,000' },
-    ],
-  },
-  {
-    emoji: '🎮',
-    label: '캐릭터/전자',
-    items: [
-      { num: 22, name: '닌텐도 스위치 한정판 게임', price: '¥5,000~7,000' },
-      { num: 23, name: '포켓몬 센터 한정 인형', price: '¥2,000~5,000' },
-      { num: 24, name: '가챠 기계 캐릭터', price: '¥200~500/회' },
-      { num: 25, name: 'AirPods 케이스 (일본 한정)', price: '¥3,000~6,000' },
-      { num: 26, name: '헬로키티 오리지널 굿즈', price: '¥1,000~4,000' },
-      { num: 27, name: '세가 크레인 게임 인형', price: '¥200~500/회' },
-    ],
-  },
-  {
-    emoji: '🏪',
-    label: '로프트',
-    items: [
-      { num: 28, name: '로프트 디자인 문구 세트', price: '¥500~2,000' },
-      { num: 29, name: '마스킹 테이프 (mt 한정)', price: '¥300~800' },
-      { num: 30, name: '일본 인테리어 소품 잡화', price: '¥500~3,000' },
+    day: 'DAY 4',
+    theme: '긴자 & 시모키타자와',
+    color: '#2D4A6B',
+    schedule: [
+      { time: '10:00', place: '긴자 식스', desc: '긴자 최고급 쇼핑몰 탐방' },
+      { time: '13:00', place: '츠키지 외시장', desc: '해산물 런치와 길거리 음식' },
+      { time: '15:00', place: '시모키타자와', desc: '빈티지 숍과 라이브 하우스 거리' },
+      { time: '18:00', place: '시모키타자와', desc: '골목 카레 맛집에서 마지막 저녁' },
+      { time: '20:00', place: '신주쿠', desc: '골든 가이 야경으로 도쿄 여행 마무리' },
     ],
   },
 ]
 
-const ITINERARY_YOUNG = [
+const TRENDS = [
   {
-    day: 1,
-    title: '도착 & 시부야·하라주쿠',
-    items: [
-      { time: '12:00', activity: '하네다/나리타 도착, 호텔 체크인' },
-      { time: '14:00', activity: '하라주쿠 다케시타 거리 탐방' },
-      { time: '15:30', activity: '오모테산도 카페 투어' },
-      { time: '17:30', activity: '시부야 스크램블 교차로 & 쇼핑' },
-      { time: '20:00', activity: '이치란 라멘 저녁 식사' },
-    ],
+    tag: '#도쿄카페투어',
+    title: '감성 카페 순례',
+    desc: '나카메구로 오니버스, 시모키타자와 커피 수프림, 긴자 폴 바셋. 도쿄의 스페셜티 카페 씬은 서울보다 한발 앞서 있다.',
+    image: 'https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=800&q=85',
+    height: '280px',
   },
   {
-    day: 2,
-    title: '아사쿠사·우에노·나카메구로',
-    items: [
-      { time: '09:00', activity: '아사쿠사 센소지 & 나카미세 쇼핑' },
-      { time: '12:00', activity: '우에노 공원 점심 피크닉' },
-      { time: '14:00', activity: '아메요코 쇼핑 거리' },
-      { time: '16:00', activity: '나카메구로 메구로 강변 카페' },
-      { time: '19:00', activity: '규카츠 모토무라 저녁' },
-    ],
+    tag: '#팀랩플래닛',
+    title: '몰입형 아트 체험',
+    desc: '2024 세계 3대 미술관에 선정된 팀랩 플래닛. 물 위를 걷는 미러 공간과 수천 개의 등불이 만드는 우주.',
+    image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=85',
+    height: '220px',
   },
   {
-    day: 3,
-    title: '신주쿠·시모키타자와',
-    items: [
-      { time: '09:30', activity: '신주쿠 고엔 산책' },
-      { time: '12:00', activity: '카츠젠 돈카츠 런치' },
-      { time: '14:00', activity: '신주쿠 쇼핑 (이세탄, 타카시마야)' },
-      { time: '17:00', activity: '시모키타자와 빈티지 숍 탐방' },
-      { time: '20:00', activity: '시모키타자와 라이브 공연 관람' },
-    ],
+    tag: '#도쿄야시장',
+    title: '야간 그루밍 마켓',
+    desc: '히비야 파크 야외 마켓, 요요기 파크 파머스 마켓. 주말마다 열리는 로컬 마켓은 도쿄의 새로운 사교 공간.',
+    image: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=85',
+    height: '320px',
   },
   {
-    day: 4,
-    title: '팀랩·오다이바·이케부쿠로',
-    items: [
-      { time: '10:00', activity: '팀랩 플래닛 (예약 필수)' },
-      { time: '13:00', activity: '오다이바 다이버시티 점심 & 쇼핑' },
-      { time: '16:00', activity: '이케부쿠로 선샤인 시티' },
-      { time: '18:30', activity: '이케부쿠로 야키토리 골목' },
-      { time: '21:00', activity: '신주쿠 골든가이 바 호핑' },
-    ],
+    tag: '#오모테산도힐즈',
+    title: '아키텍처 쇼핑',
+    desc: '안도 다다오 설계의 오모테산도 힐즈. 쇼핑몰이 건축 기행의 목적지가 되는 도시, 도쿄.',
+    image: 'https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?w=800&q=85',
+    height: '240px',
   },
   {
-    day: 5,
-    title: '긴자·쇼핑·귀국',
-    items: [
-      { time: '09:00', activity: '긴자 모닝 커피 & 산책' },
-      { time: '10:00', activity: '긴자 식스 & 마지막 쇼핑' },
-      { time: '12:30', activity: '츠지한 카이센동 런치' },
-      { time: '14:30', activity: '돈키호테 마지막 쇼핑' },
-      { time: '17:00', activity: '공항 이동 및 귀국' },
-    ],
+    tag: '#신주쿠골든가이',
+    title: '골목 이자카야 문화',
+    desc: '200개 남짓한 작은 바가 밀집한 골든 가이. 낯선 이와 술잔 기울이는 것이 이 골목의 예절이다.',
+    image: 'https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?w=800&q=85',
+    height: '300px',
+  },
+  {
+    tag: '#도쿄빈티지',
+    title: '고수의 빈티지 헌팅',
+    desc: '시모키타자와 빈티지 메카. 플리크 빈티지, 레트로픽, 비스. 1980~90년대 일본 데님과 아메카지를 찾아라.',
+    image: 'https://images.unsplash.com/photo-1604928141064-207cea6f571f?w=800&q=85',
+    height: '260px',
   },
 ]
 
-const ITINERARY_COUPLE = [
-  {
-    day: 1,
-    title: '로맨틱 아사쿠사·나카메구로',
-    items: [
-      { time: '11:00', activity: '나리타/하네다 도착, 호텔 체크인' },
-      { time: '14:00', activity: '아사쿠사 센소지 커플 소원 빌기' },
-      { time: '16:00', activity: '나카미세 화과자 쇼핑' },
-      { time: '18:00', activity: '나카메구로 강변 석양 산책' },
-      { time: '20:00', activity: '나카메구로 분위기 좋은 이탈리안' },
-    ],
-  },
-  {
-    day: 2,
-    title: '오모테산도·신주쿠 야경',
-    items: [
-      { time: '10:00', activity: '오모테산도 갤러리 & 브런치 카페' },
-      { time: '13:00', activity: '히나스시 스시 런치' },
-      { time: '15:00', activity: '요요기 공원 피크닉' },
-      { time: '17:30', activity: '시부야 스카이 야경 (예약 필수)' },
-      { time: '20:30', activity: '신주쿠 분위기 레스토랑 디너' },
-    ],
-  },
-  {
-    day: 3,
-    title: '팀랩·오다이바 데이트',
-    items: [
-      { time: '10:00', activity: '팀랩 플래닛 몰입형 아트 체험' },
-      { time: '13:00', activity: '오다이바 레인보우 브릿지 뷰' },
-      { time: '15:00', activity: '오다이바 쇼핑 & 온천 체험' },
-      { time: '19:00', activity: '베이뷰 레스토랑 석식' },
-      { time: '21:00', activity: '오다이바 야경 산책' },
-    ],
-  },
-  {
-    day: 4,
-    title: '하코네 당일치기 (선택)',
-    items: [
-      { time: '08:00', activity: '신주쿠역에서 로망스카 탑승' },
-      { time: '10:30', activity: '하코네 오픈에어 뮤지엄' },
-      { time: '13:00', activity: '하코네 온천 료칸 점심' },
-      { time: '15:00', activity: '아시노코 호수 유람선' },
-      { time: '18:00', activity: '도쿄 복귀, 긴자 저녁' },
-    ],
-  },
-  {
-    day: 5,
-    title: '긴자·쇼핑·귀국',
-    items: [
-      { time: '09:30', activity: '긴자 모닝 세트 카페' },
-      { time: '11:00', activity: '커플 기념품 쇼핑 (긴자식스)' },
-      { time: '13:00', activity: '로스트비프 레드락 런치' },
-      { time: '15:00', activity: '돈키호테 마지막 쇼핑' },
-      { time: '17:00', activity: '공항 이동 및 귀국' },
-    ],
-  },
-]
-
-const SNS_TRENDS = [
-  { rank: 1, text: '시부야 스카이 야경샷 (시부야 스크램블 교차로 뷰)', hot: true },
-  { rank: 2, text: '팀랩 플래닛 몰입형 반영 샷', hot: true },
-  { rank: 3, text: '메구로 강변 벚꽃/단풍 산책 릴스', hot: true },
-  { rank: 4, text: '아사쿠사 센소지 인력거 체험', hot: false },
-  { rank: 5, text: '나카미세 닝교야키 먹방', hot: true },
-  { rank: 6, text: '오모테산도 힐즈 나선형 계단', hot: false },
-  { rank: 7, text: '세계 최대 스타벅스 리저브 (나카메구로)', hot: true },
-  { rank: 8, text: '다케시타 거리 카와이이 패션 룩북', hot: false },
-  { rank: 9, text: '츠지한 카이센동 언박싱 먹방', hot: false },
-  { rank: 10, text: '신주쿠 골든가이 네온사인 야간 산책', hot: true },
-  { rank: 11, text: '하라주쿠 마리온 크레이프 리뷰', hot: false },
-  { rank: 12, text: '도쿄 스카이트리 야경', hot: false },
-  { rank: 13, text: '팀랩 보더리스 리오픈 첫 방문 리뷰', hot: true },
-  { rank: 14, text: '규카츠 모토무라 먹방', hot: false },
-  { rank: 15, text: '포켓몬 카페 한정 메뉴 공략', hot: true },
-  { rank: 16, text: '이케부쿠로 선샤인 수족관 셀카', hot: false },
-  { rank: 17, text: '도쿄 마트 쇼핑 하울 (드럭스토어 TOP 10)', hot: true },
-  { rank: 18, text: '아메요코 길거리 음식 투어', hot: false },
-  { rank: 19, text: '하코네 료칸 프라이빗 온천 브이로그', hot: false },
-  { rank: 20, text: '도쿄 벚꽃/단풍 시즌 최적 스팟 정리', hot: true },
-]
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function SectionHeading({ number, title, id }: { number: string; title: string; id: string }) {
+export default function Tokyo2026Page() {
   return (
-    <div id={id} className="relative mb-12 pt-4 scroll-mt-24">
-      <span
-        className="absolute -top-4 left-0 text-8xl font-black leading-none select-none pointer-events-none"
-        style={{ color: '#1A1A2E', opacity: 0.07 }}
-      >
-        {number}
-      </span>
-      <div className="relative">
-        <p className="text-xs font-semibold tracking-[0.3em] uppercase mb-2" style={{ color: '#E8B86D' }}>
-          Section {number}
-        </p>
-        <h2
-          className="text-3xl md:text-4xl font-bold leading-tight"
-          style={{ color: '#1A1A2E', fontFamily: 'var(--font-playfair), Georgia, serif' }}
-        >
-          {title}
-        </h2>
-      </div>
-    </div>
-  )
-}
+    <div
+      className={`${playfair.variable} ${cormorant.variable} ${inter.variable}`}
+      style={{ fontFamily: 'var(--font-inter)', color: '#2D2D2D', backgroundColor: '#FAFAF8' }}
+    >
+      <ScrollAnimator />
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
-export default function TokyoMagazinePage() {
-  return (
-    <div className={`${playfair.variable}`} style={{ backgroundColor: '#FAFAF8', color: '#2D2D2D' }}>
-      {/* ── Hero ── */}
-      <section className="relative h-[60vh] min-h-[400px] flex items-end overflow-hidden">
+      {/* HERO — 100vh fullscreen */}
+      <section className="relative h-screen overflow-hidden">
         <Image
-          src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1600"
-          alt="도쿄 야경"
+          src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1920&q=90"
+          alt="Tokyo skyline at night"
           fill
-          priority
           className="object-cover"
-          sizes="100vw"
+          priority
         />
-        {/* Overlay */}
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(26,26,46,0.95) 0%, rgba(26,26,46,0.4) 60%, transparent 100%)' }} />
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 pb-12 md:pb-16">
-          <div className="max-w-2xl">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="px-3 py-1 rounded-full text-xs font-semibold text-white" style={{ backgroundColor: '#E8B86D' }}>
-                일본 · 도쿄
-              </span>
-              <span className="text-white/60 text-sm">2026 최신판</span>
-            </div>
-            <h1
-              className="text-4xl md:text-6xl font-black text-white mb-4 leading-tight"
-              style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}
-            >
-              2026 도쿄 여행
-              <br />
-              <span style={{ color: '#E8B86D' }}>완벽 가이드</span>
-            </h1>
-            <p className="text-white/80 text-lg leading-relaxed">
-              인기 지역 TOP 10 · 한국인 맛집 · 쇼핑 리스트 TOP 30 · 4박5일 일정
-            </p>
-          </div>
+        <div
+          className="absolute inset-0"
+          style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.15) 60%, transparent 100%)' }}
+        />
+        {/* Issue badge */}
+        <div className="absolute top-8 right-8 text-right">
+          <p style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.55)', fontSize: '10px', letterSpacing: '0.2em', fontWeight: 300 }}>
+            VOYRA MAGAZINE
+          </p>
+          <p style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.55)', fontSize: '10px', letterSpacing: '0.15em' }}>
+            TOKYO ISSUE 2026
+          </p>
+        </div>
+        {/* Hero text — bottom left */}
+        <div className="absolute bottom-0 left-0 p-10 md:p-16 max-w-3xl">
+          <p
+            className="mb-4"
+            style={{ fontFamily: 'var(--font-inter)', color: '#C9A96E', fontSize: '11px', letterSpacing: '0.3em', fontWeight: 400 }}
+          >
+            SPECIAL EDITION
+          </p>
+          <h1
+            className="mb-6 leading-none"
+            style={{
+              fontFamily: 'var(--font-playfair)',
+              color: '#FFFFFF',
+              fontSize: 'clamp(52px, 9vw, 120px)',
+              fontWeight: 900,
+              fontStyle: 'italic',
+            }}
+          >
+            Tokyo
+            <br />
+            <span style={{ fontWeight: 400, fontStyle: 'normal', fontSize: '0.55em', letterSpacing: '0.08em' }}>2026</span>
+          </h1>
+          <p
+            style={{
+              fontFamily: 'var(--font-cormorant)',
+              color: 'rgba(255,255,255,0.85)',
+              fontSize: 'clamp(18px, 2.5vw, 26px)',
+              fontWeight: 300,
+              fontStyle: 'italic',
+              lineHeight: 1.5,
+            }}
+          >
+            세계에서 가장 복잡하고 아름다운 도시,<br />
+            그 모든 것을 담은 완벽한 가이드
+          </p>
+        </div>
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 right-10 flex flex-col items-center gap-2">
+          <div className="w-px h-16 bg-white opacity-40" />
+          <p style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.4)', fontSize: '9px', letterSpacing: '0.25em', writingMode: 'vertical-rl' }}>
+            SCROLL
+          </p>
         </div>
       </section>
 
-      {/* ── Layout wrapper ── */}
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <div className="flex gap-12">
+      {/* MAIN LAYOUT — sidebar TOC + content */}
+      <div className="max-w-screen-2xl mx-auto px-4 md:px-8 lg:px-12">
+        <div className="flex gap-12 lg:gap-20">
           {/* Sidebar TOC */}
-          <aside className="w-56 shrink-0">
+          <aside className="hidden lg:block w-48 shrink-0 pt-20">
             <TOC sections={TOC_SECTIONS} />
           </aside>
 
           {/* Main content */}
-          <article className="flex-1 min-w-0 space-y-24">
+          <main className="flex-1 min-w-0">
 
-            {/* ────────────── SECTION 1: 인기 지역 TOP 10 ────────────── */}
-            <section>
-              <SectionHeading id="section-1" number="01" title="도쿄 인기 지역 TOP 10" />
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {LOCATIONS.map((loc) => (
-                  <div
-                    key={loc.number}
-                    className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200"
+            {/* ── CHAPTER 1: TOKYO NOW ── */}
+            <section id="ch1" className="py-20 md:py-28">
+              <div className="fade-up">
+                <p style={{ fontFamily: 'var(--font-inter)', color: '#C9A96E', fontSize: '10px', letterSpacing: '0.35em', fontWeight: 500 }} className="mb-3">
+                  CHAPTER 01
+                </p>
+                <h2
+                  style={{
+                    fontFamily: 'var(--font-playfair)',
+                    fontSize: 'clamp(36px, 6vw, 72px)',
+                    fontWeight: 900,
+                    lineHeight: 1.05,
+                    color: '#1A1A2E',
+                  }}
+                  className="mb-8"
+                >
+                  Tokyo
+                  <br />
+                  <em style={{ fontWeight: 400, color: '#C9A96E' }}>Now</em>
+                </h2>
+              </div>
+
+              {/* 50/50 split layout */}
+              <div className="grid lg:grid-cols-2 gap-0 items-stretch mt-12 fade-up">
+                {/* Text side */}
+                <div
+                  className="p-10 md:p-14 flex flex-col justify-center"
+                  style={{ backgroundColor: '#1A1A2E' }}
+                >
+                  <p
+                    className="mb-6"
+                    style={{
+                      fontFamily: 'var(--font-cormorant)',
+                      color: '#C9A96E',
+                      fontSize: 'clamp(24px, 3.5vw, 42px)',
+                      fontWeight: 300,
+                      fontStyle: 'italic',
+                      lineHeight: 1.35,
+                    }}
                   >
-                    <div className="relative h-[200px]">
-                      <Image
-                        src={loc.image}
-                        alt={`${loc.name} ${loc.japanese}`}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
-                      {/* Number badge */}
-                      <div
-                        className="absolute top-3 left-3 w-9 h-9 rounded-full flex items-center justify-center text-sm font-black text-white shadow-lg"
-                        style={{ backgroundColor: '#E8B86D' }}
-                      >
-                        {loc.number}
-                      </div>
-                    </div>
-                    <div className="p-4">
-                      <div className="flex items-baseline justify-between mb-1">
-                        <h3 className="text-lg font-bold" style={{ color: '#1A1A2E' }}>
-                          {loc.name}
-                        </h3>
-                        <span className="text-xs text-gray-400">{loc.japanese}</span>
-                      </div>
-                      <span
-                        className="inline-block text-xs font-medium px-2.5 py-0.5 rounded-full text-white mb-3"
-                        style={{ backgroundColor: '#FF5722' }}
-                      >
-                        {loc.tag}
-                      </span>
-                      <p className="text-sm text-gray-600 mb-3 leading-relaxed">{loc.desc}</p>
-                      <div className="space-y-1 text-xs text-gray-500">
-                        <div className="flex gap-2">
-                          <span className="font-medium text-gray-700 w-20 shrink-0">추천 시간</span>
-                          <span>{loc.recommendTime}</span>
+                    "도쿄는 끊임없이<br />자신을 재발명한다."
+                  </p>
+                  <p style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.7)', fontSize: '15px', lineHeight: 1.8, fontWeight: 300 }}>
+                    2026년의 도쿄는 2020 올림픽 이후 더욱 세련되어졌다. 시부야 재개발 3기가 마무리되고, 팀랩 플래닛은 세계 최고 몰입형 미술관으로 자리잡았다. 도쿄의 오래된 것들은 여전히 완벽하게 작동하고, 새로운 것들은 더 대담해졌다.
+                  </p>
+                  <div className="mt-10 pt-8" style={{ borderTop: '1px solid rgba(201,169,110,0.3)' }}>
+                    <div className="grid grid-cols-3 gap-6">
+                      {[
+                        { num: '14M', label: '연간 방문자' },
+                        { num: '23区', label: '도쿄 구역' },
+                        { num: '200+', label: '미슐랭 레스토랑' },
+                      ].map((stat) => (
+                        <div key={stat.label}>
+                          <p style={{ fontFamily: 'var(--font-playfair)', color: '#C9A96E', fontSize: '28px', fontWeight: 700 }}>{stat.num}</p>
+                          <p style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.45)', fontSize: '11px', letterSpacing: '0.1em' }}>{stat.label}</p>
                         </div>
-                        <div className="flex gap-2">
-                          <span className="font-medium text-gray-700 w-20 shrink-0">인스타 명소</span>
-                          <span>{loc.instagramSpot}</span>
-                        </div>
-                        <div className="flex gap-2">
-                          <span className="font-medium text-gray-700 w-20 shrink-0">주변</span>
-                          <span>{loc.nearby}</span>
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   </div>
-                ))}
+                </div>
+                {/* Image side */}
+                <div className="relative h-[440px] lg:h-auto lg:min-h-[440px]">
+                  <Image
+                    src="https://images.unsplash.com/photo-1533050487297-09b450131914?w=900&q=90"
+                    alt="Tokyo streets"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+
+              {/* Pull quote */}
+              <div className="mt-20 fade-up text-center max-w-2xl mx-auto">
+                <p
+                  style={{
+                    fontFamily: 'var(--font-cormorant)',
+                    fontSize: 'clamp(22px, 3.5vw, 36px)',
+                    fontWeight: 300,
+                    fontStyle: 'italic',
+                    color: '#1A1A2E',
+                    lineHeight: 1.55,
+                  }}
+                >
+                  가장 오래된 전통과 가장 새로운 기술이<br />한 골목 안에 공존하는 유일한 도시.
+                </p>
+                <div className="mt-6 flex items-center justify-center gap-4">
+                  <div className="h-px w-12" style={{ backgroundColor: '#C9A96E' }} />
+                  <p style={{ fontFamily: 'var(--font-inter)', color: '#C9A96E', fontSize: '11px', letterSpacing: '0.2em' }}>VOYRA EDITORIAL</p>
+                  <div className="h-px w-12" style={{ backgroundColor: '#C9A96E' }} />
+                </div>
               </div>
             </section>
 
-            {/* ────────────── SECTION 2: 맛집 ────────────── */}
-            <section>
-              <SectionHeading id="section-2" number="02" title="한국인 인기 맛집" />
-              <div className="space-y-10">
-                {RESTAURANTS.map((group) => (
-                  <div key={group.category}>
-                    <div className="flex items-center gap-4 mb-5">
-                      <h3 className="text-xl font-bold" style={{ color: '#1A1A2E' }}>{group.category}</h3>
-                      <div className="flex-1 h-px bg-gray-200" />
+            {/* ── CHAPTER 2: THE DISTRICTS ── */}
+            <section id="ch2" className="py-4">
+              <div className="fade-up mb-16 py-16">
+                <p style={{ fontFamily: 'var(--font-inter)', color: '#C9A96E', fontSize: '10px', letterSpacing: '0.35em', fontWeight: 500 }} className="mb-3">
+                  CHAPTER 02
+                </p>
+                <h2
+                  style={{
+                    fontFamily: 'var(--font-playfair)',
+                    fontSize: 'clamp(36px, 6vw, 72px)',
+                    fontWeight: 900,
+                    lineHeight: 1.05,
+                    color: '#1A1A2E',
+                  }}
+                >
+                  The
+                  <br />
+                  <em style={{ fontWeight: 400, color: '#C9A96E' }}>Districts</em>
+                </h2>
+                <p className="mt-6 max-w-xl" style={{ fontFamily: 'var(--font-inter)', color: '#6B7280', fontSize: '15px', lineHeight: 1.8 }}>
+                  도쿄의 각 동네는 마치 독립된 도시처럼 각자의 문화와 정체성을 갖는다. 5개의 핵심 구역을 소개한다.
+                </p>
+              </div>
+
+              <div className="space-y-0 -mx-4 md:-mx-8 lg:-mx-12">
+                {DISTRICTS.map((district, i) => {
+                  if (district.layout === 'fullscreen') {
+                    return (
+                      <div key={district.name} className="relative h-[85vh] overflow-hidden fade-up">
+                        <Image src={district.image} alt={district.name} fill className="object-cover" />
+                        <div
+                          className="absolute inset-0"
+                          style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.25) 65%, transparent 100%)' }}
+                        />
+                        <div className="absolute inset-0 flex flex-col justify-center px-10 md:px-20 max-w-2xl">
+                          <p style={{ fontFamily: 'var(--font-inter)', color: '#C9A96E', fontSize: '10px', letterSpacing: '0.4em', fontWeight: 500 }} className="mb-3">
+                            {String(i + 1).padStart(2, '0')} / {district.nameEn}
+                          </p>
+                          <h3
+                            style={{
+                              fontFamily: 'var(--font-playfair)',
+                              color: '#FFFFFF',
+                              fontSize: 'clamp(44px, 8vw, 96px)',
+                              fontWeight: 700,
+                              lineHeight: 1,
+                            }}
+                            className="mb-4"
+                          >
+                            {district.name}
+                          </h3>
+                          <p style={{ fontFamily: 'var(--font-cormorant)', color: 'rgba(255,255,255,0.75)', fontSize: '21px', fontStyle: 'italic' }} className="mb-4">
+                            {district.tagline}
+                          </p>
+                          <p style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.62)', fontSize: '14px', lineHeight: 1.75 }}>
+                            {district.description}
+                          </p>
+                        </div>
+                      </div>
+                    )
+                  }
+
+                  if (district.layout === 'split') {
+                    const isEven = i % 2 === 0
+                    const isDark = i === 3
+                    return (
+                      <div key={district.name} className="grid md:grid-cols-2 fade-up">
+                        <div className={`relative h-[55vh] md:h-[65vh] ${isEven ? 'md:order-1' : 'md:order-2'}`}>
+                          <Image src={district.image} alt={district.name} fill className="object-cover" />
+                        </div>
+                        <div
+                          className={`flex flex-col justify-center px-10 md:px-14 py-14 ${isEven ? 'md:order-2' : 'md:order-1'}`}
+                          style={{ backgroundColor: isDark ? '#1A1A2E' : '#F5F0E8' }}
+                        >
+                          <p style={{ fontFamily: 'var(--font-inter)', color: '#C9A96E', fontSize: '10px', letterSpacing: '0.4em', fontWeight: 500 }} className="mb-3">
+                            {String(i + 1).padStart(2, '0')} / {district.nameEn}
+                          </p>
+                          <h3
+                            style={{
+                              fontFamily: 'var(--font-playfair)',
+                              color: isDark ? '#FFFFFF' : '#1A1A2E',
+                              fontSize: 'clamp(32px, 5vw, 64px)',
+                              fontWeight: 700,
+                              lineHeight: 1.05,
+                            }}
+                            className="mb-3"
+                          >
+                            {district.name}
+                          </h3>
+                          <p style={{ fontFamily: 'var(--font-cormorant)', color: '#C9A96E', fontSize: '20px', fontStyle: 'italic' }} className="mb-4">
+                            {district.tagline}
+                          </p>
+                          <p style={{ fontFamily: 'var(--font-inter)', color: isDark ? 'rgba(255,255,255,0.62)' : '#6B7280', fontSize: '14px', lineHeight: 1.78 }}>
+                            {district.description}
+                          </p>
+                        </div>
+                      </div>
+                    )
+                  }
+
+                  // centered overlay
+                  return (
+                    <div key={district.name} className="relative h-[72vh] overflow-hidden fade-up">
+                      <Image src={district.image} alt={district.name} fill className="object-cover" />
+                      <div className="absolute inset-0" style={{ backgroundColor: 'rgba(0,0,0,0.48)' }} />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-8">
+                        <p style={{ fontFamily: 'var(--font-inter)', color: '#C9A96E', fontSize: '10px', letterSpacing: '0.4em', fontWeight: 500 }} className="mb-3">
+                          {String(i + 1).padStart(2, '0')} / {district.nameEn}
+                        </p>
+                        <h3
+                          style={{
+                            fontFamily: 'var(--font-playfair)',
+                            color: '#FFFFFF',
+                            fontSize: 'clamp(44px, 8vw, 96px)',
+                            fontWeight: 700,
+                            lineHeight: 1,
+                          }}
+                          className="mb-3"
+                        >
+                          {district.name}
+                        </h3>
+                        <p style={{ fontFamily: 'var(--font-cormorant)', color: 'rgba(255,255,255,0.8)', fontSize: '22px', fontStyle: 'italic' }} className="mb-4">
+                          {district.tagline}
+                        </p>
+                        <p style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.62)', fontSize: '14px', lineHeight: 1.75, maxWidth: '500px' }}>
+                          {district.description}
+                        </p>
+                      </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {group.items.map((r) => (
-                        <div key={r.name} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 flex">
-                          <div className="relative w-28 shrink-0">
+                  )
+                })}
+              </div>
+            </section>
+
+            {/* ── CHAPTER 3: TASTE OF TOKYO ── */}
+            <section
+              id="ch3"
+              className="py-20 md:py-28 -mx-4 md:-mx-8 lg:-mx-12 px-4 md:px-8 lg:px-12"
+              style={{ backgroundColor: '#1A1A2E' }}
+            >
+              <div className="fade-up mb-16">
+                <p style={{ fontFamily: 'var(--font-inter)', color: '#C9A96E', fontSize: '10px', letterSpacing: '0.35em', fontWeight: 500 }} className="mb-3">
+                  CHAPTER 03
+                </p>
+                <h2
+                  style={{
+                    fontFamily: 'var(--font-playfair)',
+                    fontSize: 'clamp(36px, 6vw, 72px)',
+                    fontWeight: 900,
+                    lineHeight: 1.05,
+                    color: '#FFFFFF',
+                  }}
+                >
+                  Taste of
+                  <br />
+                  <em style={{ fontWeight: 400, color: '#C9A96E' }}>Tokyo</em>
+                </h2>
+                <p className="mt-6 max-w-xl" style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.5)', fontSize: '15px', lineHeight: 1.8 }}>
+                  세계 최다 미슐랭 레스토랑의 도시. 한국인이 사랑하는 도쿄 맛집 정수를 모았다.
+                </p>
+              </div>
+
+              <div className="space-y-16">
+                {RESTAURANTS.map((cat) => (
+                  <div key={cat.category} className="fade-up">
+                    <div className="flex items-baseline gap-4 mb-8">
+                      <h3
+                        style={{
+                          fontFamily: 'var(--font-playfair)',
+                          color: '#C9A96E',
+                          fontSize: 'clamp(20px, 3vw, 30px)',
+                          fontWeight: 700,
+                          fontStyle: 'italic',
+                        }}
+                      >
+                        {cat.category}
+                      </h3>
+                      <span style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.2)', fontSize: '11px', letterSpacing: '0.25em' }}>
+                        {cat.categoryEn}
+                      </span>
+                    </div>
+
+                    <div className={`grid gap-6 ${cat.items.length === 1 ? 'md:grid-cols-1 max-w-lg' : 'md:grid-cols-2'}`}>
+                      {cat.items.map((item) => (
+                        <div
+                          key={item.name}
+                          className="overflow-hidden group"
+                          style={{ backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,169,110,0.15)' }}
+                        >
+                          <div className="relative h-52 overflow-hidden">
                             <Image
-                              src={r.image}
-                              alt={r.name}
+                              src={item.image}
+                              alt={item.name}
                               fill
-                              className="object-cover"
-                              sizes="112px"
+                              className="object-cover transition-transform duration-700 group-hover:scale-105"
                             />
                           </div>
-                          <div className="p-4 flex-1">
-                            <p className="font-bold text-base mb-1" style={{ color: '#1A1A2E' }}>{r.name}</p>
-                            <p className="text-sm text-gray-500 mb-2">{r.menu}</p>
-                            <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-xs text-gray-500">
-                              <span><span className="text-gray-700 font-medium">가격</span> {r.price}</span>
-                              <span><span className="text-gray-700 font-medium">위치</span> {r.location}</span>
-                              <span className="col-span-2"><span className="text-gray-700 font-medium">웨이팅</span> {r.waiting}</span>
+                          <div className="p-6">
+                            <div className="flex items-start justify-between mb-2 gap-2">
+                              <h4 style={{ fontFamily: 'var(--font-playfair)', color: '#FFFFFF', fontSize: '20px', fontWeight: 700 }}>
+                                {item.name}
+                              </h4>
+                              <span style={{ fontFamily: 'var(--font-inter)', color: '#C9A96E', fontSize: '11px', backgroundColor: 'rgba(201,169,110,0.12)', padding: '2px 8px', whiteSpace: 'nowrap' }}>
+                                {item.location}
+                              </span>
                             </div>
-                            <p className="text-xs text-gray-400 mt-2 leading-relaxed">{r.reason}</p>
+                            <p style={{ fontFamily: 'var(--font-cormorant)', color: 'rgba(255,255,255,0.55)', fontSize: '16px', fontStyle: 'italic' }} className="mb-3">
+                              {item.menu}
+                            </p>
+                            <p style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.5)', fontSize: '13px', lineHeight: 1.72 }} className="mb-4">
+                              {item.reason}
+                            </p>
+                            <div className="flex gap-6 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+                              <div>
+                                <p style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.25)', fontSize: '10px', letterSpacing: '0.12em' }}>PRICE</p>
+                                <p style={{ fontFamily: 'var(--font-inter)', color: '#C9A96E', fontSize: '13px', fontWeight: 500 }}>{item.price}</p>
+                              </div>
+                              <div>
+                                <p style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.25)', fontSize: '10px', letterSpacing: '0.12em' }}>WAIT</p>
+                                <p style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.55)', fontSize: '13px' }}>{item.waiting}</p>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -648,164 +721,299 @@ export default function TokyoMagazinePage() {
               </div>
             </section>
 
-            {/* ────────────── SECTION 3: 쇼핑 TOP 30 ────────────── */}
-            <section>
-              <SectionHeading id="section-3" number="03" title="쇼핑 리스트 TOP 30" />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {SHOPPING_GROUPS.map((group) => (
-                  <div key={group.label} className="bg-white rounded-2xl p-6 shadow-sm">
-                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: '#1A1A2E' }}>
-                      <span className="text-2xl">{group.emoji}</span>
-                      {group.label}
-                    </h3>
-                    <ul className="space-y-2.5">
-                      {group.items.map((item) => (
-                        <li key={item.num} className="flex items-start gap-3">
-                          <span
-                            className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white mt-0.5"
-                            style={{ backgroundColor: '#E8B86D' }}
-                          >
-                            {item.num}
-                          </span>
-                          <div className="flex-1 min-w-0">
-                            <span className="text-sm font-medium text-gray-800">{item.name}</span>
-                            <span className="ml-2 text-xs text-gray-400">{item.price}</span>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+            {/* ── CHAPTER 4: SHOPPING EDIT ── */}
+            <section id="ch4" className="py-20 md:py-28">
+              <div className="fade-up mb-16">
+                <p style={{ fontFamily: 'var(--font-inter)', color: '#C9A96E', fontSize: '10px', letterSpacing: '0.35em', fontWeight: 500 }} className="mb-3">
+                  CHAPTER 04
+                </p>
+                <h2
+                  style={{
+                    fontFamily: 'var(--font-playfair)',
+                    fontSize: 'clamp(36px, 6vw, 72px)',
+                    fontWeight: 900,
+                    lineHeight: 1.05,
+                    color: '#1A1A2E',
+                  }}
+                >
+                  Shopping
+                  <br />
+                  <em style={{ fontWeight: 400, color: '#C9A96E' }}>Edit</em>
+                </h2>
+                <p className="mt-6 max-w-xl" style={{ fontFamily: 'var(--font-inter)', color: '#6B7280', fontSize: '15px', lineHeight: 1.8 }}>
+                  드럭스토어부터 명품 플래그십까지. 도쿄 쇼핑의 정수 세 곳.
+                </p>
               </div>
-            </section>
 
-            {/* ────────────── SECTION 4: 일정 ────────────── */}
-            <section>
-              <SectionHeading id="section-4" number="04" title="4박 5일 추천 일정" />
-              <div className="space-y-12">
-                {/* 20대 여성 */}
-                <div>
-                  <div className="flex items-center gap-4 mb-6">
-                    <h3 className="text-xl font-bold" style={{ color: '#1A1A2E' }}>👩 20대 여성 여행객</h3>
-                    <div className="flex-1 h-px bg-gray-200" />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {ITINERARY_YOUNG.map((day) => (
-                      <div key={day.day} className="bg-white rounded-2xl p-5 shadow-sm">
-                        <div className="flex items-center gap-3 mb-4">
-                          <span
-                            className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-black text-white shrink-0"
-                            style={{ backgroundColor: '#1A1A2E' }}
-                          >
-                            D{day.day}
-                          </span>
-                          <p className="font-semibold text-sm text-gray-800 leading-snug">{day.title}</p>
-                        </div>
-                        <ul className="space-y-2.5">
-                          {day.items.map((item) => (
-                            <li key={item.time} className="flex gap-3 text-sm">
-                              <span className="shrink-0 font-mono text-xs pt-0.5" style={{ color: '#E8B86D' }}>{item.time}</span>
-                              <span className="text-gray-600 leading-snug">{item.activity}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 커플 */}
-                <div>
-                  <div className="flex items-center gap-4 mb-6">
-                    <h3 className="text-xl font-bold" style={{ color: '#1A1A2E' }}>💑 커플 여행객</h3>
-                    <div className="flex-1 h-px bg-gray-200" />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {ITINERARY_COUPLE.map((day) => (
-                      <div key={day.day} className="bg-white rounded-2xl p-5 shadow-sm">
-                        <div className="flex items-center gap-3 mb-4">
-                          <span
-                            className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-black text-white shrink-0"
-                            style={{ backgroundColor: '#E8B86D' }}
-                          >
-                            D{day.day}
-                          </span>
-                          <p className="font-semibold text-sm text-gray-800 leading-snug">{day.title}</p>
-                        </div>
-                        <ul className="space-y-2.5">
-                          {day.items.map((item) => (
-                            <li key={item.time} className="flex gap-3 text-sm">
-                              <span className="shrink-0 font-mono text-xs pt-0.5" style={{ color: '#E8B86D' }}>{item.time}</span>
-                              <span className="text-gray-600 leading-snug">{item.activity}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* ────────────── SECTION 5: SNS 트렌드 ────────────── */}
-            <section>
-              <SectionHeading id="section-5" number="05" title="SNS 트렌드 TOP 20" />
-              <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {SNS_TRENDS.map((item) => (
-                    <div
-                      key={item.rank}
-                      className="flex items-center gap-4 py-3 px-4 rounded-xl transition-colors hover:bg-gray-50"
-                    >
-                      <div className="flex items-center gap-2 shrink-0">
+              <div className="-mx-4 md:-mx-8 lg:-mx-12 fade-up">
+                {SHOPPING.map((item, i) => (
+                  <div
+                    key={item.title}
+                    className="grid md:grid-cols-5 items-stretch"
+                  >
+                    <div className={`relative h-64 md:h-80 md:col-span-3 ${i % 2 === 0 ? 'md:order-1' : 'md:order-2'}`}>
+                      <Image src={item.image} alt={item.title} fill className="object-cover" />
+                      <div className="absolute top-4 left-4">
                         <span
-                          className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black"
                           style={{
-                            backgroundColor: item.rank <= 3 ? '#1A1A2E' : '#F5F5F0',
-                            color: item.rank <= 3 ? '#E8B86D' : '#6B7280',
+                            fontFamily: 'var(--font-inter)',
+                            backgroundColor: '#C9A96E',
+                            color: '#1A1A2E',
+                            fontSize: '9px',
+                            letterSpacing: '0.18em',
+                            fontWeight: 700,
+                            padding: '4px 10px',
                           }}
                         >
-                          {item.rank}
+                          {item.tag}
                         </span>
-                        {item.hot && (
-                          <span className="px-1.5 py-0.5 rounded text-xs font-bold bg-red-500 text-white">
-                            🔥
-                          </span>
-                        )}
                       </div>
-                      <p className="text-sm text-gray-700 leading-snug">{item.text}</p>
                     </div>
-                  ))}
-                </div>
+                    <div
+                      className={`md:col-span-2 flex flex-col justify-center px-10 md:px-12 py-12 ${i % 2 === 0 ? 'md:order-2' : 'md:order-1'}`}
+                      style={{
+                        backgroundColor: i === 1 ? '#1A1A2E' : i === 2 ? '#F5F0E8' : '#FAFAF8',
+                      }}
+                    >
+                      <p style={{ fontFamily: 'var(--font-inter)', color: '#C9A96E', fontSize: '10px', letterSpacing: '0.3em', fontWeight: 500 }} className="mb-3">
+                        {item.label}
+                      </p>
+                      <h3
+                        style={{
+                          fontFamily: 'var(--font-playfair)',
+                          color: i === 1 ? '#FFFFFF' : '#1A1A2E',
+                          fontSize: 'clamp(22px, 3.5vw, 36px)',
+                          fontWeight: 700,
+                          lineHeight: 1.2,
+                        }}
+                        className="mb-2"
+                      >
+                        {item.title}
+                      </h3>
+                      <p style={{ fontFamily: 'var(--font-cormorant)', color: '#C9A96E', fontSize: '17px', fontStyle: 'italic' }} className="mb-4">
+                        {item.subtitle}
+                      </p>
+                      <p style={{ fontFamily: 'var(--font-inter)', color: i === 1 ? 'rgba(255,255,255,0.58)' : '#6B7280', fontSize: '14px', lineHeight: 1.8 }}>
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </section>
 
-            {/* ── Bottom CTA ── */}
-            <div
-              className="rounded-2xl p-8 md:p-12 text-center"
-              style={{ background: 'linear-gradient(135deg, #1A1A2E 0%, #2D2D4E 100%)' }}
+            {/* ── CHAPTER 5: 4 DAYS IN TOKYO ── */}
+            <section
+              id="ch5"
+              className="py-20 md:py-28 -mx-4 md:-mx-8 lg:-mx-12 px-4 md:px-8 lg:px-12"
+              style={{ backgroundColor: '#F5F0E8' }}
             >
-              <p className="text-sm font-medium mb-2" style={{ color: '#E8B86D' }}>더 많은 도쿄 정보</p>
-              <h2
-                className="text-2xl md:text-3xl font-bold text-white mb-4"
-                style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}
-              >
-                도쿄 여행 일정을 직접 만들어보세요
-              </h2>
-              <p className="text-white/70 mb-8 max-w-md mx-auto">
-                Kiravoy의 AI 여행 플래너로 나만의 도쿄 여행 일정을 무료로 생성해보세요.
-              </p>
-              <a
-                href="/destinations"
-                className="inline-flex items-center gap-2 px-8 py-3 rounded-xl font-semibold text-white transition-opacity hover:opacity-90"
-                style={{ backgroundColor: '#E8B86D' }}
-              >
-                여행 일정 만들기
-              </a>
-            </div>
-          </article>
+              <div className="fade-up mb-16">
+                <p style={{ fontFamily: 'var(--font-inter)', color: '#C9A96E', fontSize: '10px', letterSpacing: '0.35em', fontWeight: 500 }} className="mb-3">
+                  CHAPTER 05
+                </p>
+                <h2
+                  style={{
+                    fontFamily: 'var(--font-playfair)',
+                    fontSize: 'clamp(36px, 6vw, 72px)',
+                    fontWeight: 900,
+                    lineHeight: 1.05,
+                    color: '#1A1A2E',
+                  }}
+                >
+                  4 Days in
+                  <br />
+                  <em style={{ fontWeight: 400, color: '#C9A96E' }}>Tokyo</em>
+                </h2>
+                <p className="mt-6 max-w-xl" style={{ fontFamily: 'var(--font-inter)', color: '#6B7280', fontSize: '15px', lineHeight: 1.8 }}>
+                  4박 5일, 도쿄의 핵심만 담은 완벽한 일정표. 이동 동선과 예약 팁까지 포함했다.
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6 fade-up">
+                {ITINERARY.map((day) => (
+                  <div key={day.day} className="p-8" style={{ backgroundColor: '#FFFFFF' }}>
+                    <div className="flex items-baseline gap-4 mb-6 pb-5" style={{ borderBottom: `2px solid ${day.color}` }}>
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-playfair)',
+                          fontSize: '52px',
+                          fontWeight: 900,
+                          color: '#E8E4DE',
+                          lineHeight: 1,
+                        }}
+                      >
+                        {day.day.split(' ')[1]}
+                      </span>
+                      <div>
+                        <p style={{ fontFamily: 'var(--font-inter)', color: '#9CA3AF', fontSize: '10px', letterSpacing: '0.2em' }}>{day.day}</p>
+                        <p style={{ fontFamily: 'var(--font-playfair)', color: '#1A1A2E', fontSize: '19px', fontWeight: 700 }}>{day.theme}</p>
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      {day.schedule.map((item) => (
+                        <div key={item.time + item.place} className="flex gap-4">
+                          <span
+                            style={{
+                              fontFamily: 'var(--font-inter)',
+                              color: day.color,
+                              fontSize: '12px',
+                              fontWeight: 600,
+                              minWidth: '46px',
+                              paddingTop: '2px',
+                            }}
+                          >
+                            {item.time}
+                          </span>
+                          <div>
+                            <p style={{ fontFamily: 'var(--font-inter)', color: '#1A1A2E', fontSize: '14px', fontWeight: 500 }}>{item.place}</p>
+                            <p style={{ fontFamily: 'var(--font-inter)', color: '#9CA3AF', fontSize: '13px', lineHeight: 1.5 }}>{item.desc}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* ── CHAPTER 6: SOCIAL TREND ── */}
+            <section id="ch6" className="py-20 md:py-28">
+              <div className="fade-up mb-16">
+                <p style={{ fontFamily: 'var(--font-inter)', color: '#C9A96E', fontSize: '10px', letterSpacing: '0.35em', fontWeight: 500 }} className="mb-3">
+                  CHAPTER 06
+                </p>
+                <h2
+                  style={{
+                    fontFamily: 'var(--font-playfair)',
+                    fontSize: 'clamp(36px, 6vw, 72px)',
+                    fontWeight: 900,
+                    lineHeight: 1.05,
+                    color: '#1A1A2E',
+                  }}
+                >
+                  Social
+                  <br />
+                  <em style={{ fontWeight: 400, color: '#C9A96E' }}>Trend</em>
+                </h2>
+                <p className="mt-6 max-w-xl" style={{ fontFamily: 'var(--font-inter)', color: '#6B7280', fontSize: '15px', lineHeight: 1.8 }}>
+                  인스타그램과 유튜브를 뜨겁게 달구는 도쿄의 트렌드 키워드 6.
+                </p>
+              </div>
+
+              {/* Pinterest masonry grid */}
+              <div className="fade-up masonry-grid">
+                {TRENDS.map((trend) => (
+                  <div
+                    key={trend.tag}
+                    className="break-inside-avoid mb-4 overflow-hidden group"
+                    style={{ border: '1px solid rgba(0,0,0,0.06)' }}
+                  >
+                    <div className="relative overflow-hidden" style={{ height: trend.height }}>
+                      <Image
+                        src={trend.image}
+                        alt={trend.tag}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    </div>
+                    <div className="p-5" style={{ backgroundColor: '#FAFAF8' }}>
+                      <p style={{ fontFamily: 'var(--font-inter)', color: '#C9A96E', fontSize: '11px', fontWeight: 500 }} className="mb-1">
+                        {trend.tag}
+                      </p>
+                      <h4 style={{ fontFamily: 'var(--font-playfair)', color: '#1A1A2E', fontSize: '17px', fontWeight: 700 }} className="mb-2">
+                        {trend.title}
+                      </h4>
+                      <p style={{ fontFamily: 'var(--font-inter)', color: '#6B7280', fontSize: '13px', lineHeight: 1.7 }}>
+                        {trend.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+          </main>
         </div>
       </div>
+
+      {/* ── MAGAZINE FOOTER ── */}
+      <footer style={{ backgroundColor: '#1A1A2E' }}>
+        {/* Full-width image strip */}
+        <div className="relative h-44 overflow-hidden">
+          <Image
+            src="https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=1920&q=75"
+            alt="Tokyo"
+            fill
+            className="object-cover opacity-25"
+          />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <h2
+              style={{
+                fontFamily: 'var(--font-playfair)',
+                color: '#FFFFFF',
+                fontSize: 'clamp(28px, 5vw, 56px)',
+                fontWeight: 900,
+                fontStyle: 'italic',
+                letterSpacing: '-0.01em',
+              }}
+            >
+              Tokyo is waiting.
+            </h2>
+          </div>
+        </div>
+
+        <div className="max-w-screen-2xl mx-auto px-8 md:px-12 py-12">
+          <div className="grid md:grid-cols-3 gap-10 mb-10 pb-10" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+            <div>
+              <p style={{ fontFamily: 'var(--font-playfair)', color: '#FFFFFF', fontSize: '22px', fontWeight: 700 }} className="mb-2">
+                Voyra
+              </p>
+              <p style={{ fontFamily: 'var(--font-cormorant)', color: 'rgba(255,255,255,0.38)', fontSize: '15px', fontStyle: 'italic' }}>
+                여행의 모든 영감
+              </p>
+            </div>
+            <div>
+              <p style={{ fontFamily: 'var(--font-inter)', color: '#C9A96E', fontSize: '10px', letterSpacing: '0.2em', fontWeight: 500 }} className="mb-3">
+                EXPLORE
+              </p>
+              <div className="space-y-2">
+                {[
+                  { label: '도쿄 여행 아티클', href: '/article?city=tokyo' },
+                  { label: '매거진 허브', href: '/magazine' },
+                  { label: '커뮤니티', href: '/community' },
+                ].map((link) => (
+                  <div key={link.href}>
+                    <Link
+                      href={link.href}
+                      style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.45)', fontSize: '14px' }}
+                      className="hover:text-white transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p style={{ fontFamily: 'var(--font-inter)', color: '#C9A96E', fontSize: '10px', letterSpacing: '0.2em', fontWeight: 500 }} className="mb-3">
+                DISCLAIMER
+              </p>
+              <p style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.28)', fontSize: '12px', lineHeight: 1.72 }}>
+                이 페이지의 정보는 2026년 기준으로 작성되었습니다. 가격·운영시간은 현지 확인을 권장합니다.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.22)', fontSize: '12px' }}>
+              © 2026 Voyra. All rights reserved.
+            </p>
+            <p style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.18)', fontSize: '11px', letterSpacing: '0.15em' }}>
+              TOKYO ISSUE — JUNE 2026
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }

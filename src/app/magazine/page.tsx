@@ -6,15 +6,15 @@ import { BookMarked, ArrowRight, Calendar, MapPin } from 'lucide-react'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: '여행 매거진 | Kiravoy',
+  title: '여행 매거진 | Voyra',
   description: '한국인 여행자를 위한 심층 여행 매거진. 인기 여행지의 지역별 가이드, 맛집, 쇼핑, 일정까지 한눈에.',
   openGraph: {
-    title: '여행 매거진 | Kiravoy',
+    title: '여행 매거진 | Voyra',
     description: '한국인 여행자를 위한 심층 여행 매거진',
-    url: 'https://kiravoy.com/magazine',
+    url: 'https://voyra.co/magazine',
   },
   alternates: {
-    canonical: 'https://kiravoy.com/magazine',
+    canonical: 'https://voyra.co/magazine',
   },
 }
 
@@ -67,8 +67,52 @@ export default function MagazinePage() {
           <div className="flex-1 h-px bg-gray-200" />
         </div>
 
+        {/* Featured — full width hero card */}
+        {magazines.filter((m) => m.featured).map((mag) => (
+          <Link
+            key={mag.href}
+            href={mag.href}
+            className="group block mb-8 relative overflow-hidden"
+            style={{ borderRadius: '4px' }}
+          >
+            <div className="relative h-[52vh] min-h-[320px] overflow-hidden">
+              <Image
+                src={mag.image}
+                alt={mag.title}
+                fill
+                priority
+                className="object-cover group-hover:scale-105 transition-transform duration-700"
+                sizes="100vw"
+              />
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(26,26,46,0.85) 0%, rgba(26,26,46,0.4) 60%, transparent 100%)' }} />
+              <div className="absolute inset-0 flex flex-col justify-center px-10 md:px-16 max-w-2xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <span style={{ backgroundColor: '#C9A96E', color: '#1A1A2E', fontSize: '10px', fontWeight: 700, letterSpacing: '0.18em', padding: '3px 10px' }}>
+                    FEATURED
+                  </span>
+                  <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', letterSpacing: '0.15em' }}>{mag.tag}</span>
+                </div>
+                <h3 style={{ fontFamily: 'Georgia, serif', color: '#FFFFFF', fontSize: 'clamp(24px, 4vw, 44px)', fontWeight: 700, lineHeight: 1.15 }} className="mb-3">
+                  {mag.title}
+                </h3>
+                <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '14px', lineHeight: 1.7 }} className="mb-5">
+                  {mag.subtitle}
+                </p>
+                <div className="flex items-center gap-4 text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                  <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{mag.date}</span>
+                  <span className="flex items-center gap-1"><BookMarked className="w-3 h-3" />{mag.readTime} 읽기</span>
+                </div>
+              </div>
+              <div className="absolute bottom-6 right-8 flex items-center gap-2 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                <span style={{ fontSize: '13px', letterSpacing: '0.1em' }}>읽어보기</span>
+                <ArrowRight className="w-4 h-4" />
+              </div>
+            </div>
+          </Link>
+        ))}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {magazines.map((mag) => (
+          {magazines.filter((m) => !m.featured).map((mag) => (
             <Link
               key={mag.href}
               href={mag.href}
@@ -82,12 +126,6 @@ export default function MagazinePage() {
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
-                {mag.featured && (
-                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
-                    style={{ backgroundColor: '#E8B86D' }}>
-                    FEATURED
-                  </div>
-                )}
                 <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-xs font-semibold text-white"
                   style={{ backgroundColor: 'rgba(26,26,46,0.8)' }}>
                   {mag.tag}
@@ -95,14 +133,8 @@ export default function MagazinePage() {
               </div>
               <div className="p-6">
                 <div className="flex items-center gap-4 text-xs text-gray-400 mb-3">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />
-                    {mag.date}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <BookMarked className="w-3 h-3" />
-                    {mag.readTime} 읽기
-                  </span>
+                  <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{mag.date}</span>
+                  <span className="flex items-center gap-1"><BookMarked className="w-3 h-3" />{mag.readTime} 읽기</span>
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-2 leading-snug group-hover:text-[#E8B86D] transition-colors">
                   {mag.title}
