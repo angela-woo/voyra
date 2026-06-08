@@ -25,6 +25,7 @@ import ESimBanner from '@/components/widgets/ESimBanner'
 import ShareButtons from '@/components/ui/ShareButtons'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 import RelatedContent from '@/components/article/RelatedContent'
+import InternalLinks from '@/components/article/InternalLinks'
 import FlightSearchWidget from '@/components/widgets/FlightSearchWidget'
 
 export const dynamic = 'force-dynamic'
@@ -335,6 +336,14 @@ export default async function ArticlePage({ params }: PageProps) {
                 </div>
               ))}
             </div>
+
+            <InternalLinks
+                city={article.city ?? null}
+                country={article.country ?? null}
+                currentSlug={article.slug}
+                content={article.content ?? ''}
+                language="ko"
+              />
 
             <AdUnit slot="6933794765" />
 
