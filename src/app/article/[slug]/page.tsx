@@ -19,7 +19,8 @@ import { Calendar, MapPin, Ticket, UtensilsCrossed, Moon, Bus, Landmark } from '
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import type { Metadata } from 'next'
-import { generateMetaDescription, getOgImageUrl } from '@/lib/utils/metaGenerator'
+import { generateMetaDescription } from '@/lib/utils/metaGenerator'
+import { buildOgImageUrl } from '@/lib/seo'
 import AdUnit from '@/components/ui/AdUnit'
 import ESimBanner from '@/components/widgets/ESimBanner'
 import ShareButtons from '@/components/ui/ShareButtons'
@@ -105,9 +106,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     ? article.meta_description
     : generateMetaDescription(article.content ?? '', article.city ?? '', article.country ?? '', slug, 'ko')
 
-  const coverOgImage = getOgImageUrl(article.cover_image_url)
-  const dynamicOgImage = `https://kiravoy.com/og?title=${encodeURIComponent(article.title)}&description=${encodeURIComponent(description.slice(0, 100))}&type=article`
-  const ogImage = article.cover_image_url ? coverOgImage : dynamicOgImage
+  const ogImage = buildOgImageUrl({
+    title: article.title,
+    description: description.slice(0, 100),
+    type: 'article',
+    fallbackImageUrl: article.cover_image_url,
+  })
 
   const keywords = [
     article.city,

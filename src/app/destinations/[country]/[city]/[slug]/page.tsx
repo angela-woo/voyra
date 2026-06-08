@@ -8,7 +8,8 @@ import { fetchUnsplashPhoto, fetchUnsplashPhotos, toEnglishCity } from '@/lib/un
 import WeatherWidget from '@/components/widgets/WeatherWidget'
 import { MapPin, Clock, Thermometer, Info, ExternalLink, ChevronRight, Landmark, UtensilsCrossed, Coffee, Hotel, Map, Ticket, Building2, Coins } from 'lucide-react'
 import type { Metadata } from 'next'
-import { generatePlanMetaDescription, getOgImageUrl } from '@/lib/utils/metaGenerator'
+import { generatePlanMetaDescription } from '@/lib/utils/metaGenerator'
+import { buildOgImageUrl } from '@/lib/seo'
 import AdUnit from '@/components/ui/AdUnit'
 import ESimBanner from '@/components/widgets/ESimBanner'
 import ShareButtons from '@/components/ui/ShareButtons'
@@ -128,9 +129,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         'ko',
       )
 
-  const coverOgImage = getOgImageUrl(plan.cover_image_url)
-  const dynamicOgImage = `https://kiravoy.com/og?title=${encodeURIComponent(plan.title)}&description=${encodeURIComponent(description.slice(0, 100))}&type=destination`
-  const ogImage = plan.cover_image_url ? coverOgImage : dynamicOgImage
+  const ogImage = buildOgImageUrl({
+    title: plan.title,
+    description: description.slice(0, 100),
+    type: 'destination',
+    fallbackImageUrl: plan.cover_image_url,
+  })
 
   const keywords = [
     plan.city,
