@@ -6,7 +6,7 @@ import type { LucideIcon } from 'lucide-react'
 import type { Metadata } from 'next'
 import { SLUG_TO_COUNTRY_MAP, SLUG_TO_CITY_MAP } from '@/lib/location'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 interface PageProps {
   params: Promise<{ country: string; city: string }>

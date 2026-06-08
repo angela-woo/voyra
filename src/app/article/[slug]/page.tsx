@@ -28,7 +28,7 @@ import RelatedContent from '@/components/article/RelatedContent'
 import InternalLinks from '@/components/article/InternalLinks'
 import FlightSearchWidget from '@/components/widgets/FlightSearchWidget'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 marked.use({ renderer: { del({ text }: { text: string }) { return `~${text}~` } } })
 

@@ -3,7 +3,7 @@ import PostCard from '@/components/community/PostCard'
 import Link from 'next/link'
 import { PenSquare, MessageCircle, Lightbulb, HelpCircle, Star, Users } from 'lucide-react'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300
 
 const CATEGORIES = [
   { value: 'all', label: '전체', icon: null },

@@ -8,7 +8,7 @@ import { ArrowRight, Clock, Eye, MapPin } from 'lucide-react'
 import AdUnit from '@/components/ui/AdUnit'
 import type { Metadata } from 'next'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'Travel Guides & Itineraries for Every Destination | Kiravoy',

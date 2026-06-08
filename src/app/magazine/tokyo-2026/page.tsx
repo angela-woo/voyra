@@ -5,6 +5,8 @@ import type { Metadata } from 'next'
 import ScrollAnimator from './ScrollAnimator'
 import TOC from './TOC'
 
+export const revalidate = 86400
+
 const playfair = Playfair_Display({
   subsets: ['latin'],
   weight: ['400', '700', '900'],

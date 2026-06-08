@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { toPlanUrl } from '@/lib/location'
 import { MapPin, Clock, Users } from 'lucide-react'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 1800
 
 const BASE_URL = 'https://kiravoy.com'
 

@@ -11,7 +11,7 @@ import AdUnit from '@/components/ui/AdUnit'
 import { toPlanUrl, toCountryUrl } from '@/lib/location'
 import type { Metadata } from 'next'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: '해외여행 가이드 & 여행 일정 추천 | Kiravoy',

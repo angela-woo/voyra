@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { BookMarked, ArrowRight, Calendar, MapPin } from 'lucide-react'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: '여행 매거진 | Voyra',

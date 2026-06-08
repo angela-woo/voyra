@@ -6,7 +6,7 @@ import { toPlanUrl } from '@/lib/location'
 import { TrendingUp, MapPin, Clock, Eye } from 'lucide-react'
 import ArticleCard from '@/components/article/ArticleCard'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 1800
 
 const BASE_URL = 'https://kiravoy.com'
 

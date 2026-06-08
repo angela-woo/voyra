@@ -4,7 +4,7 @@ import ArticleCard from '@/components/article/ArticleCard'
 import Link from 'next/link'
 import { Rss } from 'lucide-react'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 1800
 
 const BASE_URL = 'https://kiravoy.com'
 const PAGE_SIZE = 12

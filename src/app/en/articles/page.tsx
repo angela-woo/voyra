@@ -5,7 +5,7 @@ import { BookOpen, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 1800
 
 export async function generateMetadata(): Promise<Metadata> {
   const supabase = await createClient()

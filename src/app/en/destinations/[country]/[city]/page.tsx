@@ -5,7 +5,7 @@ import { Clock, Heart, Users, UserCheck, Luggage, Plane } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { Metadata } from 'next'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 interface PageProps {
   params: Promise<{ country: string; city: string }>

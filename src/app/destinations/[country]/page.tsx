@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { SLUG_TO_COUNTRY_MAP, CITY_SLUG_MAP } from '@/lib/location'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 interface PageProps {
   params: Promise<{ country: string }>

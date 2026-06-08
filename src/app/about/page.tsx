@@ -2,6 +2,8 @@ import { Globe, Compass, Users, BookOpen, Mail, Shield, Cpu } from 'lucide-react
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
+export const dynamic = 'force-static'
+
 export const metadata: Metadata = {
   title: 'Kiravoy 소개 | Kiravoy',
   description: 'Kiravoy는 전 세계 여행지의 정확하고 유용한 정보를 제공하는 여행 가이드 플랫폼입니다.',

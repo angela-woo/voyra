@@ -20,7 +20,7 @@ import { getCityCoordinates } from '@/lib/utils/cityCoordinates'
 import { getKlookUrl } from '@/lib/utils/klookUrl'
 import { getBookingUrl } from '@/lib/utils/bookingUrl'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 
 interface PageProps {
