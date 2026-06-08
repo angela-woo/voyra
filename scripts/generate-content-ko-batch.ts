@@ -7,7 +7,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
 import { topicsKo } from './topics-ko'
-import { getEntityBasedImages } from '../src/lib/images/entityImageManager'
+import { getKeywordsFromSlug, fetchUniqueUnsplashImage, sessionUsedUrls } from '../src/lib/images/smartImageSearch'
 
 // 환경변수 검증 및 디버깅
 const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').replace(/\/$/, '')
@@ -186,15 +186,15 @@ places 4~5개, section_images는 모든 ## 섹션에 하나씩.`,
 function sleep(ms: number) { return new Promise(r => setTimeout(r, ms)) }
 
 async function main() {
-  // 기존 이미지 URL 로드 (중복 방지)
+  // 기존 이미지 URL 로드 → sessionUsedUrls에 추가 (배치 전체 중복 방지)
   const { data: existingImages } = await supabase
     .from('articles')
     .select('cover_image_url')
     .not('cover_image_url', 'is', null)
-  const usedUrls = new Set<string>(
-    (existingImages ?? []).map((a: { cover_image_url: string }) => a.cover_image_url),
-  )
-  console.log(`📷 기존 이미지 ${usedUrls.size}개 로드 완료`)
+  ;(existingImages ?? []).forEach((a: { cover_image_url: string }) => {
+    if (a.cover_image_url) sessionUsedUrls.add(a.cover_image_url)
+  })
+  console.log(`📷 기존 이미지 ${sessionUsedUrls.size}개 로드 완료`)
 
   // 기존 슬러그 조회
   const { data: existing } = await supabase.from('articles').select('slug').eq('language', 'ko')
@@ -246,16 +246,12 @@ async function main() {
         )
       }
 
-      // 엔티티 기반 이미지 결정 (커버 이미지 + 엔티티 매핑)
+      // slug 기반 고유 커버 이미지 (중복 방지)
       try {
-        const { coverImage } = await getEntityBasedImages(
-          slug,
-          String(article.title ?? ''),
-          String(article.content ?? ''),
-          topic.city,
-          topic.country,
-        )
-        if (coverImage) {
+        const queries = getKeywordsFromSlug(slug, topic.citySlug)
+        const coverUrl = await fetchUniqueUnsplashImage(queries, sessionUsedUrls)
+        if (coverUrl) {
+          await supabase.from('articles').update({ cover_image_url: coverUrl }).eq('slug', slug)
           process.stdout.write(` 🖼️`)
         }
       } catch (imgErr) {

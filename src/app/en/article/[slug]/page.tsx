@@ -11,6 +11,7 @@ import {
 } from '@/lib/unsplash'
 import { getSectionImageKeyword } from '@/lib/utils/sectionKeywords'
 import { getSectionImage } from '@/lib/images/sectionImageResolver'
+import { getSectionImageKeywords, fetchUniqueUnsplashImage, getCachedSectionImage, cacheSectionImage } from '@/lib/images/smartImageSearch'
 import ImageCarousel from '@/components/ui/ImageCarousel'
 import PlaceCard from '@/components/article/PlaceCard'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
@@ -163,12 +164,26 @@ export default async function EnArticlePage({ params }: PageProps) {
     fetchItemImages(allItemQueries),
   ])
 
-  // Entity-based section images (sequential to prevent duplicate URLs)
-  const sectionPhotos: Record<string, { url: string; authorName: string; authorUrl: string; sourceName: string }> = {}
+  // Item-less sections: title+content analysis for accurate image matching
+  const sectionPhotos: Record<string, string> = {}
   const usedSectionUrls = new Set<string>(article.cover_image_url ? [article.cover_image_url] : [])
   for (const s of sections.filter(sec => sec.items.length === 0)) {
-    const photo = await getSectionImage(s.heading, cityEnglish, usedSectionUrls)
-    if (photo) sectionPhotos[s.heading] = photo
+    const cacheKey = `section-v4-${article.slug}-${s.heading.slice(0, 30)}`
+    const cached = await getCachedSectionImage(cacheKey, usedSectionUrls)
+    if (cached) {
+      usedSectionUrls.add(cached)
+      sectionPhotos[s.heading] = cached
+      continue
+    }
+    const queries = getSectionImageKeywords(s.heading, s.intro, cityEnglish)
+    const url = await fetchUniqueUnsplashImage(queries, usedSectionUrls)
+    if (url) {
+      sectionPhotos[s.heading] = url
+      cacheSectionImage(cacheKey, url).catch(() => {})
+    } else {
+      const photo = await getSectionImage(s.heading, cityEnglish, usedSectionUrls)
+      if (photo) sectionPhotos[s.heading] = photo.url
+    }
   }
 
   const allMarkdown = [
@@ -291,24 +306,18 @@ export default async function EnArticlePage({ params }: PageProps) {
                     })
                   ) : (
                     sectionPhotos[section.heading] && (
-                      <figure className="not-prose my-4">
-                        <div className="relative w-full h-[220px] md:h-[350px] rounded-[var(--radius)] overflow-hidden">
-                          <Image
-                            src={sectionPhotos[section.heading]!.url}
-                            alt={section.heading}
-                            fill
-                            sizes="(max-width: 1024px) 100vw, 700px"
-                            className="object-cover"
-                          />
+                      <div className="not-prose my-4 relative w-full h-[220px] md:h-[320px] rounded-[var(--radius)] overflow-hidden">
+                        <Image
+                          src={sectionPhotos[section.heading]!}
+                          alt={section.heading}
+                          fill
+                          sizes="(max-width: 1024px) 100vw, 700px"
+                          className="object-cover"
+                        />
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                          <span className="text-white text-sm font-medium">{section.heading}</span>
                         </div>
-                        <figcaption className="text-xs text-gray-400 mt-1.5 text-right">
-                          Photo by{' '}
-                          <a href={sectionPhotos[section.heading]!.authorUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">
-                            {sectionPhotos[section.heading]!.authorName}
-                          </a>{' '}
-                          on {sectionPhotos[section.heading]!.sourceName}
-                        </figcaption>
-                      </figure>
+                      </div>
                     )
                   )}
                 </div>

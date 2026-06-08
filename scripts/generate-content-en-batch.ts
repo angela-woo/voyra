@@ -7,7 +7,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
 import { topicsEn } from './topics-en'
-import { getEntityBasedImages } from '../src/lib/images/entityImageManager'
+import { getKeywordsFromSlug, fetchUniqueUnsplashImage, sessionUsedUrls } from '../src/lib/images/smartImageSearch'
 
 // 환경변수 검증 및 디버깅
 const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').replace(/\/$/, '')
@@ -176,15 +176,15 @@ Include 4-5 places. Add section_images for each ## heading.`,
 function sleep(ms: number) { return new Promise(r => setTimeout(r, ms)) }
 
 async function main() {
-  // Load existing image URLs to prevent duplicates
+  // Load existing image URLs into sessionUsedUrls (batch-wide deduplication)
   const { data: existingImages } = await supabase
     .from('articles')
     .select('cover_image_url')
     .not('cover_image_url', 'is', null)
-  const usedUrls = new Set<string>(
-    (existingImages ?? []).map((a: { cover_image_url: string }) => a.cover_image_url),
-  )
-  console.log(`📷 Loaded ${usedUrls.size} existing image URLs`)
+  ;(existingImages ?? []).forEach((a: { cover_image_url: string }) => {
+    if (a.cover_image_url) sessionUsedUrls.add(a.cover_image_url)
+  })
+  console.log(`📷 Loaded ${sessionUsedUrls.size} existing image URLs`)
 
   const { data: existing } = await supabase.from('articles').select('slug').eq('language', 'en')
   const existingSlugs = new Set((existing ?? []).map(a => a.slug))
@@ -234,16 +234,13 @@ async function main() {
         )
       }
 
-      // Entity-based image assignment
+      // Slug-based unique cover image (deduplication via sessionUsedUrls)
       try {
-        const { coverImage } = await getEntityBasedImages(
-          slug,
-          String(article.title ?? ''),
-          String(article.content ?? ''),
-          topic.city,
-          topic.country,
-        )
-        if (coverImage) {
+        const cityEn = topic.city.toLowerCase().replace(/\s+/g, '-')
+        const queries = getKeywordsFromSlug(slug, cityEn)
+        const coverUrl = await fetchUniqueUnsplashImage(queries, sessionUsedUrls)
+        if (coverUrl) {
+          await supabase.from('articles').update({ cover_image_url: coverUrl }).eq('slug', slug)
           process.stdout.write(` 🖼️`)
         }
       } catch (imgErr) {
