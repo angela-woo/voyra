@@ -15,6 +15,8 @@ import ShareButtons from '@/components/ui/ShareButtons'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 import RelatedContent from '@/components/article/RelatedContent'
 import FlightSearchWidget from '@/components/widgets/FlightSearchWidget'
+import TagBasedInternalLinks from '@/components/InternalLinks'
+import { Suspense } from 'react'
 import { toPlanUrl } from '@/lib/location'
 import { getCityCoordinates } from '@/lib/utils/cityCoordinates'
 import { getKlookUrl } from '@/lib/utils/klookUrl'
@@ -510,6 +512,14 @@ export default async function TravelPlanPage({ params }: PageProps) {
             </section>
 
             <AdUnit slot="9176814723" />
+
+            <Suspense fallback={null}>
+              <TagBasedInternalLinks
+                currentSlug={plan.slug}
+                tags={[plan.travel_type, plan.city].filter(Boolean)}
+                type="plan"
+              />
+            </Suspense>
 
             <ShareButtons
               url={planFullUrl}

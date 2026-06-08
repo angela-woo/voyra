@@ -26,6 +26,8 @@ import ShareButtons from '@/components/ui/ShareButtons'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 import RelatedContent from '@/components/article/RelatedContent'
 import InternalLinks from '@/components/article/InternalLinks'
+import TagBasedInternalLinks from '@/components/InternalLinks'
+import { Suspense } from 'react'
 import FlightSearchWidget from '@/components/widgets/FlightSearchWidget'
 
 export const revalidate = 3600
@@ -344,6 +346,15 @@ export default async function ArticlePage({ params }: PageProps) {
                 content={article.content ?? ''}
                 language="ko"
               />
+
+            <Suspense fallback={null}>
+              <TagBasedInternalLinks
+                currentSlug={article.slug}
+                tags={[article.category, article.city].filter((v): v is string => Boolean(v))}
+                type="article"
+                language="ko"
+              />
+            </Suspense>
 
             <AdUnit slot="6933794765" />
 
