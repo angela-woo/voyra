@@ -5,17 +5,35 @@ import { BookMarked, ArrowRight, Calendar, MapPin } from 'lucide-react'
 
 export const revalidate = 3600
 
-export const metadata: Metadata = {
-  title: '여행 매거진 | Voyra',
-  description: '한국인 여행자를 위한 심층 여행 매거진. 인기 여행지의 지역별 가이드, 맛집, 쇼핑, 일정까지 한눈에.',
-  openGraph: {
-    title: '여행 매거진 | Voyra',
-    description: '한국인 여행자를 위한 심층 여행 매거진',
-    url: 'https://voyra.co/magazine',
-  },
-  alternates: {
-    canonical: 'https://voyra.co/magazine',
-  },
+const BASE_URL = 'https://kiravoy.com'
+const OG_IMAGE = `${BASE_URL}/og-image.jpg`
+
+export async function generateMetadata(): Promise<Metadata> {
+  const title = '여행 매거진 | Kiravoy'
+  const description = '한국인 여행자를 위한 심층 여행 매거진. 인기 여행지의 지역별 가이드, 맛집, 쇼핑, 일정까지 한눈에.'
+  return {
+    title,
+    description,
+    keywords: ['여행매거진', '여행가이드', '도쿄여행', '해외여행', '여행정보', '심층여행콘텐츠'],
+    openGraph: {
+      title,
+      description,
+      url: `${BASE_URL}/magazine`,
+      siteName: 'Kiravoy',
+      locale: 'ko_KR',
+      type: 'website',
+      images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: 'Kiravoy 여행 매거진' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [OG_IMAGE],
+    },
+    alternates: {
+      canonical: `${BASE_URL}/magazine`,
+    },
+  }
 }
 
 const magazines = [

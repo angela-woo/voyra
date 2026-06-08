@@ -38,11 +38,18 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: 'Kiravoy',
       locale: 'ko_KR',
       type: 'website',
+      images: [{
+        url: `https://kiravoy.com/og?title=${encodeURIComponent('해외여행 가이드')}&description=${encodeURIComponent('도쿄·파리·발리 등 인기 여행지 완벽 가이드')}&type=article`,
+        width: 1200,
+        height: 630,
+        alt: '해외여행 가이드 모음',
+      }],
     },
     twitter: {
       card: 'summary_large_image',
       title: '해외여행 가이드 모음 | Kiravoy',
       description,
+      images: [`https://kiravoy.com/og?title=${encodeURIComponent('해외여행 가이드')}&description=${encodeURIComponent('도쿄·파리·발리 등 인기 여행지 완벽 가이드')}&type=article`],
     },
   }
 }

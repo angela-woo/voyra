@@ -99,13 +99,15 @@ async function getPlaces(articleId: string) {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
   const article = await getArticle(slug)
-  if (!article) return { title: 'Not Found' }
+  if (!article) notFound()
 
   const description = (article.meta_description && article.meta_description.length >= 50)
     ? article.meta_description
     : generateMetaDescription(article.content ?? '', article.city ?? '', article.country ?? '', slug, 'ko')
 
-  const ogImage = getOgImageUrl(article.cover_image_url)
+  const coverOgImage = getOgImageUrl(article.cover_image_url)
+  const dynamicOgImage = `https://kiravoy.com/og?title=${encodeURIComponent(article.title)}&description=${encodeURIComponent(description.slice(0, 100))}&type=article`
+  const ogImage = article.cover_image_url ? coverOgImage : dynamicOgImage
 
   const keywords = [
     article.city,

@@ -11,16 +11,27 @@ export const revalidate = 1800
 const BASE_URL = 'https://kiravoy.com'
 
 export async function generateMetadata(): Promise<Metadata> {
+  const OG_IMAGE = `${BASE_URL}/og-image.jpg`
+  const title = '트렌딩 — 인기 여행 콘텐츠 | Kiravoy'
+  const description = '지금 가장 많이 읽히는 여행 가이드와 인기 여행 일정을 확인하세요. 실시간 인기 여행지와 트렌드 여행 코스를 한눈에.'
   return {
-    title: '트렌딩 — 인기 여행 콘텐츠',
-    description: '지금 가장 많이 읽히는 여행 가이드와 인기 여행 일정을 확인하세요.',
+    title,
+    description,
+    keywords: ['인기여행', '트렌딩여행', '여행추천', '인기여행지', '인기여행코스', '해외여행', '여행정보'],
     openGraph: {
-      title: '트렌딩 — 인기 여행 콘텐츠 | Kiravoy',
-      description: '지금 가장 많이 읽히는 여행 가이드와 인기 여행 일정을 확인하세요.',
+      title,
+      description,
       url: `${BASE_URL}/trending`,
       siteName: 'Kiravoy',
       locale: 'ko_KR',
       type: 'website',
+      images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: '인기 여행 콘텐츠' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [OG_IMAGE],
     },
     alternates: {
       canonical: `${BASE_URL}/trending`,

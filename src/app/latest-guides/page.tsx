@@ -10,16 +10,27 @@ const BASE_URL = 'https://kiravoy.com'
 const PAGE_SIZE = 12
 
 export async function generateMetadata(): Promise<Metadata> {
+  const OG_IMAGE = `${BASE_URL}/og-image.jpg`
+  const title = '최신 여행 가이드 | Kiravoy'
+  const description = '전 세계 여행지의 최신 여행 가이드를 만나보세요. 도쿄, 파리, 발리, 방콕 등 인기 여행지의 완벽한 여행 정보를 제공합니다.'
   return {
-    title: '최신 여행 가이드',
-    description: '전 세계 여행지의 최신 여행 가이드를 만나보세요. 도쿄, 파리, 발리, 방콕 등 인기 여행지의 완벽한 여행 정보를 제공합니다.',
+    title,
+    description,
+    keywords: ['여행가이드', '해외여행', '여행정보', '도쿄여행', '파리여행', '발리여행', '방콕여행', '여행추천'],
     openGraph: {
-      title: '최신 여행 가이드 | Kiravoy',
-      description: '전 세계 여행지의 최신 여행 가이드를 만나보세요.',
+      title,
+      description,
       url: `${BASE_URL}/latest-guides`,
       siteName: 'Kiravoy',
       locale: 'ko_KR',
       type: 'website',
+      images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: '최신 여행 가이드' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [OG_IMAGE],
     },
     alternates: {
       canonical: `${BASE_URL}/latest-guides`,

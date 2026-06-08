@@ -33,11 +33,18 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: 'Kiravoy',
       locale: 'ko_KR',
       type: 'website',
+      images: [{
+        url: `https://kiravoy.com/og?title=${encodeURIComponent('여행 일정 추천')}&description=${encodeURIComponent('커플·가족·친구·혼자 맞춤 여행 코스')}&type=destination`,
+        width: 1200,
+        height: 630,
+        alt: '여행 일정 추천',
+      }],
     },
     twitter: {
       card: 'summary_large_image',
       title: '여행 일정 추천 | Kiravoy',
       description,
+      images: [`https://kiravoy.com/og?title=${encodeURIComponent('여행 일정 추천')}&description=${encodeURIComponent('커플·가족·친구·혼자 맞춤 여행 코스')}&type=destination`],
     },
   }
 }

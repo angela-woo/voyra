@@ -10,16 +10,27 @@ export const revalidate = 1800
 const BASE_URL = 'https://kiravoy.com'
 
 export async function generateMetadata(): Promise<Metadata> {
+  const OG_IMAGE = `${BASE_URL}/og-image.jpg`
+  const title = '최신 여행 일정 | Kiravoy'
+  const description = '커플, 가족, 친구, 혼자 여행까지 다양한 테마의 최신 여행 일정을 찾아보세요. 2박3일부터 장기 여행까지 완벽한 여행 플랜을 제공합니다.'
   return {
-    title: '최신 여행 일정',
-    description: '커플, 가족, 친구, 혼자 여행까지 다양한 테마의 최신 여행 일정을 찾아보세요. 2박3일부터 장기 여행까지 완벽한 여행 플랜을 제공합니다.',
+    title,
+    description,
+    keywords: ['여행일정', '여행코스', '커플여행', '가족여행', '혼자여행', '해외여행일정', '2박3일', '3박4일'],
     openGraph: {
-      title: '최신 여행 일정 | Kiravoy',
-      description: '커플, 가족, 친구, 혼자 여행까지 다양한 테마의 최신 여행 일정을 찾아보세요.',
+      title,
+      description,
       url: `${BASE_URL}/latest-itineraries`,
       siteName: 'Kiravoy',
       locale: 'ko_KR',
       type: 'website',
+      images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: '최신 여행 일정' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [OG_IMAGE],
     },
     alternates: {
       canonical: `${BASE_URL}/latest-itineraries`,

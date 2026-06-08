@@ -118,7 +118,7 @@ async function getRelated(city: string, currentSlug: string) {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
   const plan = await getPlan(slug)
-  if (!plan) return { title: 'Not Found' }
+  if (!plan) notFound()
   const planUrl = toPlanUrl(plan)
 
   const description = (plan.meta_description && plan.meta_description.length >= 50)
@@ -128,7 +128,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         'ko',
       )
 
-  const ogImage = getOgImageUrl(plan.cover_image_url)
+  const coverOgImage = getOgImageUrl(plan.cover_image_url)
+  const dynamicOgImage = `https://kiravoy.com/og?title=${encodeURIComponent(plan.title)}&description=${encodeURIComponent(description.slice(0, 100))}&type=destination`
+  const ogImage = plan.cover_image_url ? coverOgImage : dynamicOgImage
 
   const keywords = [
     plan.city,
