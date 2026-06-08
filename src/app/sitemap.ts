@@ -1,5 +1,7 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
 import { toPlanUrl } from '@/lib/location'
+
+export const revalidate = 3600
 
 const BASE = 'https://kiravoy.com'
 
@@ -12,7 +14,11 @@ type SitemapEntry = {
 }
 
 export default async function sitemap(): Promise<SitemapEntry[]> {
-  const supabase = await createClient()
+  // cookies()가 필요 없는 직접 클라이언트 사용 (공개 데이터 조회)
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  )
 
   const [{ data: articles }, { data: plans }] = await Promise.all([
     supabase
@@ -100,57 +106,36 @@ export default async function sitemap(): Promise<SitemapEntry[]> {
     },
   ]
 
-  // Articles — pair KO and EN slugs by slug value (same slug used for both languages)
-  const articleSlugs = Array.from(new Set((articles ?? []).map(a => a.slug)))
-  const articleEntries: SitemapEntry[] = articleSlugs.flatMap(slug => {
-    const row = (articles ?? []).find(a => a.slug === slug)
-    const lastMod = row?.updated_at ? new Date(row.updated_at) : new Date()
-    const koUrl = `${BASE}/article/${slug}`
-    const enUrl = `${BASE}/en/article/${slug}`
-    return [
-      {
-        url: koUrl,
-        lastModified: lastMod,
-        changeFrequency: 'monthly' as const,
-        priority: 0.8,
-        alternates: { languages: { ko: koUrl, en: enUrl, 'x-default': koUrl } },
-      },
-      {
-        url: enUrl,
-        lastModified: lastMod,
-        changeFrequency: 'monthly' as const,
-        priority: 0.8,
-        alternates: { languages: { ko: koUrl, en: enUrl, 'x-default': koUrl } },
-      },
-    ]
-  })
+  // Articles — KO/EN 쌍 (같은 slug로 두 언어 모두 등록)
+  const seenArticleSlugs = new Set<string>()
+  const articleEntries: SitemapEntry[] = []
+  for (const a of articles ?? []) {
+    if (seenArticleSlugs.has(a.slug)) continue
+    seenArticleSlugs.add(a.slug)
+    const lastMod = a.updated_at ? new Date(a.updated_at) : new Date()
+    const koUrl = `${BASE}/article/${a.slug}`
+    const enUrl = `${BASE}/en/article/${a.slug}`
+    articleEntries.push(
+      { url: koUrl, lastModified: lastMod, changeFrequency: 'monthly', priority: 0.8, alternates: { languages: { ko: koUrl, en: enUrl, 'x-default': koUrl } } },
+      { url: enUrl, lastModified: lastMod, changeFrequency: 'monthly', priority: 0.8, alternates: { languages: { ko: koUrl, en: enUrl, 'x-default': koUrl } } },
+    )
+  }
 
-  // Travel plans — pair by slug
-  const planSlugs = Array.from(new Set((plans ?? []).map(p => p.slug)))
-  const planEntries: SitemapEntry[] = planSlugs.flatMap(slug => {
-    const row = (plans ?? []).find(p => p.slug === slug)
-    if (!row) return []
-    const lastMod = row.created_at ? new Date(row.created_at) : new Date()
-    const planPath = toPlanUrl({ country: row.country, city: row.city, slug: row.slug })
+  // Travel plans — KO/EN 쌍
+  const seenPlanSlugs = new Set<string>()
+  const planEntries: SitemapEntry[] = []
+  for (const p of plans ?? []) {
+    if (seenPlanSlugs.has(p.slug)) continue
+    seenPlanSlugs.add(p.slug)
+    const lastMod = p.created_at ? new Date(p.created_at) : new Date()
+    const planPath = toPlanUrl({ country: p.country, city: p.city, slug: p.slug })
     const koUrl = `${BASE}${planPath}`
     const enUrl = `${BASE}/en${planPath}`
-    return [
-      {
-        url: koUrl,
-        lastModified: lastMod,
-        changeFrequency: 'monthly' as const,
-        priority: 0.8,
-        alternates: { languages: { ko: koUrl, en: enUrl, 'x-default': koUrl } },
-      },
-      {
-        url: enUrl,
-        lastModified: lastMod,
-        changeFrequency: 'monthly' as const,
-        priority: 0.8,
-        alternates: { languages: { ko: koUrl, en: enUrl, 'x-default': koUrl } },
-      },
-    ]
-  })
+    planEntries.push(
+      { url: koUrl, lastModified: lastMod, changeFrequency: 'monthly', priority: 0.8, alternates: { languages: { ko: koUrl, en: enUrl, 'x-default': koUrl } } },
+      { url: enUrl, lastModified: lastMod, changeFrequency: 'monthly', priority: 0.8, alternates: { languages: { ko: koUrl, en: enUrl, 'x-default': koUrl } } },
+    )
+  }
 
   return [...staticPages, ...articleEntries, ...planEntries]
 }
