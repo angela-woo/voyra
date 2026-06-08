@@ -17,6 +17,8 @@ import RelatedContent from '@/components/article/RelatedContent'
 import FlightSearchWidget from '@/components/widgets/FlightSearchWidget'
 import TagBasedInternalLinks from '@/components/InternalLinks'
 import { Suspense } from 'react'
+import DestinationSchema from '@/components/schema/DestinationSchema'
+import BreadcrumbSchema from '@/components/schema/BreadcrumbSchema'
 import { toPlanUrl } from '@/lib/location'
 import { getCityCoordinates } from '@/lib/utils/cityCoordinates'
 import { getKlookUrl } from '@/lib/utils/klookUrl'
@@ -197,31 +199,27 @@ export default async function TravelPlanPage({ params }: PageProps) {
   ])
 
   const planFullUrl = `https://kiravoy.com${toPlanUrl(plan)}`
-  const jsonLd = [
-    {
-      '@context': 'https://schema.org',
-      '@type': 'TouristDestination',
-      name: plan.city,
-      description: plan.meta_description,
-      touristType: plan.travel_type,
-      url: planFullUrl,
-    },
-    {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: '홈', item: 'https://kiravoy.com' },
-        { '@type': 'ListItem', position: 2, name: '여행 일정', item: 'https://kiravoy.com/destinations' },
-        { '@type': 'ListItem', position: 3, name: plan.country, item: `https://kiravoy.com/destinations/${country}` },
-        { '@type': 'ListItem', position: 4, name: plan.city, item: `https://kiravoy.com/destinations/${country}/${city}` },
-        { '@type': 'ListItem', position: 5, name: plan.title, item: planFullUrl },
-      ],
-    },
-  ]
+  const planCoords = getCityCoordinates(plan.city)
 
   return (
     <div className="min-h-screen">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <DestinationSchema
+        name={plan.city}
+        description={plan.meta_description}
+        image={plan.cover_image_url}
+        url={planFullUrl}
+        touristType={plan.travel_type}
+        geo={planCoords ? { latitude: planCoords.lat, longitude: planCoords.lng } : null}
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: '홈', url: 'https://kiravoy.com' },
+          { name: '여행 일정', url: 'https://kiravoy.com/destinations' },
+          { name: plan.country, url: `https://kiravoy.com/destinations/${country}` },
+          { name: plan.city, url: `https://kiravoy.com/destinations/${country}/${city}` },
+          { name: plan.title, url: planFullUrl },
+        ]}
+      />
       {/* Hero */}
       <section className="relative h-72 md:h-96 bg-gradient-to-br from-blue-700 to-indigo-800 overflow-hidden">
         {heroImage && (

@@ -29,6 +29,8 @@ import InternalLinks from '@/components/article/InternalLinks'
 import TagBasedInternalLinks from '@/components/InternalLinks'
 import { Suspense } from 'react'
 import FlightSearchWidget from '@/components/widgets/FlightSearchWidget'
+import ArticleSchema from '@/components/schema/ArticleSchema'
+import BreadcrumbSchema from '@/components/schema/BreadcrumbSchema'
 
 export const revalidate = 3600
 
@@ -199,26 +201,26 @@ export default async function ArticlePage({ params }: PageProps) {
   const destination = [article.city, article.country].filter(Boolean).join(', ')
   const mainPlace = places.find((p: { lat: number | null; lng: number | null }) => p.lat && p.lng)
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: article.title,
-    description: article.meta_description,
-    image: article.cover_image_url ?? 'https://kiravoy.com/og-image.jpg',
-    datePublished: article.created_at ?? undefined,
-    dateModified: article.updated_at ?? article.created_at ?? undefined,
-    author: { '@type': 'Organization', name: 'Kiravoy', url: 'https://kiravoy.com' },
-    publisher: {
-      '@type': 'Organization',
-      name: 'Kiravoy',
-      logo: { '@type': 'ImageObject', url: 'https://kiravoy.com/og-image.jpg' },
-    },
-    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://kiravoy.com/article/${article.slug}` },
-  }
+  const articleUrl = `https://kiravoy.com/article/${article.slug}`
 
   return (
     <div>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <ArticleSchema
+        headline={article.title}
+        description={article.meta_description}
+        image={article.cover_image_url}
+        datePublished={article.created_at}
+        dateModified={article.updated_at ?? article.created_at}
+        url={articleUrl}
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: '홈', url: 'https://kiravoy.com' },
+          { name: '여행 가이드', url: 'https://kiravoy.com/articles' },
+          ...(article.country ? [{ name: article.country, url: `https://kiravoy.com/articles?country=${encodeURIComponent(article.country)}` }] : []),
+          { name: article.title, url: articleUrl },
+        ]}
+      />
       {/* 히어로 */}
       <div className={`relative w-full h-[300px] md:h-[500px] ${heroImageUrl ? 'bg-gray-200' : 'bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900'}`}>
         {heroImageUrl && (
