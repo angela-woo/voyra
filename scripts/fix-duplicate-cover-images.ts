@@ -59,7 +59,8 @@ async function fixDuplicates() {
       console.log(`  교체 중: ${article.slug}`)
       console.log(`  키워드: ${queries[0]}`)
 
-      const newUrl = await fetchUniqueUnsplashImage(queries, usedUrls)
+      // 3페이지로 제한해 API 호출 절약
+      const newUrl = await fetchUniqueUnsplashImage(queries, usedUrls, 3)
       if (newUrl) {
         const { error } = await supabase
           .from('articles')
@@ -77,7 +78,7 @@ async function fixDuplicates() {
         console.log(`  ⚠️ 대체 이미지 없음`)
       }
 
-      await new Promise(r => setTimeout(r, 1500))
+      await new Promise(r => setTimeout(r, 2000))
     }
   }
 
@@ -88,7 +89,8 @@ async function fixDuplicates() {
   for (const article of noImageArticles) {
     const cityEn = (article.city_en as string | null) || (article.city as string) || 'travel'
     const queries = getKeywordsFromSlug(article.slug, cityEn.toLowerCase().replace(/\s+/g, '-'))
-    const newUrl = await fetchUniqueUnsplashImage(queries, usedUrls)
+    // 3페이지로 제한해 API 호출 절약
+    const newUrl = await fetchUniqueUnsplashImage(queries, usedUrls, 3)
 
     if (newUrl) {
       const { error } = await supabase
@@ -105,7 +107,7 @@ async function fixDuplicates() {
       console.log(`  ⚠️ ${article.slug} 이미지 없음`)
     }
 
-    await new Promise(r => setTimeout(r, 1500))
+    await new Promise(r => setTimeout(r, 2000))
   }
 
   console.log(`\n🎉 완료! 총 ${fixed}개 이미지 수정/추가됨`)

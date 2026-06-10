@@ -28,11 +28,12 @@ export async function fetchUniqueUnsplashImage(
           { headers: { Authorization: `Client-ID ${UNSPLASH_KEY}` } },
         )
         if (!res.ok) {
-          if (res.status === 429) {
-            console.log('⏳ Unsplash rate limit — 10초 대기')
-            await new Promise(r => setTimeout(r, 10000))
+          if (res.status === 429 || res.status === 403) {
+            console.log(`⏳ Unsplash rate limit (${res.status}) — 15초 대기`)
+            await new Promise(r => setTimeout(r, 15000))
             continue
           }
+          console.warn(`⚠️ Unsplash non-ok: ${res.status} (${query} p${page})`)
           break
         }
         const data = await res.json()
@@ -41,7 +42,7 @@ export async function fetchUniqueUnsplashImage(
         const candidates = photos
           .filter(p => {
             const url = p.urls?.regular
-            return url && !usedUrls.has(url) && p.width >= 800 && p.height >= 500
+            return url && !usedUrls.has(url)
           })
           .sort((a, b) => {
             const scoreA = (a.likes ?? 0) + (a.downloads ?? 0) * 0.1
@@ -112,9 +113,9 @@ export function getKeywordsFromSlug(slug: string, cityEn: string): string[] {
     tempura: ['tempura japanese shrimp golden crispy', 'tempura set meal restaurant'],
     kaisendon: ['kaisen don seafood rice bowl sashimi fresh', 'colorful bowl japanese market'],
     matcha: ['matcha green tea dessert japan parfait', 'matcha sweets traditional tea'],
-    cafe: ['japanese cafe interior cozy specialty coffee', 'tokyo cafe design aesthetic'],
+    cafe: [`${city} cafe coffee shop cozy interior`, `${city} specialty coffee culture trendy`],
     izakaya: ['izakaya japanese pub night food yakitori', 'japanese bar grill lantern'],
-    'street-food': ['japanese street food market stall', 'osaka street snack dotonbori'],
+    'street-food': [`${city} street food market stall night`, `${city} local food vendor outdoor`],
     shopping: [`${city} shopping street market boutique`, `${city} retail district local`],
     drugstore: ['japanese drugstore cosmetics beauty shelf', 'japan pharmacy matsukiyo interior'],
     kimono: ['kimono traditional japanese woman temple', 'kimono asakusa rental dress'],
@@ -197,13 +198,13 @@ export function getKeywordsFromSlug(slug: string, cityEn: string): string[] {
     const stopWords = new Set(['the', 'for', 'and', 'guide', 'travel', 'korean', 'travelers', 'ko', 'en', '2024', '2025', '2026'])
     const words = s.split('-').filter(w => w.length > 2 && !stopWords.has(w))
     if (words.length >= 2) {
-      queries.push(`${words.slice(0, 3).join(' ')} korea travel`)
+      queries.push(`${words.slice(0, 3).join(' ')} travel destination`)
       queries.push(`${words[0]} ${words[1]} tourism photo`)
     }
     // 도시 기반 고유 페이지 폴백 (slug 해시로 페이지 분산)
-    const page = (Math.abs(s.split('').reduce((a, c) => a + c.charCodeAt(0), 0)) % 50) + 1
-    queries.push(`${city} travel attraction landmark page${page}`)
-    queries.push(`${city} tourism scenic beautiful`)
+    const pageHash = (Math.abs(s.split('').reduce((a, c) => a + c.charCodeAt(0), 0)) % 20) + 1
+    queries.push(`${city} travel landmark scenic`)
+    queries.push(`${city} tourism beautiful destination page${pageHash}`)
   }
 
   const seen = new Set<string>()
