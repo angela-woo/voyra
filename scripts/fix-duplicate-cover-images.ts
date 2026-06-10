@@ -4,7 +4,7 @@
  * 실행: env $(cat .env.local | grep -v '^#' | xargs) npx tsx scripts/fix-duplicate-cover-images.ts
  */
 import { createClient } from '@supabase/supabase-js'
-import { getKeywordsFromSlug, fetchUniqueUnsplashImage } from '../src/lib/images/smartImageSearch'
+import { getKeywordsFromSlug, fetchUniqueUnsplashImage, CITY_KO_TO_EN } from '../src/lib/images/smartImageSearch'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

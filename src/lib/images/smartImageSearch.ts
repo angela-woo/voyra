@@ -69,9 +69,24 @@ export async function fetchUniqueUnsplashImage(
 // ─────────────────────────────────────────────────
 // slug 기반 커버 이미지 키워드 (구체적 장소/테마)
 // ─────────────────────────────────────────────────
+export const CITY_KO_TO_EN: Record<string, string> = {
+  '도쿄': 'tokyo', '오사카': 'osaka', '교토': 'kyoto', '후쿠오카': 'fukuoka',
+  '삿포로': 'sapporo', '나고야': 'nagoya', '오키나와': 'okinawa', '나라': 'nara',
+  '서울': 'seoul', '부산': 'busan', '제주': 'jeju', '전주': 'jeonju', '경주': 'gyeongju',
+  '방콕': 'bangkok', '치앙마이': 'chiang mai', '푸켓': 'phuket', '파타야': 'pattaya',
+  '발리': 'bali', '자카르타': 'jakarta', '싱가포르': 'singapore',
+  '하노이': 'hanoi', '호치민': 'ho chi minh', '다낭': 'da nang', '호이안': 'hoi an', '나트랑': 'nha trang',
+  '파리': 'paris', '런던': 'london', '로마': 'rome', '바르셀로나': 'barcelona',
+  '암스테르담': 'amsterdam', '프라하': 'prague', '이스탄불': 'istanbul',
+  '뉴욕': 'new york', '로스앤젤레스': 'los angeles', '시드니': 'sydney',
+  '두바이': 'dubai', '타이베이': 'taipei', '홍콩': 'hong kong', '마카오': 'macau',
+  '세부': 'cebu', '마닐라': 'manila',
+}
+
 export function getKeywordsFromSlug(slug: string, cityEn: string): string[] {
   const s = slug.toLowerCase()
-  const city = cityEn.toLowerCase()
+  // Korean 도시명이 넘어온 경우 영어로 변환
+  const city = (CITY_KO_TO_EN[cityEn] ?? cityEn).toLowerCase()
 
   const slugKeywords: Record<string, string[]> = {
     shinjuku: ['shinjuku tokyo neon night street', 'shinjuku golden gai bar alley'],
@@ -109,8 +124,8 @@ export function getKeywordsFromSlug(slug: string, cityEn: string): string[] {
     autumn: ['autumn koyo red maple japan foliage', 'fall leaves temple garden japan'],
     'night-view': [`${city} night skyline city lights panorama`, `${city} illumination rooftop view`],
     night: [`${city} night city lights skyline`, `${city} illumination dusk beautiful`],
-    budget: ['budget travel japan affordable tips', 'backpacker hostel japan explore'],
-    solo: ['solo travel japan adventure explore', 'solo journey backpacker'],
+    budget: [`${city} budget travel affordable tips`, `${city} backpacker hostel explore`],
+    solo: [`${city} solo travel adventure explore`, 'solo journey backpacker'],
     couple: ['romantic couple travel japan sunset', 'couple japanese garden walk'],
     family: ['family vacation japan children', 'family travel theme park fun'],
     beach: [`${city} beach tropical ocean clear`, `${city} coast waves scenic`],
