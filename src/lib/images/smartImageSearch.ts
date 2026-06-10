@@ -16,33 +16,53 @@ export const sessionUsedUrls = new Set<string>()
 export async function fetchUniqueUnsplashImage(
   queries: string[],
   usedUrls: Set<string> = sessionUsedUrls,
-  maxRetries = 5,
+  maxPagesPerQuery = 8,
 ): Promise<string | null> {
   if (!UNSPLASH_KEY) return null
 
   for (const query of queries) {
-    for (let page = 1; page <= maxRetries; page++) {
+    for (let page = 1; page <= maxPagesPerQuery; page++) {
       try {
         const res = await fetch(
-          `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=10&page=${page}&orientation=landscape`,
+          `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=30&page=${page}&orientation=landscape&order_by=relevant`,
           { headers: { Authorization: `Client-ID ${UNSPLASH_KEY}` } },
         )
-        if (!res.ok) break
-        const data = await res.json()
-        for (const photo of (data.results ?? [])) {
-          const url: string = photo.urls?.regular
-          if (url && !usedUrls.has(url)) {
-            usedUrls.add(url)
-            return url
+        if (!res.ok) {
+          if (res.status === 429) {
+            console.log('⏳ Unsplash rate limit — 10초 대기')
+            await new Promise(r => setTimeout(r, 10000))
+            continue
           }
+          break
+        }
+        const data = await res.json()
+        const photos: Array<{ urls: { regular: string }; width: number; height: number; likes: number; downloads?: number }> = data.results ?? []
+
+        const candidates = photos
+          .filter(p => {
+            const url = p.urls?.regular
+            return url && !usedUrls.has(url) && p.width >= 800 && p.height >= 500
+          })
+          .sort((a, b) => {
+            const scoreA = (a.likes ?? 0) + (a.downloads ?? 0) * 0.1
+            const scoreB = (b.likes ?? 0) + (b.downloads ?? 0) * 0.1
+            return scoreB - scoreA
+          })
+
+        if (candidates.length > 0) {
+          const url = candidates[0].urls.regular
+          usedUrls.add(url)
+          return url
         }
         await new Promise(r => setTimeout(r, 200))
       } catch (err) {
         console.error(`Unsplash fetch error (${query}, page ${page}):`, err)
-        break
+        await new Promise(r => setTimeout(r, 1000))
       }
     }
   }
+
+  console.warn(`⚠️ 이미지 없음: ${queries[0]}`)
   return null
 }
 
@@ -99,6 +119,45 @@ export function getKeywordsFromSlug(slug: string, cityEn: string): string[] {
     hiking: [`${city} hiking trail mountain nature`, `${city} outdoor trekking landscape`],
     museum: [`${city} museum art gallery interior`, `${city} cultural exhibition space`],
     temple: [`${city} temple shrine ancient architecture`, `${city} religious cultural heritage`],
+    // 서울 세부 명소
+    ssamsiegil: ['ssamsiegil insadong courtyard mall seoul', 'insadong ssamsiegil spiral shopping'],
+    insadong: ['insadong seoul traditional culture street', 'insadong korea craft gallery alley'],
+    hongdae: ['hongdae seoul indie music street art', 'hongdae young culture cafe korea'],
+    hongik: ['hongdae university street seoul art', 'hongik indie culture music korea'],
+    bukchon: ['bukchon hanok village seoul traditional roof', 'bukchon korea traditional house hill'],
+    myeongdong: ['myeongdong seoul shopping street cosmetics', 'myeongdong street food night korea'],
+    gangnam: ['gangnam seoul modern district skyscraper', 'gangnam luxury shopping korea'],
+    itaewon: ['itaewon seoul multicultural district food', 'itaewon international street korea'],
+    namsan: ['namsan tower seoul city view night', 'n seoul tower cable car mountain'],
+    dongdaemun: ['dongdaemun design plaza ddp seoul', 'dongdaemun shopping fashion night'],
+    jeonju: ['jeonju hanok village korea traditional', 'jeonju bibimbap food culture'],
+    busan: ['busan gamcheon culture village colorful', 'busan haeundae beach korea'],
+    jeju: ['jeju island korea volcanic landscape', 'jeju hallasan mountain natural'],
+    gyeongju: ['gyeongju historic site korea ancient', 'gyeongju bulguksa temple heritage'],
+    // 도쿄 세부 명소 (추가)
+    kabukicho: ['kabukicho shinjuku entertainment night neon', 'kabukicho tower tokyo red light'],
+    koenji: ['koenji vintage shop tokyo indie', 'koenji retro fashion alley'],
+    yanaka: ['yanaka old town tokyo traditional', 'yanaka cemetery shopping street'],
+    kagurazaka: ['kagurazaka french japanese tokyo alley', 'kagurazaka cobblestone narrow street'],
+    // 오사카 세부
+    dotonbori: ['dotonbori osaka canal neon glico sign', 'dotonbori night reflection river'],
+    shinsekai: ['shinsekai retro osaka tower tsutenkaku', 'shinsekai old town osaka street'],
+    kuromon: ['kuromon market osaka fresh seafood', 'kuromon ichiba market fish stall'],
+    namba: ['namba osaka shopping street busy', 'namba parks shopping center osaka'],
+    // 베트남
+    hoian: ['hoi an ancient town lantern night', 'hoi an yellow buildings canal boat'],
+    banhmi: ['banh mi vietnam sandwich street food', 'vietnamese sandwich baguette fresh'],
+    pho: ['pho vietnam noodle soup bowl herbs', 'vietnamese noodle pho restaurant'],
+    // 태국 세부
+    watpho: ['wat pho reclining buddha temple bangkok', 'bangkok grand palace temple gold'],
+    khaosan: ['khao san road bangkok backpacker night', 'khaosan road street food bar'],
+    chatuchak: ['chatuchak weekend market bangkok', 'chatuchak market stalls shopping'],
+    // 발리 세부
+    ubud: ['ubud bali rice terrace green landscape', 'ubud monkey forest temple bali'],
+    seminyak: ['seminyak bali beach club sunset', 'seminyak luxury villa pool bali'],
+    uluwatu: ['uluwatu cliff temple bali ocean sunset', 'uluwatu kecak fire dance ceremony'],
+    kuta: ['kuta beach bali surfer sunset orange', 'kuta bali busy beach wave'],
+    // 도시 전반
     tokyo: ['tokyo japan modern skyline landmark', 'tokyo contrast traditional modern'],
     osaka: ['osaka dotonbori canal neon glico', 'osaka street food market night'],
     kyoto: ['kyoto temple fushimi inari torii gates', 'kyoto geisha gion district lantern'],
@@ -120,11 +179,16 @@ export function getKeywordsFromSlug(slug: string, cityEn: string): string[] {
   }
 
   if (queries.length === 0) {
-    queries.push(
-      `${city} travel famous landmark scenic`,
-      `${city} tourism popular destination`,
-      `${city} scenic view attraction`,
-    )
+    const stopWords = new Set(['the', 'for', 'and', 'guide', 'travel', 'korean', 'travelers', 'ko', 'en', '2024', '2025', '2026'])
+    const words = s.split('-').filter(w => w.length > 2 && !stopWords.has(w))
+    if (words.length >= 2) {
+      queries.push(`${words.slice(0, 3).join(' ')} korea travel`)
+      queries.push(`${words[0]} ${words[1]} tourism photo`)
+    }
+    // 도시 기반 고유 페이지 폴백 (slug 해시로 페이지 분산)
+    const page = (Math.abs(s.split('').reduce((a, c) => a + c.charCodeAt(0), 0)) % 50) + 1
+    queries.push(`${city} travel attraction landmark page${page}`)
+    queries.push(`${city} tourism scenic beautiful`)
   }
 
   const seen = new Set<string>()

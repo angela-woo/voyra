@@ -175,16 +175,31 @@ Include 4-5 places. Add section_images for each ## heading.`,
 
 function sleep(ms: number) { return new Promise(r => setTimeout(r, ms)) }
 
-async function main() {
-  // Load existing image URLs into sessionUsedUrls (batch-wide deduplication)
-  const { data: existingImages } = await supabase
-    .from('articles')
+async function loadAllUsedImageUrls(): Promise<void> {
+  console.log('📥 Loading existing image URLs...')
+  let page = 0
+  const pageSize = 1000
+  while (true) {
+    const { data } = await supabase
+      .from('articles')
+      .select('cover_image_url')
+      .not('cover_image_url', 'is', null)
+      .range(page * pageSize, (page + 1) * pageSize - 1)
+    if (!data || data.length === 0) break
+    data.forEach((a: { cover_image_url: string }) => { if (a.cover_image_url) sessionUsedUrls.add(a.cover_image_url) })
+    if (data.length < pageSize) break
+    page++
+  }
+  const { data: plans } = await supabase
+    .from('travel_plans')
     .select('cover_image_url')
     .not('cover_image_url', 'is', null)
-  ;(existingImages ?? []).forEach((a: { cover_image_url: string }) => {
-    if (a.cover_image_url) sessionUsedUrls.add(a.cover_image_url)
-  })
-  console.log(`📷 Loaded ${sessionUsedUrls.size} existing image URLs`)
+  plans?.forEach((p: { cover_image_url: string }) => { if (p.cover_image_url) sessionUsedUrls.add(p.cover_image_url) })
+  console.log(`✅ Loaded ${sessionUsedUrls.size} existing image URLs (dedup active)`)
+}
+
+async function main() {
+  await loadAllUsedImageUrls()
 
   const { data: existing } = await supabase.from('articles').select('slug').eq('language', 'en')
   const existingSlugs = new Set((existing ?? []).map(a => a.slug))
@@ -243,6 +258,7 @@ async function main() {
           await supabase.from('articles').update({ cover_image_url: coverUrl }).eq('slug', slug)
           process.stdout.write(` 🖼️`)
         }
+        await new Promise(r => setTimeout(r, 1500))
       } catch (imgErr) {
         process.stdout.write(` ⚠️img-error`)
         console.error('Image error:', imgErr)
