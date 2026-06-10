@@ -36,6 +36,9 @@ export const metadata: Metadata = {
   },
   verification: {
     google: 'adsWS-dLWCg1bUDwvbJSTq_-Cbrpl40LtvHGRIjPUMQ',
+    other: {
+      'naver-site-verification': 'ef62af1badd4fb9e92a943fbccbb0153',
+    },
   },
   alternates: {
     canonical: 'https://kiravoy.com',
