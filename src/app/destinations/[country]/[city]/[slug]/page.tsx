@@ -423,7 +423,8 @@ export default async function TravelPlanPage({ params }: PageProps) {
                                     href={place.google_maps_url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center gap-1 text-[10px] px-2.5 py-1 border border-gray-200 rounded hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"
+                                    className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded text-white font-medium"
+                                    style={{ backgroundColor: '#4285F4' }}
                                   >
                                     <Map className="w-3 h-3" />구글맵
                                   </a>
