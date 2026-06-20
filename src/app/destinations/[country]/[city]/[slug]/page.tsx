@@ -10,6 +10,7 @@ import { MapPin, Clock, Thermometer, Info, ExternalLink, ChevronRight, Landmark,
 import type { Metadata } from 'next'
 import { generatePlanMetaDescription } from '@/lib/utils/metaGenerator'
 import { buildOgImageUrl } from '@/lib/seo'
+import { NOINDEX_PLAN_SLUGS } from '@/lib/seo/noindex-plans'
 import AdUnit from '@/components/ui/AdUnit'
 import ESimBanner from '@/components/widgets/ESimBanner'
 import ShareButtons from '@/components/ui/ShareButtons'
@@ -150,6 +151,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${plan.title} | Kiravoy`,
     description,
     keywords,
+    ...(NOINDEX_PLAN_SLUGS.has(plan.slug) && { robots: { index: false, follow: false } }),
     alternates: {
       canonical: `https://kiravoy.com${planUrl}`,
       languages: {

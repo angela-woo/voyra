@@ -11,6 +11,7 @@ import WeatherWidget from '@/components/widgets/WeatherWidget'
 import { MapPin, Clock, Thermometer, Info, ExternalLink, ChevronRight, Landmark, UtensilsCrossed, Coffee, Hotel, Map, Ticket, Building2, Coins } from 'lucide-react'
 import type { Metadata } from 'next'
 import { generatePlanMetaDescription, getOgImageUrl } from '@/lib/utils/metaGenerator'
+import { NOINDEX_PLAN_SLUGS } from '@/lib/seo/noindex-plans'
 import AdUnit from '@/components/ui/AdUnit'
 import ESimBanner from '@/components/widgets/ESimBanner'
 import ShareButtons from '@/components/ui/ShareButtons'
@@ -117,6 +118,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${plan.title} | Kiravoy`,
     description,
     keywords,
+    ...(NOINDEX_PLAN_SLUGS.has(plan.slug) && { robots: { index: false, follow: false } }),
     alternates: {
       canonical: `https://kiravoy.com${enPlanUrl}`,
       languages: {

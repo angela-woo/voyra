@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { toPlanUrl } from '@/lib/location'
+import { NOINDEX_PLAN_SLUGS } from '@/lib/seo/noindex-plans'
 
 export const revalidate = 3600
 
@@ -127,6 +128,7 @@ export default async function sitemap(): Promise<SitemapEntry[]> {
   for (const p of plans ?? []) {
     if (seenPlanSlugs.has(p.slug)) continue
     seenPlanSlugs.add(p.slug)
+    if (NOINDEX_PLAN_SLUGS.has(p.slug)) continue
     const lastMod = p.created_at ? new Date(p.created_at) : new Date()
     const planPath = toPlanUrl({ country: p.country, city: p.city, slug: p.slug })
     const koUrl = `${BASE}${planPath}`
