@@ -22,6 +22,7 @@ import { ko } from 'date-fns/locale'
 import type { Metadata } from 'next'
 import { generateMetaDescription } from '@/lib/utils/metaGenerator'
 import { buildOgImageUrl } from '@/lib/seo'
+import { NOINDEX_ARTICLE_SLUGS } from '@/lib/seo/noindex-articles'
 import AdUnit from '@/components/ui/AdUnit'
 import ESimBanner from '@/components/widgets/ESimBanner'
 import ShareButtons from '@/components/ui/ShareButtons'
@@ -128,6 +129,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${article.title} | Kiravoy`,
     description,
     keywords,
+    ...(NOINDEX_ARTICLE_SLUGS.has(slug) && { robots: { index: false, follow: false } }),
     alternates: {
       canonical: `https://kiravoy.com/article/${slug}`,
       languages: {

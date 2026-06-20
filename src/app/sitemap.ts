@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { toPlanUrl } from '@/lib/location'
 import { NOINDEX_PLAN_SLUGS } from '@/lib/seo/noindex-plans'
+import { NOINDEX_ARTICLE_SLUGS } from '@/lib/seo/noindex-articles'
 
 export const revalidate = 3600
 
@@ -113,6 +114,7 @@ export default async function sitemap(): Promise<SitemapEntry[]> {
   for (const a of articles ?? []) {
     if (seenArticleSlugs.has(a.slug)) continue
     seenArticleSlugs.add(a.slug)
+    if (NOINDEX_ARTICLE_SLUGS.has(a.slug)) continue
     const lastMod = a.updated_at ? new Date(a.updated_at) : new Date()
     const koUrl = `${BASE}/article/${a.slug}`
     const enUrl = `${BASE}/en/article/${a.slug}`
