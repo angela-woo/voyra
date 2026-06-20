@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { fetchUnsplashPhoto, fetchUnsplashPhotos, toEnglishCity } from '@/lib/unsplash'
+import { fetchUnsplashPhoto, toEnglishCity } from '@/lib/unsplash'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
 import { MapPin, Clock, Thermometer, Info, ExternalLink, ChevronRight, Landmark, UtensilsCrossed, Coffee, Hotel, Map, Ticket, Building2, Coins } from 'lucide-react'
 import type { Metadata } from 'next'
@@ -51,6 +51,11 @@ interface DayData {
   places: DayPlace[]
 }
 
+interface DaysDataObject {
+  days: DayData[]
+  prices_verified_at?: string
+}
+
 interface TravelPlan {
   id: string
   slug: string
@@ -69,10 +74,28 @@ interface TravelPlan {
     tips?: string[]
     best_season?: string
   } | null
-  days_data: DayData[] | null
+  days_data: DayData[] | DaysDataObject | null
   cover_image_url: string | null
   views_count: number
   created_at: string
+}
+
+function extractDays(daysData: TravelPlan['days_data']): DayData[] {
+  if (!daysData) return []
+  if (Array.isArray(daysData)) return daysData
+  return daysData.days ?? []
+}
+
+function extractPricesVerifiedAt(daysData: TravelPlan['days_data']): string | null {
+  if (!daysData || Array.isArray(daysData)) return null
+  return daysData.prices_verified_at ?? null
+}
+
+function isPriceStale(verifiedAt: string | null): boolean {
+  if (!verifiedAt) return true
+  const sixMonthsAgo = new Date()
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+  return new Date(verifiedAt) < sixMonthsAgo
 }
 
 const adminSupabase = createServiceClient(
@@ -198,13 +221,9 @@ export default async function TravelPlanPage({ params }: PageProps) {
 
   const cityEn = toEnglishCity(plan.city)
 
-  const [heroImage, hotelImages, tourImages] = await Promise.all([
-    plan.cover_image_url
-      ? Promise.resolve(plan.cover_image_url)
-      : fetchUnsplashPhoto(`${cityEn} travel`).then(p => p?.url ?? null),
-    fetchUnsplashPhotos(`${cityEn} hotel`, 4),
-    fetchUnsplashPhotos(`${cityEn} tour activity`, 4),
-  ])
+  const heroImage = plan.cover_image_url
+    ? plan.cover_image_url
+    : await fetchUnsplashPhoto(`${cityEn} travel`).then(p => p?.url ?? null)
 
   const planFullUrl = `https://kiravoy.com${toPlanUrl(plan)}`
   const planCoords = getCityCoordinates(plan.city)
@@ -321,65 +340,34 @@ export default async function TravelPlanPage({ params }: PageProps) {
 
             <AdUnit slot="1936618959" />
 
-            {/* Booking.com Hotel Carousel */}
-            <section>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>인기 숙소</h2>
-                <a
-                  href={getBookingUrl(cityEn, 'ko')}
-                  target="_blank"
-                  rel="noopener noreferrer sponsored"
-                  className="text-xs text-[var(--primary)] hover:underline flex items-center gap-1"
-                >
-                  더보기 <ExternalLink className="w-3 h-3" />
-                </a>
+            {/* Booking.com CTA */}
+            <a
+              href={getBookingUrl(cityEn, 'ko')}
+              target="_blank"
+              rel="noopener noreferrer sponsored"
+              className="flex items-center justify-between gap-3 bg-[#003580] text-white rounded-[var(--radius)] px-5 py-4 hover:opacity-90 transition-opacity"
+            >
+              <div>
+                <p className="font-semibold text-sm">{plan.city} 숙소 최저가 비교</p>
+                <p className="text-xs text-white/70 mt-0.5">Booking.com에서 실시간 가격 확인</p>
               </div>
-              <div className="overflow-x-auto -mx-4 px-4">
-                <div className="flex gap-4 pb-3" style={{ width: 'max-content' }}>
-                  {[
-                    { name: `${plan.city} 인기 호텔`, tag: '가성비' },
-                    { name: `${plan.city} 럭셔리 호텔`, tag: '럭셔리' },
-                    { name: `${plan.city} 게스트하우스`, tag: '배낭여행' },
-                    { name: `${plan.city} 부티크 호텔`, tag: '감성' },
-                  ].map((hotel, i) => (
-                    <a
-                      key={i}
-                      href={getBookingUrl(cityEn, 'ko')}
-                      target="_blank"
-                      rel="noopener noreferrer sponsored"
-                      className="w-48 shrink-0 bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
-                    >
-                      <div className="h-28 relative bg-gradient-to-br from-blue-100 to-indigo-100 overflow-hidden">
-                        {hotelImages[i] ? (
-                          <Image src={hotelImages[i].url} alt={hotel.name} fill className="object-cover" sizes="192px" />
-                        ) : (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <Building2 className="w-8 h-8 text-blue-300" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <p className="text-xs font-semibold text-gray-700 mb-1 line-clamp-2">{hotel.name}</p>
-                        <span className="inline-block bg-blue-50 text-blue-600 text-[10px] px-1.5 py-0.5 rounded mb-2">{hotel.tag}</span>
-                        <div
-                          className="w-full text-center text-[10px] py-1.5 rounded text-white font-medium"
-                          style={{ backgroundColor: '#003580' }}
-                        >
-                          Booking.com 예약
-                        </div>
-                      </div>
-                    </a>
-                  ))}
-                </div>
+              <div className="flex items-center gap-1.5 shrink-0 text-xs font-medium bg-white/20 px-3 py-1.5 rounded">
+                <Building2 className="w-3.5 h-3.5" />예약
               </div>
-            </section>
+            </a>
 
             {/* Day-by-day itinerary */}
-            {plan.days_data && plan.days_data.length > 0 && (
+            {extractDays(plan.days_data).length > 0 && (
               <section>
                 <h2 className="text-xl font-bold mb-6" style={{ fontFamily: 'var(--font-heading)' }}>일별 일정</h2>
+                {isPriceStale(extractPricesVerifiedAt(plan.days_data)) && (
+                  <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-5 text-xs text-amber-800">
+                    <Info className="w-4 h-4 shrink-0 mt-0.5 text-amber-500" />
+                    <span>가격은 변동될 수 있으니 방문 전 공식 사이트 확인을 권장합니다.</span>
+                  </div>
+                )}
                 <div className="space-y-8">
-                  {plan.days_data.map((day) => (
+                  {extractDays(plan.days_data).map((day) => (
                     <div key={day.day}>
                       {day.day === 2 && <AdUnit slot="6933794765" />}
                       <div className="flex items-center gap-3 mb-4">
@@ -430,29 +418,16 @@ export default async function TravelPlanPage({ params }: PageProps) {
                                   </div>
                                 )}
 
-                                <div className="flex flex-wrap gap-2">
-                                  {place.google_maps_url && (
-                                    <a
-                                      href={place.google_maps_url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="flex items-center gap-1 text-[10px] px-2.5 py-1 border border-gray-200 rounded hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"
-                                    >
-                                      <Map className="w-3 h-3" />구글맵
-                                    </a>
-                                  )}
-                                  {place.category === 'attraction' && (
-                                    <a
-                                      href={getKlookUrl(place.name, 'ko')}
-                                      target="_blank"
-                                      rel="noopener noreferrer sponsored"
-                                      className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded text-white font-medium"
-                                      style={{ backgroundColor: '#FF5722' }}
-                                    >
-                                      <Ticket className="w-3 h-3" />Klook 예약
-                                    </a>
-                                  )}
-                                </div>
+                                {place.google_maps_url && (
+                                  <a
+                                    href={place.google_maps_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-1 text-[10px] px-2.5 py-1 border border-gray-200 rounded hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"
+                                  >
+                                    <Map className="w-3 h-3" />구글맵
+                                  </a>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -464,58 +439,21 @@ export default async function TravelPlanPage({ params }: PageProps) {
               </section>
             )}
 
-            {/* Klook Tour Carousel */}
-            <section>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>인기 투어 & 액티비티</h2>
-                <a
-                  href={getKlookUrl(cityEn + ' tour', 'ko')}
-                  target="_blank"
-                  rel="noopener noreferrer sponsored"
-                  className="text-xs text-[var(--primary)] hover:underline flex items-center gap-1"
-                >
-                  더보기 <ExternalLink className="w-3 h-3" />
-                </a>
+            {/* Klook CTA */}
+            <a
+              href={getKlookUrl(cityEn + ' tour', 'ko')}
+              target="_blank"
+              rel="noopener noreferrer sponsored"
+              className="flex items-center justify-between gap-3 bg-[#FF5722] text-white rounded-[var(--radius)] px-5 py-4 hover:opacity-90 transition-opacity"
+            >
+              <div>
+                <p className="font-semibold text-sm">{plan.city} 투어 · 티켓 예약</p>
+                <p className="text-xs text-white/70 mt-0.5">Klook에서 현지 체험 예약</p>
               </div>
-              <div className="overflow-x-auto -mx-4 px-4">
-                <div className="flex gap-4 pb-3" style={{ width: 'max-content' }}>
-                  {[
-                    { name: `${plan.city} 대표 투어`, tag: '베스트' },
-                    { name: `${plan.city} 야경 투어`, tag: '야경' },
-                    { name: `${plan.city} 음식 투어`, tag: '미식' },
-                    { name: `${plan.city} 문화 체험`, tag: '문화' },
-                  ].map((tour, i) => (
-                    <a
-                      key={i}
-                      href={getKlookUrl(cityEn + ' tour', 'ko')}
-                      target="_blank"
-                      rel="noopener noreferrer sponsored"
-                      className="w-48 shrink-0 bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
-                    >
-                      <div className="h-28 relative bg-gradient-to-br from-orange-100 to-red-100 overflow-hidden">
-                        {tourImages[i] ? (
-                          <Image src={tourImages[i].url} alt={tour.name} fill className="object-cover" sizes="192px" />
-                        ) : (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <Ticket className="w-8 h-8 text-orange-300" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <p className="text-xs font-semibold text-gray-700 mb-1 line-clamp-2">{tour.name}</p>
-                        <span className="inline-block bg-orange-50 text-orange-600 text-[10px] px-1.5 py-0.5 rounded mb-2">{tour.tag}</span>
-                        <div
-                          className="w-full text-center text-[10px] py-1.5 rounded text-white font-medium"
-                          style={{ backgroundColor: '#FF5722' }}
-                        >
-                          Klook에서 예약
-                        </div>
-                      </div>
-                    </a>
-                  ))}
-                </div>
+              <div className="flex items-center gap-1.5 shrink-0 text-xs font-medium bg-white/20 px-3 py-1.5 rounded">
+                <Ticket className="w-3.5 h-3.5" />예약
               </div>
-            </section>
+            </a>
 
             <AdUnit slot="9176814723" />
 

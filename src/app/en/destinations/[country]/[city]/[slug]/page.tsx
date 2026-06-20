@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { fetchUnsplashPhoto, fetchUnsplashPhotos, toEnglishCity } from '@/lib/unsplash'
+import { fetchUnsplashPhoto, toEnglishCity } from '@/lib/unsplash'
 import { toPlanUrl } from '@/lib/location'
 import { getCityCoordinates } from '@/lib/utils/cityCoordinates'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
@@ -166,15 +166,21 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
 
   const cityEn = toEnglishCity(plan.city)
 
-  const [heroImage, hotelImages, tourImages] = await Promise.all([
-    plan.cover_image_url
-      ? Promise.resolve(plan.cover_image_url)
-      : fetchUnsplashPhoto(`${cityEn} travel`).then(p => p?.url ?? null),
-    fetchUnsplashPhotos(`${cityEn} hotel`, 4),
-    fetchUnsplashPhotos(`${cityEn} tour activity`, 4),
-  ])
+  const heroImage = plan.cover_image_url
+    ? plan.cover_image_url
+    : await fetchUnsplashPhoto(`${cityEn} travel`).then(p => p?.url ?? null)
 
-  const days_data: DayData[] = plan.days_data ?? []
+  const rawDaysData = plan.days_data
+  const days_data: DayData[] = Array.isArray(rawDaysData)
+    ? rawDaysData
+    : (rawDaysData as { days?: DayData[] } | null)?.days ?? []
+  const pricesVerifiedAt: string | null = (!rawDaysData || Array.isArray(rawDaysData))
+    ? null
+    : (rawDaysData as { prices_verified_at?: string }).prices_verified_at ?? null
+  const isPriceStale = !pricesVerifiedAt || (() => {
+    const sixMonthsAgo = new Date(); sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+    return new Date(pricesVerifiedAt) < sixMonthsAgo
+  })()
 
   const koPlanUrl = toPlanUrl(plan)
   const enPlanFullUrl = `https://kiravoy.com/en${koPlanUrl}`
@@ -293,60 +299,32 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
 
             <AdUnit slot="1936618959" />
 
-            {/* Hotel Carousel */}
-            <section>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>Where to Stay</h2>
-                <a
-                  href={getBookingUrl(cityEn, 'en')}
-                  target="_blank"
-                  rel="noopener noreferrer sponsored"
-                  className="text-xs text-[var(--primary)] hover:underline flex items-center gap-1"
-                >
-                  See more <ExternalLink className="w-3 h-3" />
-                </a>
+            {/* Booking.com CTA */}
+            <a
+              href={getBookingUrl(cityEn, 'en')}
+              target="_blank"
+              rel="noopener noreferrer sponsored"
+              className="flex items-center justify-between gap-3 bg-[#003580] text-white rounded-[var(--radius)] px-5 py-4 hover:opacity-90 transition-opacity"
+            >
+              <div>
+                <p className="font-semibold text-sm">Compare Hotels in {cityEn}</p>
+                <p className="text-xs text-white/70 mt-0.5">Find the best rates on Booking.com</p>
               </div>
-              <div className="overflow-x-auto -mx-4 px-4">
-                <div className="flex gap-4 pb-3" style={{ width: 'max-content' }}>
-                  {[
-                    { name: `Best Hotels in ${cityEn}`, tag: 'Best Value' },
-                    { name: `${cityEn} Luxury Hotels`, tag: 'Luxury' },
-                    { name: `${cityEn} Hostels`, tag: 'Budget' },
-                    { name: `${cityEn} Boutique Hotels`, tag: 'Boutique' },
-                  ].map((hotel, i) => (
-                    <a
-                      key={i}
-                      href={getBookingUrl(cityEn, 'en')}
-                      target="_blank"
-                      rel="noopener noreferrer sponsored"
-                      className="w-48 shrink-0 bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
-                    >
-                      <div className="h-28 relative bg-gradient-to-br from-blue-100 to-indigo-100 overflow-hidden">
-                        {hotelImages[i] ? (
-                          <Image src={hotelImages[i].url} alt={hotel.name} fill className="object-cover" sizes="192px" />
-                        ) : (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <Building2 className="w-8 h-8 text-blue-300" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <p className="text-xs font-semibold text-gray-700 mb-1 line-clamp-2">{hotel.name}</p>
-                        <span className="inline-block bg-blue-50 text-blue-600 text-[10px] px-1.5 py-0.5 rounded mb-2">{hotel.tag}</span>
-                        <div className="w-full text-center text-[10px] py-1.5 rounded text-white font-medium" style={{ backgroundColor: '#003580' }}>
-                          Book on Booking.com
-                        </div>
-                      </div>
-                    </a>
-                  ))}
-                </div>
+              <div className="flex items-center gap-1.5 shrink-0 text-xs font-medium bg-white/20 px-3 py-1.5 rounded">
+                <Building2 className="w-3.5 h-3.5" />Book
               </div>
-            </section>
+            </a>
 
             {/* Day-by-day */}
             {days_data.length > 0 && (
               <section>
                 <h2 className="text-xl font-bold mb-6" style={{ fontFamily: 'var(--font-heading)' }}>Day-by-Day Itinerary</h2>
+                {isPriceStale && (
+                  <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-5 text-xs text-amber-800">
+                    <Info className="w-4 h-4 shrink-0 mt-0.5 text-amber-500" />
+                    <span>Prices may vary. We recommend checking the official website before your visit.</span>
+                  </div>
+                )}
                 <div className="space-y-8">
                   {days_data.map((day) => (
                     <div key={day.day}>
@@ -399,29 +377,16 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
                                   </div>
                                 )}
 
-                                <div className="flex flex-wrap gap-2">
-                                  {place.google_maps_url && (
-                                    <a
-                                      href={place.google_maps_url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="flex items-center gap-1 text-[10px] px-2.5 py-1 border border-gray-200 rounded hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"
-                                    >
-                                      <Map className="w-3 h-3" />Google Maps
-                                    </a>
-                                  )}
-                                  {place.category === 'attraction' && (
-                                    <a
-                                      href={getKlookUrl(place.name, 'en')}
-                                      target="_blank"
-                                      rel="noopener noreferrer sponsored"
-                                      className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded text-white font-medium"
-                                      style={{ backgroundColor: '#FF5722' }}
-                                    >
-                                      <Ticket className="w-3 h-3" />Book on Klook
-                                    </a>
-                                  )}
-                                </div>
+                                {place.google_maps_url && (
+                                  <a
+                                    href={place.google_maps_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-1 text-[10px] px-2.5 py-1 border border-gray-200 rounded hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"
+                                  >
+                                    <Map className="w-3 h-3" />Google Maps
+                                  </a>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -433,55 +398,21 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
               </section>
             )}
 
-            {/* Klook Tour Carousel */}
-            <section>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold" style={{ fontFamily: 'var(--font-heading)' }}>Popular Tours &amp; Activities</h2>
-                <a
-                  href={getKlookUrl(cityEn + ' tour', 'en')}
-                  target="_blank"
-                  rel="noopener noreferrer sponsored"
-                  className="text-xs text-[var(--primary)] hover:underline flex items-center gap-1"
-                >
-                  See more <ExternalLink className="w-3 h-3" />
-                </a>
+            {/* Klook CTA */}
+            <a
+              href={getKlookUrl(cityEn + ' tour', 'en')}
+              target="_blank"
+              rel="noopener noreferrer sponsored"
+              className="flex items-center justify-between gap-3 bg-[#FF5722] text-white rounded-[var(--radius)] px-5 py-4 hover:opacity-90 transition-opacity"
+            >
+              <div>
+                <p className="font-semibold text-sm">{cityEn} Tours &amp; Tickets</p>
+                <p className="text-xs text-white/70 mt-0.5">Book local experiences on Klook</p>
               </div>
-              <div className="overflow-x-auto -mx-4 px-4">
-                <div className="flex gap-4 pb-3" style={{ width: 'max-content' }}>
-                  {[
-                    { name: `${cityEn} Best Tour`, tag: 'Best' },
-                    { name: `${cityEn} Night Tour`, tag: 'Night' },
-                    { name: `${cityEn} Food Tour`, tag: 'Foodie' },
-                    { name: `${cityEn} Culture`, tag: 'Culture' },
-                  ].map((tour, i) => (
-                    <a
-                      key={i}
-                      href={getKlookUrl(cityEn + ' tour', 'en')}
-                      target="_blank"
-                      rel="noopener noreferrer sponsored"
-                      className="w-48 shrink-0 bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
-                    >
-                      <div className="h-28 relative bg-gradient-to-br from-orange-100 to-red-100 overflow-hidden">
-                        {tourImages[i] ? (
-                          <Image src={tourImages[i].url} alt={tour.name} fill className="object-cover" sizes="192px" />
-                        ) : (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <Ticket className="w-8 h-8 text-orange-300" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <p className="text-xs font-semibold text-gray-700 mb-1 line-clamp-2">{tour.name}</p>
-                        <span className="inline-block bg-orange-50 text-orange-600 text-[10px] px-1.5 py-0.5 rounded mb-2">{tour.tag}</span>
-                        <div className="w-full text-center text-[10px] py-1.5 rounded text-white font-medium" style={{ backgroundColor: '#FF5722' }}>
-                          Book on Klook
-                        </div>
-                      </div>
-                    </a>
-                  ))}
-                </div>
+              <div className="flex items-center gap-1.5 shrink-0 text-xs font-medium bg-white/20 px-3 py-1.5 rounded">
+                <Ticket className="w-3.5 h-3.5" />Book
               </div>
-            </section>
+            </a>
 
             <AdUnit slot="9176814723" />
 
