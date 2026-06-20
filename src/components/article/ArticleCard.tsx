@@ -65,9 +65,17 @@ export default async function ArticleCard({ article, locale = 'ko' }: { article:
               className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-            {photo.authorName && (
+            {photo.url.includes('unsplash.com') && (
               <span className="absolute bottom-1.5 right-2 text-[10px] text-white/60">
-                Photo by {photo.authorName} on Unsplash
+                {photo.authorName ? (
+                  <>Photo by{' '}
+                    {photo.authorUrl
+                      ? <a href={photo.authorUrl} target="_blank" rel="noopener noreferrer" className="underline">{photo.authorName}</a>
+                      : photo.authorName
+                    }{' '}on{' '}
+                  </>
+                ) : 'Photo on '}
+                <a href="https://unsplash.com/?utm_source=kiravoy&utm_medium=referral" target="_blank" rel="noopener noreferrer" className="underline">Unsplash</a>
               </span>
             )}
           </>

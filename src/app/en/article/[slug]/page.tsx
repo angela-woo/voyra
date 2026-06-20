@@ -242,8 +242,11 @@ export default async function EnArticlePage({ params }: PageProps) {
             {article.title}
           </h1>
         </div>
-        {heroImageUrl && article.cover_image_attribution && (
-          <span className="absolute bottom-2 right-3 text-[10px] text-white/50">{article.cover_image_attribution}</span>
+        {heroImageUrl && heroImageUrl.includes('unsplash.com') && (
+          <span className="absolute bottom-2 right-3 text-[10px] text-white/50">
+            {article.cover_image_attribution ? `${article.cover_image_attribution} / ` : 'Photo on '}
+            <a href="https://unsplash.com/?utm_source=kiravoy&utm_medium=referral" target="_blank" rel="noopener noreferrer" className="underline">Unsplash</a>
+          </span>
         )}
       </div>
 
