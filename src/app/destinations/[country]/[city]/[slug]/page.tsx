@@ -383,11 +383,9 @@ export default async function TravelPlanPage({ params }: PageProps) {
                       </div>
 
                       {/* Timeline */}
-                      <div className="relative space-y-4 ml-4 border-l-2 pl-6" style={{ borderColor: '#FF5722' }}>
+                      <div className="relative space-y-4 ml-4 pl-6">
                         {day.places.map((place, pi) => (
-                          <div key={pi} className="relative bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm p-4">
-                            {/* Timeline dot */}
-                            <div className="absolute -left-[calc(1.5rem+4px)] top-5 w-3 h-3 rounded-full border-2 bg-white" style={{ borderColor: '#FF5722' }} />
+                          <div key={pi} className="relative bg-white rounded-[var(--radius)] shadow-sm p-4" style={{ border: '1px solid #FF5722' }}>
 
                             <div className="flex items-start gap-3">
                               {/* Icon + time */}
