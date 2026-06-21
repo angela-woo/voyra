@@ -359,7 +359,7 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
                               </div>
 
                               <div className="flex-1 min-w-0">
-                                <h4 className="font-bold text-sm mb-1.5 text-gray-900">{place.name}</h4>
+                                <h4 className="font-bold text-base mb-1.5 text-gray-900">{place.name}</h4>
 
                                 {place.description && (
                                   <p className="text-sm text-gray-600 mb-3 leading-relaxed">{place.description}</p>
