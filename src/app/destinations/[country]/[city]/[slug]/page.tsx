@@ -372,13 +372,13 @@ export default async function TravelPlanPage({ params }: PageProps) {
                       {day.day === 2 && <AdUnit slot="6933794765" />}
 
                       {/* Day header */}
-                      <div className="flex items-center gap-3 mb-5 rounded-xl px-4 py-3 border-l-4" style={{ backgroundColor: '#fff7f5', borderColor: '#FF5722' }}>
-                        <span className="w-9 h-9 rounded-full text-white text-sm font-bold flex items-center justify-center shrink-0" style={{ backgroundColor: '#FF5722' }}>
+                      <div className="flex items-center gap-3 mb-5 px-4 py-3 border-l-4" style={{ borderColor: '#FF5722' }}>
+                        <span className="w-10 h-10 rounded-full text-white text-base font-bold flex items-center justify-center shrink-0" style={{ backgroundColor: '#FF5722' }}>
                           {day.day}
                         </span>
                         <div>
-                          <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: '#FF5722' }}>Day {day.day}</p>
-                          <h3 className="font-bold text-base leading-tight text-gray-900">{day.title}</h3>
+                          <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#FF5722' }}>Day {day.day}</p>
+                          <h3 className="font-bold text-lg leading-tight text-gray-900">{day.title}</h3>
                         </div>
                       </div>
 
