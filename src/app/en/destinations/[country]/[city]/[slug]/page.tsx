@@ -399,10 +399,10 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
                                     href={place.google_maps_url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full text-white font-medium"
+                                    className="inline-flex items-center gap-1.5 text-sm px-3.5 py-1.5 rounded-full text-white font-medium"
                                     style={{ backgroundColor: '#4285F4' }}
                                   >
-                                    <Map className="w-3 h-3" />Google Maps
+                                    <Map className="w-4 h-4" />Google Maps
                                   </a>
                                 )}
                               </div>
