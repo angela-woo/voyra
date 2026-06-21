@@ -383,7 +383,7 @@ export default async function TravelPlanPage({ params }: PageProps) {
                       </div>
 
                       {/* Timeline */}
-                      <div className="relative space-y-4 ml-4 pl-6">
+                      <div className="space-y-4">
                         {day.places.map((place, pi) => (
                           <div key={pi} className="relative bg-white rounded-[var(--radius)] shadow-sm p-4" style={{ border: '1px solid #FF5722' }}>
 
