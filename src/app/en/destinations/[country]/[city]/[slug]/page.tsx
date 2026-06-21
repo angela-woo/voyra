@@ -325,51 +325,70 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
                     <span>Prices may vary. We recommend checking the official website before your visit.</span>
                   </div>
                 )}
-                <div className="space-y-8">
+                <div className="space-y-10">
                   {days_data.map((day) => (
                     <div key={day.day}>
                       {day.day === 2 && <AdUnit slot="6933794765" />}
-                      <div className="flex items-center gap-3 mb-4">
-                        <span className="w-8 h-8 rounded-full bg-[var(--primary)] text-white text-sm font-bold flex items-center justify-center shrink-0">
+
+                      {/* Day header */}
+                      <div className="flex items-center gap-3 mb-5 rounded-xl px-4 py-3 border-l-4" style={{ backgroundColor: '#fff7f5', borderColor: '#FF5722' }}>
+                        <span className="w-9 h-9 rounded-full text-white text-sm font-bold flex items-center justify-center shrink-0" style={{ backgroundColor: '#FF5722' }}>
                           {day.day}
                         </span>
-                        <h3 className="font-bold text-lg">{day.title}</h3>
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: '#FF5722' }}>Day {day.day}</p>
+                          <h3 className="font-bold text-base leading-tight text-gray-900">{day.title}</h3>
+                        </div>
                       </div>
 
-                      <div className="space-y-3 ml-4 border-l-2 border-gray-100 pl-6">
+                      {/* Timeline */}
+                      <div className="relative space-y-4 ml-4 border-l-2 pl-6" style={{ borderColor: '#FF5722' }}>
                         {day.places.map((place, pi) => (
-                          <div key={pi} className="bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm p-4">
+                          <div key={pi} className="relative bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm p-4">
+                            {/* Timeline dot */}
+                            <div className="absolute -left-[calc(1.5rem+4px)] top-5 w-3 h-3 rounded-full border-2 bg-white" style={{ borderColor: '#FF5722' }} />
+
                             <div className="flex items-start gap-3">
-                              <div className="flex flex-col items-center gap-1 shrink-0">
-                                {(() => { const Icon = CATEGORY_ICONS[place.category] ?? MapPin; return <Icon className="w-5 h-5 text-gray-400" /> })()}
+                              {/* Icon + time */}
+                              <div className="flex flex-col items-center gap-1.5 shrink-0 pt-0.5">
+                                {(() => {
+                                  const Icon = CATEGORY_ICONS[place.category] ?? MapPin
+                                  return <Icon className="w-5 h-5" style={{ color: '#FF5722' }} />
+                                })()}
                                 {place.time && (
-                                  <span className="text-[10px] text-gray-400 font-mono">{place.time}</span>
+                                  <span className="text-[11px] font-mono font-semibold text-gray-500 bg-gray-50 px-1.5 py-0.5 rounded">{place.time}</span>
                                 )}
                               </div>
+
                               <div className="flex-1 min-w-0">
-                                <h4 className="font-semibold text-sm mb-0.5">{place.name}</h4>
+                                <h4 className="font-bold text-sm mb-1.5 text-gray-900">{place.name}</h4>
+
                                 {place.description && (
-                                  <p className="text-xs text-gray-500 mb-2">{place.description}</p>
+                                  <p className="text-sm text-gray-600 mb-3 leading-relaxed">{place.description}</p>
                                 )}
-                                <div className="flex flex-wrap gap-2 mb-3 text-xs text-gray-400">
-                                  {place.duration && (
-                                    <span className="flex items-center gap-1">
-                                      <Clock className="w-3 h-3" />{place.duration}
-                                    </span>
-                                  )}
-                                  {place.cost && (
-                                    <span className="flex items-center gap-1">
-                                      <Coins className="w-3 h-3" />{place.cost}
-                                    </span>
-                                  )}
-                                </div>
+
+                                {/* Badges: duration + cost */}
+                                {(place.duration || place.cost) && (
+                                  <div className="flex flex-wrap gap-2 mb-3">
+                                    {place.duration && (
+                                      <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 text-xs px-2.5 py-1 rounded-full font-medium">
+                                        <Clock className="w-3 h-3" />{place.duration}
+                                      </span>
+                                    )}
+                                    {place.cost && (
+                                      <span className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium" style={{ backgroundColor: '#fff0ec', color: '#c0390a' }}>
+                                        <Coins className="w-3 h-3" />{place.cost}
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
 
                                 {place.alternatives && place.alternatives.length > 0 && (
                                   <div className="mb-3">
-                                    <p className="text-[10px] text-gray-400 mb-1">Alternatives</p>
+                                    <p className="text-xs text-gray-400 mb-1">Alternatives</p>
                                     <div className="flex flex-wrap gap-1">
                                       {place.alternatives.map((alt, ai) => (
-                                        <span key={ai} className="text-[10px] bg-gray-50 border border-gray-200 px-2 py-0.5 rounded">
+                                        <span key={ai} className="text-xs bg-gray-50 border border-gray-200 px-2 py-0.5 rounded">
                                           {alt}
                                         </span>
                                       ))}
@@ -382,7 +401,7 @@ export default async function EnTravelPlanPage({ params }: PageProps) {
                                     href={place.google_maps_url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded text-white font-medium"
+                                    className="inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full text-white font-medium"
                                     style={{ backgroundColor: '#4285F4' }}
                                   >
                                     <Map className="w-3 h-3" />Google Maps
