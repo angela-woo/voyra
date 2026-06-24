@@ -12,10 +12,12 @@ interface BreadcrumbProps {
 }
 
 export default function Breadcrumb({ items, includeJsonLd = true }: BreadcrumbProps) {
+  // href 없는 중간 항목은 JSON-LD에서 제외 (Google: 마지막 항목만 item 필드 optional)
+  const jsonLdItems = items.filter((item, i) => item.href || i === items.length - 1)
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
-    itemListElement: items.map((item, i) => ({
+    itemListElement: jsonLdItems.map((item, i) => ({
       '@type': 'ListItem',
       position: i + 1,
       name: item.label,

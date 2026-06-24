@@ -255,7 +255,7 @@ export default async function EnArticlePage({ params }: PageProps) {
       <Breadcrumb items={[
         { label: 'Home', href: '/en' },
         { label: 'Travel Guides', href: '/en/articles' },
-        ...(article.country ? [{ label: article.country }] : []),
+        ...(article.country ? [{ label: article.country, href: `/en/articles?country=${encodeURIComponent(article.country)}` }] : []),
         { label: article.title },
       ]} />
 

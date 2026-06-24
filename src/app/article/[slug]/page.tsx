@@ -272,7 +272,7 @@ export default async function ArticlePage({ params }: PageProps) {
       <Breadcrumb items={[
         { label: '홈', href: '/' },
         { label: '여행 가이드', href: '/articles' },
-        ...(article.country ? [{ label: article.country }] : []),
+        ...(article.country ? [{ label: article.country, href: `/articles?country=${encodeURIComponent(article.country)}` }] : []),
         { label: article.title },
       ]} />
 
