@@ -23,6 +23,15 @@ const nextConfig = {
       { source: '/article/rome-travel-guide-en', destination: '/en/article/rome-complete-guide-en', permanent: true },
       { source: '/en/article/sydney-travel-guide-en', destination: '/en/article/sydney-complete-guide-en', permanent: true },
       { source: '/article/sydney-travel-guide-en', destination: '/en/article/sydney-complete-guide-en', permanent: true },
+      // Group B: KO complete-guide → live KO article 301 consolidation
+      { source: '/article/fukuoka-complete-guide-ko', destination: '/article/fukuoka-travel-guide-for-korean-travelers-2024', permanent: true },
+      { source: '/en/article/fukuoka-complete-guide-ko', destination: '/article/fukuoka-travel-guide-for-korean-travelers-2024', permanent: true },
+      { source: '/article/cebu-complete-guide-ko', destination: '/article/cebu-philippines-travel-guide-for-koreans-2024', permanent: true },
+      { source: '/en/article/cebu-complete-guide-ko', destination: '/article/cebu-philippines-travel-guide-for-koreans-2024', permanent: true },
+      { source: '/article/hanoi-complete-guide-ko', destination: '/article/hanoi-vietnam-travel-guide', permanent: true },
+      { source: '/en/article/hanoi-complete-guide-ko', destination: '/article/hanoi-vietnam-travel-guide', permanent: true },
+      { source: '/article/ho-chi-minh-complete-guide-ko', destination: '/article/ho-chi-minh-city-complete-travel-guide', permanent: true },
+      { source: '/en/article/ho-chi-minh-complete-guide-ko', destination: '/article/ho-chi-minh-city-complete-travel-guide', permanent: true },
     ]
   },
   async headers() {

@@ -5,10 +5,16 @@ import { NOINDEX_ARTICLE_SLUGS } from '@/lib/seo/noindex-articles'
 
 // Redirect sources (301 → canonical): exclude from sitemap
 const REDIRECT_SOURCE_SLUGS = new Set([
+  // Group A: EN
   'amsterdam-travel-guide-en',
   'los-angeles-travel-guide-en',
   'rome-travel-guide-en',
   'sydney-travel-guide-en',
+  // Group B: KO
+  'fukuoka-complete-guide-ko',
+  'cebu-complete-guide-ko',
+  'hanoi-complete-guide-ko',
+  'ho-chi-minh-complete-guide-ko',
 ])
 
 export const revalidate = 3600

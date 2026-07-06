@@ -3,13 +3,7 @@
 // 사유 B: 콘텐츠 분량 부족 (3,000자 미만)
 // 업데이트: 2026-06-20
 export const NOINDEX_ARTICLE_SLUGS: ReadonlySet<string> = new Set([
-  // ── 사유 A: 중복 일반가이드 (4개) ──────────────────────────────
-  'fukuoka-complete-guide-ko',   // ※ 사유 B 중복 포함
-  'cebu-complete-guide-ko',      // ※ 사유 B 중복 포함
-  'hanoi-complete-guide-ko',
-  'ho-chi-minh-complete-guide-ko',
-
-  // ── 사유 B: 콘텐츠 분량 부족 3,000자 미만 (48개 신규) ──────────
+  // ── 사유 B: 콘텐츠 분량 부족 3,000자 미만 (48개) ──────────
   'rome-colosseum-guide-ko',            // 2,433자
   'da-nang-golf-guide-ko',              // 2,457자
   'sapporo-winter-guide-ko',            // 2,472자
