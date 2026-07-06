@@ -22,7 +22,6 @@ export const NOINDEX_ARTICLE_SLUGS: ReadonlySet<string> = new Set([
   'brussels-belgium-travel-guide',      // 2,675자
   'nha-trang-resort-guide-ko',          // 2,679자
   'tokyo-travel-guide-like-a-local',    // 2,693자
-  'osaka-usj-guide-ko',                 // 2,704자
   'bangkok-shopping-guide-ko',          // 2,727자
   'tokyo-shinjuku-guide-ko',            // 2,729자
   'helsinki-finland-travel-guide',      // 2,732자
