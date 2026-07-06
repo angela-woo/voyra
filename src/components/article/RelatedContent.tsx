@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
 import { toPlanUrl } from '@/lib/location'
+import { NOINDEX_ARTICLE_SLUGS } from '@/lib/seo/noindex-articles'
 
 interface RelatedContentProps {
   city: string | null
@@ -48,6 +49,7 @@ export default async function RelatedContent({
           .select('slug, title, cover_image_url, city, country')
           .eq('published', true)
           .eq('language', language)
+          .not('slug', 'in', `(${Array.from(NOINDEX_ARTICLE_SLUGS).join(',')})`)
           .neq('slug', currentSlug)
           .or(orFilter)
           .order('created_at', { ascending: false })

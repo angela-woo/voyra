@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { BookOpen, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
+import { NOINDEX_ARTICLE_SLUGS } from '@/lib/seo/noindex-articles'
 
 export const revalidate = 1800
 
@@ -14,6 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
     .select('id', { count: 'exact', head: true })
     .eq('published', true)
     .eq('language', 'en')
+    .not('slug', 'in', `(${Array.from(NOINDEX_ARTICLE_SLUGS).join(',')})`)
 
   const total = count ?? 0
   const description = `Expert travel guides for ${total > 0 ? `${total}+ ` : ''}top destinations worldwide. Find local tips, attractions, restaurants and transportation info.`
@@ -61,6 +63,7 @@ async function fetchArticles(page: number) {
     .select(SELECT_COLS, { count: 'exact' })
     .eq('published', true)
     .eq('language', 'en')
+    .not('slug', 'in', `(${Array.from(NOINDEX_ARTICLE_SLUGS).join(',')})`)
     .order('created_at', { ascending: false })
     .range(from, from + PER_PAGE - 1)
   return { articles: data ?? [], total: count ?? 0 }

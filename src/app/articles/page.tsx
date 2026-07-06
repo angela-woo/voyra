@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { BookOpen, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Metadata } from 'next'
 import AdUnit from '@/components/ui/AdUnit'
+import { NOINDEX_ARTICLE_SLUGS } from '@/lib/seo/noindex-articles'
 
 export const revalidate = 1800
 
@@ -15,6 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
     .select('id', { count: 'exact', head: true })
     .eq('published', true)
     .eq('language', 'ko')
+    .not('slug', 'in', `(${Array.from(NOINDEX_ARTICLE_SLUGS).join(',')})`)
 
   const total = count ?? 0
   const description = `도쿄, 파리, 발리 등 ${total > 0 ? `${total}개의 ` : ''}인기 여행지 가이드. 현지 맛집, 관광지, 교통, 숙소 정보까지 한번에.`
@@ -71,6 +73,7 @@ async function fetchArticles(page: number, sort: string, country: string, catego
       .select(SELECT_COLS, { count: 'exact' })
       .eq('published', true)
       .eq('language', 'ko')
+      .not('slug', 'in', `(${Array.from(NOINDEX_ARTICLE_SLUGS).join(',')})`)
     if (country) q = q.eq('country', country)
     if (category) q = q.eq('category', category)
     return q
@@ -97,6 +100,7 @@ async function getFilters() {
     .select('country, category')
     .eq('published', true)
     .eq('language', 'ko')
+    .not('slug', 'in', `(${Array.from(NOINDEX_ARTICLE_SLUGS).join(',')})`)
 
   const countries = Array.from(
     new Set((data ?? []).map(r => r.country).filter((v): v is string => !!v)),

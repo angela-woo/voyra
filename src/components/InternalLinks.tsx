@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { toPlanUrl } from '@/lib/location'
+import { NOINDEX_ARTICLE_SLUGS } from '@/lib/seo/noindex-articles'
 
 /**
  * tags 매핑 (스키마에 tags 컬럼 없음):
@@ -61,6 +62,7 @@ export default async function InternalLinks({
           .select('slug, title, cover_image_url, city, category')
           .eq('published', true)
           .eq('language', language)
+          .not('slug', 'in', `(${Array.from(NOINDEX_ARTICLE_SLUGS).join(',')})`)
           .eq(articleFilterCol, articleFilterVal)
           .neq('slug', currentSlug)
           .order('created_at', { ascending: false })
