@@ -14,9 +14,6 @@ export const NOINDEX_ARTICLE_SLUGS: ReadonlySet<string> = new Set([
   'ho-chi-minh-complete-guide-ko',
 
   // ── 사유 B: 콘텐츠 분량 부족 3,000자 미만 (48개 신규) ──────────
-  'sapporo-snow-festival-ko',            // 2,272자
-  'bangkok-massage-spa-ko',             // 2,317자
-  'bali-seminyak-guide-ko',             // 2,412자
   'rome-colosseum-guide-ko',            // 2,433자
   'da-nang-golf-guide-ko',              // 2,457자
   'sapporo-winter-guide-ko',            // 2,472자
