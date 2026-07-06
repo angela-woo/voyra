@@ -14,6 +14,15 @@ const nextConfig = {
       { source: '/destinations/:country/:city/:slug/', destination: '/destinations/:country/:city/:slug', permanent: true },
       { source: '/en/article/:slug/', destination: '/en/article/:slug', permanent: true },
       { source: '/en/destinations/:country/:city/:slug/', destination: '/en/destinations/:country/:city/:slug', permanent: true },
+      // Group A: EN travel-guide → complete-guide 301 consolidation
+      { source: '/en/article/amsterdam-travel-guide-en', destination: '/en/article/amsterdam-complete-guide-en', permanent: true },
+      { source: '/article/amsterdam-travel-guide-en', destination: '/en/article/amsterdam-complete-guide-en', permanent: true },
+      { source: '/en/article/los-angeles-travel-guide-en', destination: '/en/article/los-angeles-complete-guide-en', permanent: true },
+      { source: '/article/los-angeles-travel-guide-en', destination: '/en/article/los-angeles-complete-guide-en', permanent: true },
+      { source: '/en/article/rome-travel-guide-en', destination: '/en/article/rome-complete-guide-en', permanent: true },
+      { source: '/article/rome-travel-guide-en', destination: '/en/article/rome-complete-guide-en', permanent: true },
+      { source: '/en/article/sydney-travel-guide-en', destination: '/en/article/sydney-complete-guide-en', permanent: true },
+      { source: '/article/sydney-travel-guide-en', destination: '/en/article/sydney-complete-guide-en', permanent: true },
     ]
   },
   async headers() {

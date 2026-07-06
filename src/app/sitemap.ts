@@ -3,6 +3,14 @@ import { toPlanUrl } from '@/lib/location'
 import { NOINDEX_PLAN_SLUGS } from '@/lib/seo/noindex-plans'
 import { NOINDEX_ARTICLE_SLUGS } from '@/lib/seo/noindex-articles'
 
+// Redirect sources (301 → canonical): exclude from sitemap
+const REDIRECT_SOURCE_SLUGS = new Set([
+  'amsterdam-travel-guide-en',
+  'los-angeles-travel-guide-en',
+  'rome-travel-guide-en',
+  'sydney-travel-guide-en',
+])
+
 export const revalidate = 3600
 
 const BASE = 'https://kiravoy.com'
@@ -103,7 +111,7 @@ export default async function sitemap(): Promise<SitemapEntry[]> {
   for (const a of articles ?? []) {
     if (seenArticleSlugs.has(a.slug)) continue
     seenArticleSlugs.add(a.slug)
-    if (NOINDEX_ARTICLE_SLUGS.has(a.slug)) continue
+    if (NOINDEX_ARTICLE_SLUGS.has(a.slug) || REDIRECT_SOURCE_SLUGS.has(a.slug)) continue
     const lastMod = a.updated_at ? new Date(a.updated_at) : new Date()
     const koUrl = `${BASE}/article/${a.slug}`
     const enUrl = `${BASE}/en/article/${a.slug}`

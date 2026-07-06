@@ -3,11 +3,7 @@
 // 사유 B: 콘텐츠 분량 부족 (3,000자 미만)
 // 업데이트: 2026-06-20
 export const NOINDEX_ARTICLE_SLUGS: ReadonlySet<string> = new Set([
-  // ── 사유 A: 중복 일반가이드 (8개) ──────────────────────────────
-  'amsterdam-complete-guide-en',
-  'los-angeles-complete-guide-en',
-  'rome-complete-guide-en',
-  'sydney-complete-guide-en',
+  // ── 사유 A: 중복 일반가이드 (4개) ──────────────────────────────
   'fukuoka-complete-guide-ko',   // ※ 사유 B 중복 포함
   'cebu-complete-guide-ko',      // ※ 사유 B 중복 포함
   'hanoi-complete-guide-ko',
