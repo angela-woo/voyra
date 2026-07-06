@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { ArrowRight, Clock, Eye, MapPin } from 'lucide-react'
 import AdUnit from '@/components/ui/AdUnit'
 import type { Metadata } from 'next'
+import { NOINDEX_ARTICLE_SLUGS } from '@/lib/seo/noindex-articles'
 
 export const revalidate = 3600
 
@@ -75,6 +76,7 @@ async function getArticles(limit: number) {
       .select('id, slug, title, meta_description, city, country, category, created_at, cover_image_url')
       .eq('published', true)
       .eq('language', 'en')
+      .not('slug', 'in', `(${Array.from(NOINDEX_ARTICLE_SLUGS).join(',')})`)
       .order('created_at', { ascending: false })
       .limit(limit)
     return data ?? []

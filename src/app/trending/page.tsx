@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { toPlanUrl } from '@/lib/location'
+import { NOINDEX_ARTICLE_SLUGS } from '@/lib/seo/noindex-articles'
 import { TrendingUp, MapPin, Clock, Eye } from 'lucide-react'
 import ArticleCard from '@/components/article/ArticleCard'
 
@@ -89,6 +90,7 @@ export default async function TrendingPage() {
       .select('id, slug, title, meta_description, city, country, category, created_at, cover_image_url, cover_image_attribution')
       .eq('published', true)
       .eq('language', 'ko')
+      .not('slug', 'in', `(${Array.from(NOINDEX_ARTICLE_SLUGS).join(',')})`)
       .gte('created_at', sevenDaysAgo)
       .order('created_at', { ascending: false })
       .limit(10),

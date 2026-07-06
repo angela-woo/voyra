@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
+import { NOINDEX_ARTICLE_SLUGS } from '@/lib/seo/noindex-articles'
 
 interface InternalLinksProps {
   city: string | null
@@ -69,6 +70,7 @@ export default async function InternalLinks({
     .select('slug, title, cover_image_url, city, country')
     .eq('published', true)
     .eq('language', language)
+    .not('slug', 'in', `(${Array.from(NOINDEX_ARTICLE_SLUGS).join(',')})`)
     .neq('slug', currentSlug)
     .eq('city', city ?? '')
     .order('created_at', { ascending: false })
