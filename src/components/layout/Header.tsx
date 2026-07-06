@@ -1,14 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Menu, X, Globe, Home, BookOpen, MapPin, Users, LogIn, LogOut, UserCircle, UserPlus, Loader2, BookMarked } from 'lucide-react'
-import type { User } from '@supabase/supabase-js'
+import { Menu, X, Globe, Home, BookOpen, MapPin, Users, Loader2, BookMarked } from 'lucide-react'
 
 export default function Header({ siteName }: { siteName: string }) {
-  const [user, setUser] = useState<User | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [langLoading, setLangLoading] = useState(false)
   const pathname = usePathname()
@@ -87,20 +85,6 @@ export default function Header({ siteName }: { siteName: string }) {
     }
   }
 
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user))
-    const { data: listener } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user ?? null)
-    })
-    return () => listener.subscription.unsubscribe()
-  }, [])
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    setUser(null)
-    setMenuOpen(false)
-  }
-
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-8">
@@ -123,34 +107,8 @@ export default function Header({ siteName }: { siteName: string }) {
           ))}
         </nav>
 
-        {/* Auth + Lang toggle */}
-        <div className="hidden md:flex items-center gap-3 flex-shrink-0">
-          {user ? (
-            <>
-              <Link href="/auth/profile" className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-[var(--primary)] transition-colors">
-                <UserCircle className="w-4 h-4" />{isEn ? 'Profile' : '프로필'}
-              </Link>
-              <button
-                onClick={handleSignOut}
-                className="flex items-center gap-1.5 text-sm px-4 py-1.5 rounded-[var(--radius)] border border-gray-300 hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors duration-200"
-              >
-                <LogOut className="w-4 h-4" />{isEn ? 'Log Out' : '로그아웃'}
-              </button>
-            </>
-          ) : (
-            <>
-              <Link href="/auth/login" className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-[var(--primary)] transition-colors">
-                <LogIn className="w-4 h-4" />{isEn ? 'Log In' : '로그인'}
-              </Link>
-              <Link
-                href="/auth/signup"
-                className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg font-medium text-white transition-colors duration-200"
-                style={{ backgroundColor: '#FF5722' }}
-              >
-                <UserPlus className="w-4 h-4" />{isEn ? 'Sign Up' : '회원가입'}
-              </Link>
-            </>
-          )}
+        {/* Lang toggle */}
+        <div className="hidden md:flex items-center flex-shrink-0">
           <button
             onClick={toggleLang}
             disabled={langLoading}
@@ -183,25 +141,6 @@ export default function Header({ siteName }: { siteName: string }) {
             </Link>
           ))}
           <hr className="border-gray-100" />
-          {user ? (
-            <>
-              <Link href="/auth/profile" className="flex items-center gap-2 text-sm text-gray-700" onClick={() => setMenuOpen(false)}>
-                <UserCircle className="w-4 h-4" />{isEn ? 'Profile' : '프로필'}
-              </Link>
-              <button onClick={handleSignOut} className="flex items-center gap-2 text-sm text-left text-gray-700">
-                <LogOut className="w-4 h-4" />{isEn ? 'Log Out' : '로그아웃'}
-              </button>
-            </>
-          ) : (
-            <>
-              <Link href="/auth/login" className="flex items-center gap-2 text-sm text-gray-700" onClick={() => setMenuOpen(false)}>
-                <LogIn className="w-4 h-4" />{isEn ? 'Log In' : '로그인'}
-              </Link>
-              <Link href="/auth/signup" className="flex items-center gap-2 text-sm font-medium text-[var(--primary)]" onClick={() => setMenuOpen(false)}>
-                <UserPlus className="w-4 h-4" />{isEn ? 'Sign Up' : '회원가입'}
-              </Link>
-            </>
-          )}
           <button
             onClick={() => { toggleLang(); setMenuOpen(false) }}
             disabled={langLoading}
