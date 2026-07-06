@@ -94,18 +94,7 @@ export default async function sitemap(): Promise<SitemapEntry[]> {
       changeFrequency: 'daily',
       priority: 0.9,
     },
-    {
-      url: `${BASE}/magazine`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${BASE}/magazine/tokyo-2026`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
+
   ]
 
   // Articles — KO/EN 쌍 (같은 slug로 두 언어 모두 등록)

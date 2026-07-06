@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Menu, X, Globe, Home, BookOpen, MapPin, Users, Loader2, BookMarked } from 'lucide-react'
+import { Menu, X, Globe, Home, BookOpen, MapPin, Users, Loader2 } from 'lucide-react'
 
 export default function Header({ siteName }: { siteName: string }) {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -20,7 +20,6 @@ export default function Header({ siteName }: { siteName: string }) {
     { href: `${base}/`, label: isEn ? 'Home' : '홈', icon: Home },
     { href: `${base}/articles`, label: isEn ? 'Travel Guides' : '여행 가이드', icon: BookOpen },
     { href: `${base}/destinations`, label: isEn ? 'Itineraries' : '여행 일정', icon: MapPin },
-    { href: '/magazine', label: isEn ? 'Magazine' : '여행 매거진', icon: BookMarked },
     { href: '/community', label: isEn ? 'Community' : '커뮤니티', icon: Users },
   ]
 
