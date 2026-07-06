@@ -35,7 +35,6 @@ export const NOINDEX_ARTICLE_SLUGS: ReadonlySet<string> = new Set([
   'bali-ubud-guide-ko',                 // 2,828자
   'kyoto-kimono-experience-ko',         // 2,866자
   'da-nang-hoi-an-day-trip-ko',         // 2,870자
-  'tokyo-best-restaurants-ko',          // 2,872자
   'busan-haeundae-guide-ko',            // 2,879자
   'kyoto-japan-travel-guide-complete',  // 2,879자
   'taipei-taiwan-complete-travel-guide',// 2,908자
