@@ -48,7 +48,7 @@ const nextConfig = {
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: https: blob:",
               "frame-src https://www.google.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com",
-              "connect-src 'self' https://*.supabase.co https://api.unsplash.com https://api.open-meteo.com https://pagead2.googlesyndication.com https://ep1.adtrafficquality.google https://*.doubleclick.net https://googleads.g.doubleclick.net",
+              "connect-src 'self' https://*.supabase.co https://api.unsplash.com https://api.open-meteo.com https://pagead2.googlesyndication.com https://ep1.adtrafficquality.google https://*.doubleclick.net https://googleads.g.doubleclick.net https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.googletagmanager.com https://www.google.com",
               "worker-src 'self' blob:",
             ].join('; '),
           },
