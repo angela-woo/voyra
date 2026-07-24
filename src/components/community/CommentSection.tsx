@@ -79,7 +79,7 @@ export default function CommentSection({ postId, currentUserId }: { postId: stri
 
   return (
     <div className="mt-8">
-      <h3 className="font-bold text-lg mb-4">댓글 {comments.length}개</h3>
+      <h3 className="text-lg mb-4" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>댓글 {comments.length}개</h3>
 
       <div className="space-y-4 mb-6">
         {topLevel.map(comment => (
@@ -128,8 +128,8 @@ export default function CommentSection({ postId, currentUserId }: { postId: stri
             placeholder="댓글을 작성하세요..."
           />
         ) : (
-          <p className="text-sm text-gray-500 text-center py-4 bg-gray-50 rounded-[var(--radius)]">
-            댓글을 작성하려면 <a href="/auth/login" className="text-[var(--primary)] underline">로그인</a>이 필요합니다.
+          <p className="text-sm text-[color:var(--ink-faint)] text-center py-4 border border-[var(--border)]">
+            댓글을 작성하려면 <a href="/auth/login" className="text-[color:var(--primary)] underline">로그인</a>이 필요합니다.
           </p>
         )
       )}
@@ -160,23 +160,23 @@ function CommentItem({
   }
 
   return (
-    <div className="bg-gray-50 rounded-[var(--radius)] p-3">
+    <div className="border border-[var(--border)] p-3">
       <div className="flex items-center justify-between mb-1">
-        <div className="flex items-center gap-2 text-xs text-gray-500">
-          <span className="font-medium text-gray-700">{comment.user_profiles?.username ?? '익명'}</span>
+        <div className="flex items-center gap-2 text-xs text-[color:var(--ink-faint)]">
+          <span className="text-[color:var(--ink-soft)]">{comment.user_profiles?.username ?? '익명'}</span>
           <span>{timeAgo}</span>
         </div>
         {isOwner && !editing && (
           <div className="flex items-center gap-2">
             <button
               onClick={() => { setEditContent(comment.content); setEditing(true) }}
-              className="flex items-center gap-0.5 text-xs text-gray-400 hover:text-[var(--primary)] transition-colors"
+              className="flex items-center gap-0.5 text-xs text-[color:var(--ink-faint)] hover:text-[color:var(--ink)] transition-colors"
             >
               <Pencil className="w-3 h-3" /> 수정
             </button>
             <button
               onClick={() => onDelete(comment.id)}
-              className="flex items-center gap-0.5 text-xs text-gray-400 hover:text-red-500 transition-colors"
+              className="flex items-center gap-0.5 text-xs text-[color:var(--ink-faint)] hover:text-red-500 transition-colors"
             >
               <Trash2 className="w-3 h-3" /> 삭제
             </button>
@@ -190,19 +190,19 @@ function CommentItem({
             value={editContent}
             onChange={e => setEditContent(e.target.value)}
             rows={2}
-            className="w-full border border-gray-200 rounded-[var(--radius)] px-2 py-1.5 text-sm focus:outline-none focus:border-[var(--primary)] resize-none"
+            className="w-full border border-[var(--border)] px-2 py-1.5 text-sm bg-transparent focus:outline-none focus:border-[color:var(--ink)] resize-none"
           />
           <div className="flex gap-2 mt-1">
             <button
               onClick={handleSave}
               disabled={saving || !editContent.trim()}
-              className="flex items-center gap-1 text-xs px-2 py-1 bg-[var(--primary)] text-white rounded hover:bg-[var(--primary-hover)] disabled:opacity-50"
+              className="flex items-center gap-1 text-xs px-2 py-1 border border-[color:var(--ink)] text-[color:var(--ink)] hover:bg-[color:var(--ink)] hover:text-white transition-colors disabled:opacity-50"
             >
               {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />} 저장
             </button>
             <button
               onClick={() => setEditing(false)}
-              className="flex items-center gap-1 text-xs px-2 py-1 border border-gray-200 text-gray-500 rounded hover:bg-gray-50"
+              className="flex items-center gap-1 text-xs px-2 py-1 border border-[var(--border)] text-[color:var(--ink-soft)] hover:border-[color:var(--ink)] transition-colors"
             >
               <X className="w-3 h-3" /> 취소
             </button>
@@ -210,8 +210,8 @@ function CommentItem({
         </div>
       ) : (
         <>
-          <p className="text-sm text-gray-700 mb-2">{comment.content}</p>
-          <button onClick={onReply} className="flex items-center gap-1 text-xs text-gray-400 hover:text-[var(--primary)] transition-colors">
+          <p className="text-sm text-[color:var(--ink-soft)] mb-2">{comment.content}</p>
+          <button onClick={onReply} className="flex items-center gap-1 text-xs text-[color:var(--ink-faint)] hover:text-[color:var(--ink)] transition-colors">
             <Reply className="w-3 h-3" /> 답글
           </button>
         </>
@@ -237,18 +237,18 @@ function CommentForm({
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
         rows={2}
-        className="flex-1 border border-gray-200 rounded-[var(--radius)] px-3 py-2 text-sm focus:outline-none focus:border-[var(--primary)] resize-none"
+        className="flex-1 border border-[var(--border)] px-3 py-2 text-sm bg-transparent focus:outline-none focus:border-[color:var(--ink)] resize-none"
       />
       <div className="flex flex-col gap-1">
         <button
           type="submit"
           disabled={loading || !value.trim()}
-          className="px-3 py-2 bg-[var(--primary)] text-white rounded-[var(--radius)] text-sm hover:bg-[var(--primary-hover)] disabled:opacity-50 flex items-center gap-1"
+          className="px-3 py-2 border border-[color:var(--ink)] text-[color:var(--ink)] text-sm hover:bg-[color:var(--ink)] hover:text-white transition-colors disabled:opacity-50 flex items-center gap-1"
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
         </button>
         {onCancel && (
-          <button type="button" onClick={onCancel} className="px-3 py-2 border border-gray-200 rounded-[var(--radius)] text-xs text-gray-500 hover:bg-gray-50">
+          <button type="button" onClick={onCancel} className="px-3 py-2 border border-[var(--border)] text-xs text-[color:var(--ink-soft)] hover:border-[color:var(--ink)] transition-colors">
             취소
           </button>
         )}

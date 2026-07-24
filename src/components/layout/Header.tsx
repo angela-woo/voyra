@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Menu, X, Globe, Home, BookOpen, MapPin, Users, Loader2 } from 'lucide-react'
+import { Menu, X, Loader2 } from 'lucide-react'
 
 export default function Header({ siteName }: { siteName: string }) {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -17,10 +17,10 @@ export default function Header({ siteName }: { siteName: string }) {
   const base = isEn ? '/en' : ''
 
   const NAV_LINKS = [
-    { href: `${base}/`, label: isEn ? 'Home' : '홈', icon: Home },
-    { href: `${base}/articles`, label: isEn ? 'Travel Guides' : '여행 가이드', icon: BookOpen },
-    { href: `${base}/destinations`, label: isEn ? 'Itineraries' : '여행 일정', icon: MapPin },
-    { href: '/community', label: isEn ? 'Community' : '커뮤니티', icon: Users },
+    { href: `${base}/`, label: isEn ? 'Home' : '홈' },
+    { href: `${base}/articles`, label: isEn ? 'Travel Guides' : '여행 가이드' },
+    { href: `${base}/destinations`, label: isEn ? 'Itineraries' : '여행 일정' },
+    { href: '/community', label: isEn ? 'Community' : '커뮤니티' },
   ]
 
   async function toggleLang() {
@@ -85,22 +85,25 @@ export default function Header({ siteName }: { siteName: string }) {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-8">
+    <header className="sticky top-0 z-50 bg-[var(--bg)]/95 backdrop-blur-sm border-b border-[var(--border)]">
+      <div className="max-w-[var(--measure-wide)] mx-auto px-6 h-20 flex items-center justify-between gap-8">
         {/* Logo */}
-        <Link href="/" className="flex-shrink-0 text-2xl font-bold" style={{ color: '#FF5722', fontFamily: 'var(--font-heading)' }}>
+        <Link
+          href="/"
+          className="flex-shrink-0 text-xl tracking-tight"
+          style={{ color: 'var(--ink)', fontFamily: 'var(--font-heading)', fontWeight: 700 }}
+        >
           {siteName}
         </Link>
 
         {/* Desktop nav — centered */}
-        <nav className="hidden md:flex items-center gap-8 flex-1 justify-center">
+        <nav className="hidden md:flex items-center gap-10 flex-1 justify-center">
           {NAV_LINKS.map(link => (
             <Link
               key={link.href}
               href={link.href}
-              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-[var(--primary)] transition-colors duration-200"
+              className="text-[13px] tracking-wide text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] transition-colors duration-200"
             >
-              <link.icon className="w-4 h-4" />
               {link.label}
             </Link>
           ))}
@@ -111,41 +114,40 @@ export default function Header({ siteName }: { siteName: string }) {
           <button
             onClick={toggleLang}
             disabled={langLoading}
-            className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 hover:border-[var(--primary)] transition-colors duration-200 flex items-center gap-1.5 font-medium text-gray-600 hover:text-[var(--primary)] disabled:opacity-50"
+            className="text-[13px] tracking-wide text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] transition-colors duration-200 flex items-center gap-1.5 disabled:opacity-50"
             title={isEn ? '한국어로 보기' : 'View in English'}
           >
-            {langLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />}
+            {langLoading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
             {isEn ? 'KO' : 'EN'}
           </button>
         </div>
 
         {/* Mobile hamburger */}
-        <button className="md:hidden p-2 -mr-2" onClick={() => setMenuOpen(v => !v)} aria-label="메뉴">
+        <button className="md:hidden p-2 -mr-2 text-[color:var(--ink)]" onClick={() => setMenuOpen(v => !v)} aria-label="메뉴">
           {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
       {/* Mobile nav */}
       {menuOpen && (
-        <div className="md:hidden border-t border-gray-100 bg-white px-4 py-4 flex flex-col gap-4 shadow-md">
+        <div className="md:hidden border-t border-[var(--border)] bg-[var(--bg)] px-6 py-6 flex flex-col gap-5">
           {NAV_LINKS.map(link => (
             <Link
               key={link.href}
               href={link.href}
-              className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-[var(--primary)]"
+              className="text-sm text-[color:var(--ink)]"
               onClick={() => setMenuOpen(false)}
             >
-              <link.icon className="w-4 h-4" />
               {link.label}
             </Link>
           ))}
-          <hr className="border-gray-100" />
+          <hr className="border-[var(--border)]" />
           <button
             onClick={() => { toggleLang(); setMenuOpen(false) }}
             disabled={langLoading}
-            className="flex items-center gap-2 text-sm font-medium text-gray-700 text-left disabled:opacity-50"
+            className="flex items-center gap-2 text-sm text-[color:var(--ink)] text-left disabled:opacity-50"
           >
-            {langLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />}
+            {langLoading && <Loader2 className="w-4 h-4 animate-spin" />}
             {isEn ? '한국어로 보기' : 'View in English'}
           </button>
         </div>

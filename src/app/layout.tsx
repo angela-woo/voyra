@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Noto_Sans_KR } from 'next/font/google'
 import Script from 'next/script'
 import './globals.css'
@@ -53,6 +53,11 @@ export const metadata: Metadata = {
   other: {
     'agd-partner-manual-verification': '',
   },
+  manifest: '/manifest.webmanifest',
+}
+
+export const viewport: Viewport = {
+  themeColor: '#FF5722',
 }
 
 interface SiteSettings {
@@ -86,12 +91,14 @@ function adjustColor(hex: string, amount: number): string {
 
 function buildCssVars(settings: Record<string, string>): string {
   const primary = settings.primary_color || '#FF5722'
-  const bg = settings.background_color || '#ffffff'
-  const radius = settings.border_radius || '12'
+  const bg = settings.background_color || '#FAF9F7'
+  const radius = settings.border_radius || '2'
   const fontHeadingName = settings.font_heading || 'Noto Sans KR'
   const fontBodyName = settings.font_body || 'Noto Sans KR'
-  const toFontVar = (name: string) =>
-    name === 'Noto Sans KR' ? 'var(--font-kr), sans-serif' : `'${name}', sans-serif`
+  const toFontVar = (name: string) => {
+    if (name === 'Noto Sans KR') return 'var(--font-kr), sans-serif'
+    return `'${name}', sans-serif`
+  }
 
   return [
     `--primary: ${primary}`,
@@ -117,7 +124,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="alternate" hrefLang="en" href="https://kiravoy.com/en/" />
         <link rel="alternate" hrefLang="x-default" href="https://kiravoy.com/" />
       </head>
-      <body className="bg-[var(--bg)] font-[family-name:var(--font-body)] text-gray-900 min-h-screen flex flex-col">
+      <body className="bg-[var(--bg)] font-[family-name:var(--font-body)] text-[color:var(--ink)] min-h-screen flex flex-col">
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-8J2W1762K5"
           strategy="afterInteractive"

@@ -88,26 +88,27 @@ export default async function EnArticlesPage({ searchParams }: PageProps) {
 
   return (
     <div className="min-h-screen bg-[var(--bg)]">
-      <div className="bg-gradient-to-r from-[var(--primary)] to-indigo-600 text-white py-14 px-4">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
+      <div className="border-b border-[var(--border)] py-16 px-6">
+        <div className="max-w-[var(--measure-wide)] mx-auto">
+          <p className="eyebrow mb-3">Kiravoy</p>
+          <h1 className="editorial-heading text-4xl mb-3">
             Travel Guides
           </h1>
-          <p className="text-white/80 text-sm">
+          <p className="text-[color:var(--ink-soft)] text-sm">
             {total > 0 ? `${total.toLocaleString()} curated travel guides` : 'Curated travel guides'}
           </p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-10">
+      <div className="max-w-[var(--measure-wide)] mx-auto px-6 py-14">
         {articles.length > 0 ? (
           <>
             {total > 0 && (
-              <p className="text-sm text-gray-400 mb-6">
+              <p className="text-sm text-[color:var(--ink-faint)] mb-8">
                 Showing {rangeStart}–{rangeEnd} of {total.toLocaleString()} guides
               </p>
             )}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 mb-14">
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {articles.slice(0, 6).map((article: any) => (
                 <ArticleCard key={article.id} article={article} locale="en" />
@@ -126,39 +127,41 @@ export default async function EnArticlesPage({ searchParams }: PageProps) {
             </div>
 
             {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-1.5 mt-4">
+              <div className="flex items-center justify-center gap-6 mt-4 pt-10 border-t border-[var(--border)] text-sm">
                 {page > 1 ? (
-                  <Link href={`/en/articles?page=${page - 1}`} className="flex items-center gap-1 px-4 py-2 text-sm border border-gray-200 rounded-[var(--radius)] text-gray-600 hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors">
+                  <Link href={`/en/articles?page=${page - 1}`} className="flex items-center gap-1 text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] transition-colors">
                     <ChevronLeft className="w-4 h-4" />Prev
                   </Link>
                 ) : (
-                  <span className="flex items-center gap-1 px-4 py-2 text-sm border border-gray-100 rounded-[var(--radius)] text-gray-300 cursor-not-allowed">
+                  <span className="flex items-center gap-1 text-[color:var(--ink-faint)] opacity-40 cursor-not-allowed">
                     <ChevronLeft className="w-4 h-4" />Prev
                   </span>
                 )}
-                {pageNumbers.map((p, i) =>
-                  p === 'dot' ? (
-                    <span key={`dot-${i}`} className="px-1.5 text-gray-400 text-sm">…</span>
-                  ) : (
-                    <Link
-                      key={p}
-                      href={`/en/articles?page=${p}`}
-                      className={`w-9 h-9 flex items-center justify-center text-sm rounded-[var(--radius)] border transition-colors ${
-                        page === p
-                          ? 'bg-[var(--primary)] text-white border-[var(--primary)]'
-                          : 'border-gray-200 text-gray-600 hover:border-[var(--primary)] hover:text-[var(--primary)]'
-                      }`}
-                    >
-                      {p}
-                    </Link>
-                  ),
-                )}
+                <div className="flex items-center gap-4">
+                  {pageNumbers.map((p, i) =>
+                    p === 'dot' ? (
+                      <span key={`dot-${i}`} className="text-[color:var(--ink-faint)]">…</span>
+                    ) : (
+                      <Link
+                        key={p}
+                        href={`/en/articles?page=${p}`}
+                        className={
+                          page === p
+                            ? 'text-[color:var(--ink)] underline underline-offset-4'
+                            : 'text-[color:var(--ink-faint)] hover:text-[color:var(--ink-soft)] transition-colors'
+                        }
+                      >
+                        {p}
+                      </Link>
+                    ),
+                  )}
+                </div>
                 {page < totalPages ? (
-                  <Link href={`/en/articles?page=${page + 1}`} className="flex items-center gap-1 px-4 py-2 text-sm border border-gray-200 rounded-[var(--radius)] text-gray-600 hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors">
+                  <Link href={`/en/articles?page=${page + 1}`} className="flex items-center gap-1 text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] transition-colors">
                     Next<ChevronRight className="w-4 h-4" />
                   </Link>
                 ) : (
-                  <span className="flex items-center gap-1 px-4 py-2 text-sm border border-gray-100 rounded-[var(--radius)] text-gray-300 cursor-not-allowed">
+                  <span className="flex items-center gap-1 text-[color:var(--ink-faint)] opacity-40 cursor-not-allowed">
                     Next<ChevronRight className="w-4 h-4" />
                   </span>
                 )}
@@ -166,11 +169,11 @@ export default async function EnArticlesPage({ searchParams }: PageProps) {
             )}
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center py-24 text-gray-400">
-            <BookOpen className="w-14 h-14 mb-4 opacity-20" />
-            <p className="text-lg font-medium mb-1">English guides coming soon!</p>
+          <div className="flex flex-col items-center justify-center py-24 text-[color:var(--ink-faint)]">
+            <BookOpen className="w-12 h-12 mb-4 opacity-30" />
+            <p className="text-lg mb-1" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>English guides coming soon!</p>
             <p className="text-sm mb-4">We&apos;re working on English-language travel guides.</p>
-            <Link href="/articles" className="text-sm font-medium hover:underline" style={{ color: '#FF5722' }}>
+            <Link href="/articles" className="link-underline text-sm text-[color:var(--primary)]">
               Browse Korean guides →
             </Link>
           </div>

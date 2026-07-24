@@ -5,7 +5,7 @@ export default function NotFound() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center">
       <MapPin className="w-12 h-12 text-gray-300 mb-4" />
-      <h2 className="text-2xl font-bold text-gray-800 mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
+      <h2 className="text-2xl font-bold text-gray-800 mb-2" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>
         페이지를 찾을 수 없습니다
       </h2>
       <p className="text-sm text-gray-500 mb-6">

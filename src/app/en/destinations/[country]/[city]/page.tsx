@@ -11,11 +11,11 @@ interface PageProps {
   params: Promise<{ country: string; city: string }>
 }
 
-const TRAVEL_TYPE_LABELS: Record<string, { label: string; icon: LucideIcon; color: string }> = {
-  couple: { label: 'Couple', icon: Heart, color: 'bg-pink-50 border-pink-200 text-pink-700' },
-  family: { label: 'Family', icon: Users, color: 'bg-green-50 border-green-200 text-green-700' },
-  friends: { label: 'Friends', icon: UserCheck, color: 'bg-blue-50 border-blue-200 text-blue-700' },
-  solo: { label: 'Solo', icon: Luggage, color: 'bg-purple-50 border-purple-200 text-purple-700' },
+const TRAVEL_TYPE_LABELS: Record<string, { label: string; icon: LucideIcon }> = {
+  couple: { label: 'Couple', icon: Heart },
+  family: { label: 'Family', icon: Users },
+  friends: { label: 'Friends', icon: UserCheck },
+  solo: { label: 'Solo', icon: Luggage },
 }
 
 async function getPlans(countrySlug: string, citySlug: string) {
@@ -52,46 +52,44 @@ export default async function EnCityPage({ params }: PageProps) {
   const countryName = plans[0].country
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <div className="mb-2 text-sm text-gray-400">
-        <Link href="/en/destinations" className="hover:text-[var(--primary)]">Destinations</Link>
-        {' › '}
-        <Link href={`/en/destinations/${country}`} className="hover:text-[var(--primary)]">{countryName}</Link>
-        {' › '}
-        <span>{cityName}</span>
-      </div>
-      <div className="mb-10">
-        <h1 className="text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
+    <div className="max-w-[var(--measure-wide)] mx-auto px-6 py-16">
+      <div className="mb-12 pb-6 border-b border-[var(--border)]">
+        <p className="eyebrow mb-3">
+          <Link href="/en/destinations" className="hover:text-[color:var(--ink)] transition-colors">Destinations</Link>
+          {' / '}
+          <Link href={`/en/destinations/${country}`} className="hover:text-[color:var(--ink)] transition-colors">{countryName}</Link>
+          {' / '}
+          <span className="text-[color:var(--ink)]">{cityName}</span>
+        </p>
+        <h1 className="editorial-heading text-4xl mb-3">
           {cityName} Travel Itineraries
         </h1>
-        <p className="text-gray-500">Choose a travel style to find your perfect itinerary.</p>
+        <p className="text-[color:var(--ink-soft)]">Choose a travel style to find your perfect itinerary.</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
         {plans.map(plan => {
-          const typeInfo = TRAVEL_TYPE_LABELS[plan.travel_type] ?? { label: plan.travel_type, icon: Plane, color: 'bg-gray-50 border-gray-200 text-gray-700' }
+          const typeInfo = TRAVEL_TYPE_LABELS[plan.travel_type] ?? { label: plan.travel_type, icon: Plane }
           const TypeIcon = typeInfo.icon
           return (
             <Link
               key={plan.id}
               href={`/en/destinations/${country}/${city}/${plan.slug}`}
-              className="group bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm hover:border-[var(--primary)] hover:shadow-md transition-all overflow-hidden"
+              className="group border-t border-[var(--border)] pt-5"
             >
-              <div className={`px-4 py-3 border-b flex items-center gap-2 ${typeInfo.color}`}>
-                <TypeIcon className="w-4 h-4" />
-                <span className="font-semibold text-sm">{typeInfo.label} Trip</span>
+              <div className="flex items-center gap-1.5 mb-2 text-xs text-[color:var(--primary)]">
+                <TypeIcon className="w-3.5 h-3.5" />
+                <span>{typeInfo.label} Trip</span>
               </div>
-              <div className="p-5">
-                <h2 className="font-bold text-gray-800 mb-2 group-hover:text-[var(--primary)] transition-colors line-clamp-2">
-                  {plan.title}
-                </h2>
-                {plan.meta_description && (
-                  <p className="text-xs text-gray-500 line-clamp-2 mb-3">{plan.meta_description}</p>
-                )}
-                <div className="flex items-center gap-1 text-xs text-gray-400">
-                  <Clock className="w-3 h-3" />
-                  <span>{plan.days}-day itinerary</span>
-                </div>
+              <h2 className="text-[color:var(--ink)] mb-2 line-clamp-2 group-hover:opacity-70 transition-opacity" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>
+                {plan.title}
+              </h2>
+              {plan.meta_description && (
+                <p className="text-xs text-[color:var(--ink-soft)] line-clamp-2 mb-3 leading-relaxed">{plan.meta_description}</p>
+              )}
+              <div className="flex items-center gap-1 text-xs text-[color:var(--ink-faint)]">
+                <Clock className="w-3 h-3" />
+                <span>{plan.days}-day itinerary</span>
               </div>
             </Link>
           )

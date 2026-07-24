@@ -18,20 +18,6 @@ interface Article {
   cover_image_attribution?: string | null
 }
 
-const GRADIENTS = [
-  'from-blue-400 to-purple-500',
-  'from-orange-400 to-red-500',
-  'from-green-400 to-teal-500',
-  'from-yellow-400 to-orange-500',
-  'from-pink-400 to-rose-500',
-  'from-indigo-400 to-blue-500',
-]
-
-function slugGradient(slug: string): string {
-  const idx = slug.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % GRADIENTS.length
-  return GRADIENTS[idx]
-}
-
 export default async function ArticleCard({ article, locale = 'ko' }: { article: Article; locale?: 'ko' | 'en' }) {
   const timeAgo = article.created_at
     ? formatDistanceToNow(new Date(article.created_at), { addSuffix: true, locale: locale === 'en' ? enUS : ko })
@@ -49,12 +35,11 @@ export default async function ArticleCard({ article, locale = 'ko' }: { article:
   }
 
   const href = locale === 'en' ? `/en/article/${article.slug}` : `/article/${article.slug}`
-  const gradient = slugGradient(article.slug)
 
   return (
-    <Link href={href} className="group block bg-white rounded-[var(--radius)] overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+    <div className="group relative">
       {/* Cover image */}
-      <div className={`h-48 bg-gradient-to-br ${gradient} relative overflow-hidden`}>
+      <div className="h-56 bg-[var(--bg-secondary)] relative overflow-hidden">
         {photo ? (
           <>
             <Image
@@ -62,11 +47,10 @@ export default async function ArticleCard({ article, locale = 'ko' }: { article:
               alt={`${article.city ?? ''} ${article.title} 여행 가이드`}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
             {photo.url.includes('unsplash.com') && (
-              <span className="absolute bottom-1.5 right-2 text-[10px] text-white/60">
+              <span className="absolute z-10 bottom-1.5 right-2 text-[10px] text-white/70">
                 {photo.authorName ? (
                   <>Photo by{' '}
                     {photo.authorUrl
@@ -81,37 +65,37 @@ export default async function ArticleCard({ article, locale = 'ko' }: { article:
           </>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
-            <MapPin className="w-10 h-10 text-white/60" />
+            <MapPin className="w-8 h-8 text-[color:var(--ink-faint)]" />
           </div>
-        )}
-        {destination && (
-          <span className="absolute top-3 left-3 bg-[var(--primary)] text-white text-xs px-2 py-1 rounded-full z-10">
-            {destination}
-          </span>
         )}
       </div>
 
-      <div className="p-4">
-        <h3 className="font-semibold text-base leading-snug mb-2 line-clamp-2 group-hover:text-[var(--primary)] transition-colors" style={{ fontFamily: 'var(--font-heading)' }}>
+      <div className="pt-4">
+        {destination && <p className="eyebrow mb-2">{destination}</p>}
+        <h3
+          className="text-lg leading-snug mb-2 line-clamp-2 text-[color:var(--ink)] group-hover:opacity-70 transition-opacity"
+          style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}
+        >
           {article.title}
         </h3>
         {article.meta_description && (
-          <p className="text-sm text-gray-500 line-clamp-2 mb-3">{article.meta_description}</p>
+          <p className="text-sm text-[color:var(--ink-soft)] line-clamp-2 mb-3 leading-relaxed">{article.meta_description}</p>
         )}
-        <div className="flex items-center gap-3 text-xs text-gray-400">
+        <div className="flex items-center gap-3 text-xs text-[color:var(--ink-faint)]">
           {timeAgo && (
             <span className="flex items-center gap-1">
               <Calendar className="w-3 h-3" />
               {timeAgo}
             </span>
           )}
-          {article.category && (
-            <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
-              {article.category}
-            </span>
-          )}
+          {article.category && <span>{article.category}</span>}
         </div>
       </div>
-    </Link>
+
+      {/* Stretched link — makes the whole card clickable without nesting an <a> inside the attribution link above */}
+      <Link href={href} className="absolute inset-0" aria-label={article.title}>
+        <span className="sr-only">{article.title}</span>
+      </Link>
+    </div>
   )
 }

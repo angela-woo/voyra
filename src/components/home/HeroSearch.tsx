@@ -17,33 +17,33 @@ export default function HeroSearch() {
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
-      {/* Search bar */}
-      <div className="flex items-center bg-white rounded-[var(--radius)] shadow-xl overflow-hidden">
+    <div className="w-full max-w-lg mx-auto">
+      {/* Search bar — underline only, no fill/shadow */}
+      <div className="flex items-center gap-3 border-b border-white/40 focus-within:border-white/90 transition-colors">
+        <Search className="w-4 h-4 text-white/70 shrink-0" />
         <input
           type="text"
           value={query}
           onChange={e => setQuery(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && search(query)}
           placeholder="도시 또는 나라를 검색하세요"
-          className="flex-1 px-5 py-4 text-gray-800 placeholder-gray-400 focus:outline-none text-base"
+          className="flex-1 bg-transparent py-3 text-white placeholder-white/60 focus:outline-none text-[15px] tracking-wide"
         />
         <button
           onClick={() => search(query)}
-          className="bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white px-6 py-4 transition-colors duration-200 flex items-center gap-2 font-medium whitespace-nowrap"
+          className="text-[13px] tracking-[0.08em] uppercase text-white/80 hover:text-white transition-colors shrink-0"
         >
-          <Search className="w-4 h-4" />
           검색
         </button>
       </div>
 
       {/* Popular tags */}
-      <div className="flex flex-wrap justify-center gap-2 mt-4">
+      <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 mt-6 text-[13px] tracking-wide">
         {POPULAR_TAGS.map(tag => (
           <button
             key={tag}
             onClick={() => search(tag)}
-            className="text-sm text-white bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-1.5 rounded-full transition-colors duration-200 border border-white/30"
+            className="text-white/65 hover:text-white transition-colors"
           >
             {tag}
           </button>

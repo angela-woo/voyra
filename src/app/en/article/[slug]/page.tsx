@@ -2,7 +2,6 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { marked } from 'marked'
 import Image from 'next/image'
-import Link from 'next/link'
 import {
   fetchUnsplashPhoto,
   fetchItemImages,
@@ -16,20 +15,19 @@ import ImageCarousel from '@/components/ui/ImageCarousel'
 import PlaceCard from '@/components/article/PlaceCard'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
 import BudgetCalculator from '@/components/widgets/BudgetCalculator'
-import { getKlookUrl } from '@/lib/utils/klookUrl'
-import { Calendar, MapPin, Ticket, UtensilsCrossed, Moon, Bus, Landmark } from 'lucide-react'
+import ReadingProgress from '@/components/article/ReadingProgress'
+import TableOfContents from '@/components/article/TableOfContents'
+import { Calendar, MapPin, Clock } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { enUS } from 'date-fns/locale'
 import type { Metadata } from 'next'
 import { generateMetaDescription, getOgImageUrl } from '@/lib/utils/metaGenerator'
 import { NOINDEX_ARTICLE_SLUGS } from '@/lib/seo/noindex-articles'
 import AdUnit from '@/components/ui/AdUnit'
-import ESimBanner from '@/components/widgets/ESimBanner'
 import ShareButtons from '@/components/ui/ShareButtons'
 import Breadcrumb from '@/components/ui/Breadcrumb'
 import RelatedContent from '@/components/article/RelatedContent'
 import InternalLinks from '@/components/article/InternalLinks'
-import FlightSearchWidget from '@/components/widgets/FlightSearchWidget'
 
 export const revalidate = 3600
 
@@ -78,6 +76,20 @@ function parseArticle(content: string): { globalIntro: string; sections: Article
       items: s.items.map(i => ({ heading: i.heading, body: i.bodyBuf.join('\n') })),
     })),
   }
+}
+
+function slugify(text: string, index: number): string {
+  const base = text
+    .trim()
+    .toLowerCase()
+    .replace(/["'!?.,:;()[\]{}·`~]/g, '')
+    .replace(/\s+/g, '-')
+  return base ? `${base}-${index}` : `section-${index}`
+}
+
+function estimateReadingMinutes(content: string): number {
+  const words = content.replace(/[#*`>_-]/g, '').trim().split(/\s+/).filter(Boolean).length
+  return Math.max(1, Math.round(words / 200))
 }
 
 async function getArticle(slug: string) {
@@ -196,16 +208,19 @@ export default async function EnArticlePage({ params }: PageProps) {
 
   let htmlIdx = 0
   const globalIntroHtml = allHtml[htmlIdx++]
-  const processedSections = sections.map(s => ({
+  const processedSections = sections.map((s, i) => ({
     ...s,
+    id: slugify(s.heading, i),
     introHtml: allHtml[htmlIdx++],
     items: s.items.map(item => ({ ...item, bodyHtml: allHtml[htmlIdx++] })),
   }))
+  const tocItems = processedSections.map(s => ({ id: s.id, label: s.heading }))
 
   const heroImageUrl = article.cover_image_url ?? heroPhoto?.url ?? null
   const timeAgo = article.created_at
     ? formatDistanceToNow(new Date(article.created_at), { addSuffix: true, locale: enUS })
     : null
+  const readingMinutes = estimateReadingMinutes(article.content ?? '')
   const destination = [article.city, article.country].filter(Boolean).join(', ')
   const mainPlace = places.find((p: { lat: number | null; lng: number | null }) => p.lat && p.lng)
 
@@ -229,20 +244,28 @@ export default async function EnArticlePage({ params }: PageProps) {
   return (
     <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <div className={`relative w-full h-[300px] md:h-[500px] ${heroImageUrl ? 'bg-gray-200' : 'bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900'}`}>
+      <ReadingProgress />
+
+      {/* Hero */}
+      <div className={`relative w-full h-[46vh] min-h-[320px] md:h-[64vh] md:min-h-[440px] ${heroImageUrl ? 'bg-[var(--bg-secondary)]' : 'bg-[var(--ink)]'}`}>
         {heroImageUrl && (
           <Image src={heroImageUrl} alt={article.title} fill priority sizes="100vw" className="object-cover object-center" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-        <div className="absolute bottom-4 left-4 right-4 max-w-6xl mx-auto">
-          {destination && (
-            <span className="inline-flex items-center gap-1 text-sm text-white/90 font-medium mb-2">
-              <MapPin className="w-4 h-4" />{destination}
-            </span>
-          )}
-          <h1 className="text-2xl md:text-4xl font-bold text-white leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
-            {article.title}
-          </h1>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 pb-8 md:pb-12 px-6">
+          <div className="max-w-[var(--measure)] mx-auto">
+            {destination && (
+              <p className="eyebrow text-white/75 mb-3">
+                <MapPin className="w-3 h-3 inline -mt-0.5 mr-1" />{destination}
+              </p>
+            )}
+            <h1
+              className="text-white leading-[1.15] max-w-2xl"
+              style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 'clamp(1.75rem, 4vw, 2.75rem)' }}
+            >
+              {article.title}
+            </h1>
+          </div>
         </div>
         {heroImageUrl && heroImageUrl.includes('unsplash.com') && (
           <span className="absolute bottom-2 right-3 text-[10px] text-white/50">
@@ -259,19 +282,26 @@ export default async function EnArticlePage({ params }: PageProps) {
         { label: article.title },
       ]} />
 
-      <div className="max-w-6xl mx-auto px-4 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10">
-          <article>
-            <div className="mb-8">
-              {article.meta_description && <p className="text-lg text-gray-500 mb-4">{article.meta_description}</p>}
-              {timeAgo && (
-                <div className="flex items-center gap-1 text-sm text-gray-400 mb-4">
-                  <Calendar className="w-4 h-4" />{timeAgo}
-                </div>
+      <div className="max-w-[1360px] mx-auto px-6 py-14">
+        <div className="grid grid-cols-1 xl:grid-cols-[180px_minmax(0,var(--measure))_300px] gap-12 xl:gap-16 justify-center">
+          <TableOfContents items={tocItems} />
+
+          <article className="w-full mx-auto max-w-[var(--measure)] xl:max-w-none">
+            {/* Meta / byline */}
+            <div className="mb-10 pb-8 border-b border-[var(--border)]">
+              {article.meta_description && (
+                <p className="text-lg text-[color:var(--ink-soft)] mb-5 leading-relaxed" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>
+                  {article.meta_description}
+                </p>
               )}
-              {article.category && (
-                <span className="inline-block text-xs px-3 py-1 rounded-full font-medium" style={{ backgroundColor: '#FFF3F0', color: '#FF5722' }}>{article.category}</span>
-              )}
+              <div className="flex items-center flex-wrap gap-x-4 gap-y-2 text-[13px] text-[color:var(--ink-faint)] mb-5">
+                <span>Kiravoy Editor</span>
+                {timeAgo && (
+                  <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{timeAgo}</span>
+                )}
+                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{readingMinutes} min read</span>
+                {article.category && <span>{article.category}</span>}
+              </div>
               <ShareButtons
                 url={`https://kiravoy.com/en/article/${article.slug}`}
                 title={article.title}
@@ -280,17 +310,15 @@ export default async function EnArticlePage({ params }: PageProps) {
               />
             </div>
 
-            <div className="prose prose-gray max-w-none prose-headings:font-bold prose-a:text-[var(--primary)]">
+            {/* Body */}
+            <div className="prose max-w-none">
               {globalIntro && <div dangerouslySetInnerHTML={{ __html: globalIntroHtml as string }} />}
 
               <AdUnit slot="1936618959" />
 
               {processedSections.map(section => (
                 <div key={section.heading}>
-                  <div className="not-prose flex items-center gap-3 mt-8 mb-3">
-                    <div className="w-1 h-6 rounded-full shrink-0" style={{ backgroundColor: '#FF5722' }} />
-                    <h2 className="text-xl font-bold text-gray-900">{section.heading}</h2>
-                  </div>
+                  <h2 id={section.id}>{section.heading}</h2>
 
                   {section.intro && (
                     <div dangerouslySetInnerHTML={{ __html: section.introHtml as string }} />
@@ -311,18 +339,18 @@ export default async function EnArticlePage({ params }: PageProps) {
                     })
                   ) : (
                     sectionPhotos[section.heading] && (
-                      <div className="not-prose my-4 relative w-full h-[220px] md:h-[320px] rounded-[var(--radius)] overflow-hidden">
-                        <Image
-                          src={sectionPhotos[section.heading]!}
-                          alt={section.heading}
-                          fill
-                          sizes="(max-width: 1024px) 100vw, 700px"
-                          className="object-cover"
-                        />
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                          <span className="text-white text-sm font-medium">{section.heading}</span>
+                      <figure className="not-prose my-6">
+                        <div className="relative w-full h-[220px] md:h-[380px] overflow-hidden">
+                          <Image
+                            src={sectionPhotos[section.heading]!}
+                            alt={section.heading}
+                            fill
+                            sizes="(max-width: 1024px) 100vw, 700px"
+                            className="object-cover"
+                          />
                         </div>
-                      </div>
+                        <figcaption className="eyebrow mt-2 text-[color:var(--ink-faint)]">{section.heading}</figcaption>
+                      </figure>
                     )
                   )}
                 </div>
@@ -339,44 +367,10 @@ export default async function EnArticlePage({ params }: PageProps) {
 
             <AdUnit slot="6933794765" />
 
-            {article.city && (
-              <div className="mt-10 not-prose">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-1 h-6 rounded-full shrink-0" style={{ backgroundColor: '#FF5722' }} />
-                  <h2 className="text-xl font-bold">{article.city} Popular Tours &amp; Activities</h2>
-                </div>
-                <div className="overflow-x-auto -mx-4 px-4 pb-2">
-                  <div className="flex gap-3" style={{ width: 'max-content' }}>
-                    {[
-                      { label: `Best Tours in ${article.city}`, Icon: Ticket },
-                      { label: `${article.city} Food Tour`, Icon: UtensilsCrossed },
-                      { label: `${article.city} Night Tour`, Icon: Moon },
-                      { label: `${article.city} Day Trip`, Icon: Bus },
-                      { label: `${article.city} Cultural Experience`, Icon: Landmark },
-                    ].map((tour, i) => (
-                      <a
-                        key={i}
-                        href={getKlookUrl((article.city ?? '') + ' ' + tour.label, 'en')}
-                        target="_blank"
-                        rel="noopener noreferrer sponsored"
-                        className="flex items-center gap-2.5 px-4 py-3 rounded-2xl border text-sm font-medium shrink-0 hover:border-[#FF5722] hover:text-[#FF5722] transition-all"
-                        style={{ borderColor: '#E5E7EB', color: '#374151', backgroundColor: 'white' }}
-                      >
-                        <tour.Icon className="w-4 h-4" />
-                        {tour.label}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
+            {/* Recommended places */}
             {places.length > 0 && (
-              <div className="mt-10">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-1 h-6 rounded-full shrink-0" style={{ backgroundColor: '#FF5722' }} />
-                  <h2 className="text-xl font-bold text-gray-900">Recommended Places</h2>
-                </div>
+              <div className="mt-14 pt-10 border-t border-[var(--border)]">
+                <h2 className="editorial-heading text-xl mb-5">Recommended Places</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {places.map((place: { id: string }) => (
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -387,18 +381,10 @@ export default async function EnArticlePage({ params }: PageProps) {
             )}
 
             <AdUnit slot="9176814723" />
-
-            <ESimBanner locale="en" city={article.city} />
-            <FlightSearchWidget city={article.city ?? ''} cityEn={cityEnglish} locale="en" />
-
-            <div className="mt-8 pt-4 border-t border-gray-100">
-              <Link href="/en/articles" className="text-sm font-medium hover:underline" style={{ color: '#FF5722' }}>
-                ← Back to Travel Guides
-              </Link>
-            </div>
           </article>
 
-          <aside className="space-y-6">
+          {/* Sidebar */}
+          <aside className="space-y-6 xl:pt-0">
             {article.city && (
               <WeatherWidget lat={mainPlace?.lat ?? null} lng={mainPlace?.lng ?? null} city={article.city} />
             )}

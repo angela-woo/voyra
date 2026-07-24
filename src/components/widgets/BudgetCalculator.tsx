@@ -38,9 +38,9 @@ export default function BudgetCalculator() {
   const totalKRW = items.reduce((sum, item) => sum + item.amount * (RATES_TO_KRW[item.currency] ?? 1), 0)
 
   return (
-    <div className="bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm p-5">
-      <h3 className="font-semibold text-sm flex items-center gap-2 mb-4">
-        <Calculator className="w-4 h-4 text-[var(--primary)]" />
+    <div className="border border-[var(--border)] p-5">
+      <h3 className="eyebrow flex items-center gap-2 mb-4">
+        <Calculator className="w-3.5 h-3.5" />
         여행 예산 계산기
       </h3>
       <div className="space-y-3 mb-4">
@@ -50,7 +50,7 @@ export default function BudgetCalculator() {
               value={item.label}
               onChange={e => updateItem(item.id, 'label', e.target.value)}
               placeholder="항목명"
-              className="w-full text-sm border border-gray-200 rounded-[var(--radius)] px-2 py-1.5 focus:outline-none focus:border-[var(--primary)]"
+              className="w-full text-sm border border-[var(--border)] px-2 py-1.5 bg-transparent focus:outline-none focus:border-[color:var(--ink)]"
             />
             <div className="flex gap-1.5 items-center">
               <input
@@ -58,16 +58,16 @@ export default function BudgetCalculator() {
                 value={item.amount || ''}
                 onChange={e => updateItem(item.id, 'amount', parseFloat(e.target.value) || 0)}
                 placeholder="금액"
-                className="flex-1 min-w-0 text-sm border border-gray-200 rounded-[var(--radius)] px-2 py-1.5 focus:outline-none focus:border-[var(--primary)]"
+                className="flex-1 min-w-0 text-sm border border-[var(--border)] px-2 py-1.5 bg-transparent focus:outline-none focus:border-[color:var(--ink)]"
               />
               <select
                 value={item.currency}
                 onChange={e => updateItem(item.id, 'currency', e.target.value)}
-                className="text-sm border border-gray-200 rounded-[var(--radius)] px-2 py-1.5 focus:outline-none focus:border-[var(--primary)]"
+                className="text-sm border border-[var(--border)] px-2 py-1.5 bg-transparent focus:outline-none focus:border-[color:var(--ink)]"
               >
                 {CURRENCIES.map(c => <option key={c}>{c}</option>)}
               </select>
-              <button onClick={() => removeItem(item.id)} className="flex-shrink-0 text-gray-300 hover:text-red-400 transition-colors">
+              <button onClick={() => removeItem(item.id)} className="flex-shrink-0 text-[color:var(--ink-faint)] hover:text-red-400 transition-colors">
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>
@@ -76,18 +76,18 @@ export default function BudgetCalculator() {
       </div>
       <button
         onClick={addItem}
-        className="flex items-center gap-1 text-sm text-[var(--primary)] hover:underline mb-4"
+        className="link-underline flex items-center gap-1 text-sm text-[color:var(--ink-soft)] mb-4"
       >
         <Plus className="w-4 h-4" /> 항목 추가
       </button>
-      <div className="border-t border-gray-100 pt-3">
+      <div className="border-t border-[var(--border)] pt-3">
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-500">총 예산 (원화 기준)</span>
-          <span className="font-bold text-lg text-[var(--primary)]">
+          <span className="text-sm text-[color:var(--ink-soft)]">총 예산 (원화 기준)</span>
+          <span className="text-lg text-[color:var(--ink)]" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>
             ₩{totalKRW.toLocaleString('ko-KR')}
           </span>
         </div>
-        <p className="text-xs text-gray-400 mt-1">* 환율은 참고용 값입니다</p>
+        <p className="text-xs text-[color:var(--ink-faint)] mt-1">* 환율은 참고용 값입니다</p>
       </div>
     </div>
   )

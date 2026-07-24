@@ -10,11 +10,6 @@ const CATEGORY_LABELS_KO: Record<string, string> = {
 const CATEGORY_LABELS_EN: Record<string, string> = {
   all: 'All', free: 'General', tips: 'Tips', question: 'Questions', review: 'Reviews', meetup: 'Meetups',
 }
-const CATEGORY_COLORS: Record<string, string> = {
-  free: 'bg-blue-100 text-blue-700', tips: 'bg-green-100 text-green-700',
-  question: 'bg-yellow-100 text-yellow-700', review: 'bg-purple-100 text-purple-700',
-  meetup: 'bg-pink-100 text-pink-700',
-}
 
 interface Post {
   id: string
@@ -32,23 +27,18 @@ export default function PostCard({ post, locale = 'ko' }: { post: Post; locale?:
   const dateLocale = locale === 'en' ? enUS : ko
   const timeAgo = formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: dateLocale })
   const categoryLabels = locale === 'en' ? CATEGORY_LABELS_EN : CATEGORY_LABELS_KO
-  const categoryColor = CATEGORY_COLORS[post.category] ?? 'bg-gray-100 text-gray-700'
   const href = locale === 'en' ? `/en/community/${post.id}` : `/community/${post.id}`
 
   const thumbnail = post.image_urls?.[0]
 
   return (
-    <Link href={href} className="block bg-white rounded-[var(--radius)] border border-gray-100 p-4 hover:shadow-sm hover:border-gray-200 transition-all">
-      <div className="flex items-start gap-3">
+    <Link href={href} className="block border-t border-[var(--border)] pt-4 pb-1 hover:opacity-70 transition-opacity">
+      <div className="flex items-start gap-4">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${categoryColor}`}>
-              {categoryLabels[post.category] ?? post.category}
-            </span>
-          </div>
-          <h3 className="font-semibold text-sm leading-snug mb-1 line-clamp-1">{post.title}</h3>
-          <p className="text-xs text-gray-500 line-clamp-2">{post.content}</p>
-          <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
+          <p className="eyebrow mb-1.5">{categoryLabels[post.category] ?? post.category}</p>
+          <h3 className="text-[15px] leading-snug mb-1.5 line-clamp-1 text-[color:var(--ink)]" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>{post.title}</h3>
+          <p className="text-sm text-[color:var(--ink-soft)] line-clamp-2 mb-2">{post.content}</p>
+          <div className="flex items-center gap-3 text-xs text-[color:var(--ink-faint)]">
             <span>{post.user_profiles?.username ?? '익명'}</span>
             <span className="flex items-center gap-1">
               <Clock className="w-3 h-3" />
@@ -65,7 +55,7 @@ export default function PostCard({ post, locale = 'ko' }: { post: Post; locale?:
           </div>
         </div>
         {thumbnail && (
-          <div className="relative w-16 h-16 shrink-0 rounded-[var(--radius)] overflow-hidden border border-gray-100">
+          <div className="relative w-16 h-16 shrink-0 bg-[var(--bg-secondary)] overflow-hidden">
             <Image src={thumbnail} alt="" fill className="object-cover" />
           </div>
         )}

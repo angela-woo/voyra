@@ -16,15 +16,15 @@ interface DesignSettings {
   site_description: string
 }
 
-const FONTS_HEADING = ['Playfair Display', 'Georgia', 'Merriweather', 'Lora']
-const FONTS_BODY = ['Inter', 'Roboto', 'Open Sans', 'Nunito']
+const FONTS_HEADING = ['Noto Sans KR', 'Playfair Display', 'Georgia', 'Merriweather', 'Lora']
+const FONTS_BODY = ['Noto Sans KR', 'Inter', 'Roboto', 'Open Sans', 'Nunito']
 
 const defaults: DesignSettings = {
-  primary_color: '#2563eb',
-  background_color: '#ffffff',
-  border_radius: '8',
-  font_heading: 'Playfair Display',
-  font_body: 'Inter',
+  primary_color: '#FF5722',
+  background_color: '#FAF9F7',
+  border_radius: '2',
+  font_heading: 'Noto Sans KR',
+  font_body: 'Noto Sans KR',
   site_name: 'Kiravoy',
   site_description: 'Discover the world with expert travel guides curated by Kiravoy.',
 }
@@ -214,7 +214,7 @@ export default function AdminDesignPage() {
             </div>
             <div className="p-6" style={previewStyle}>
               <div className="mb-4 p-4 rounded-[var(--radius)] border-2 border-[var(--primary)]">
-                <h3 className="font-bold text-lg mb-1" style={{ fontFamily: 'var(--font-heading)' }}>
+                <h3 className="font-bold text-lg mb-1" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>
                   {settings.site_name}
                 </h3>
                 <p className="text-xs text-gray-500">{settings.site_description}</p>
@@ -226,7 +226,7 @@ export default function AdminDesignPage() {
                 주요 버튼
               </button>
               <div className="p-3 rounded-[var(--radius)] bg-gray-50 text-xs text-gray-600">
-                <p style={{ fontFamily: 'var(--font-heading)' }} className="font-bold mb-1">제목 폰트 샘플</p>
+                <p style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }} className="font-bold mb-1">제목 폰트 샘플</p>
                 본문 텍스트 샘플입니다. 여행 가이드 내용이 이 폰트로 표시됩니다.
               </div>
             </div>

@@ -117,7 +117,7 @@ export default async function LatestItinerariesPage({ searchParams }: PageProps)
     <div className="max-w-6xl mx-auto px-4 py-10">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900" style={{ fontFamily: 'var(--font-heading)' }}>
+        <h1 className="text-3xl font-bold text-gray-900" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>
           최신 여행 일정
         </h1>
         <p className="mt-2 text-gray-500 text-sm">
@@ -218,7 +218,7 @@ export default async function LatestItinerariesPage({ searchParams }: PageProps)
                 </div>
 
                 <div className="p-4">
-                  <h3 className="font-semibold text-base leading-snug mb-2 line-clamp-2 group-hover:text-[var(--primary)] transition-colors" style={{ fontFamily: 'var(--font-heading)' }}>
+                  <h3 className="font-semibold text-base leading-snug mb-2 line-clamp-2 group-hover:text-[var(--primary)] transition-colors" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>
                     {plan.title}
                   </h3>
                   {plan.meta_description && (

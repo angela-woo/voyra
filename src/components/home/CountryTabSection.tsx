@@ -51,14 +51,6 @@ const TRAVEL_TYPE_LABELS: Record<string, string> = {
   solo: '혼자',
 }
 
-const CATEGORY_COLORS: Record<string, string> = {
-  맛집: 'bg-orange-100 text-orange-700',
-  관광: 'bg-orange-50 text-[#FF5722]',
-  쇼핑: 'bg-pink-100 text-pink-700',
-  숙박: 'bg-purple-100 text-purple-700',
-  액티비티: 'bg-green-100 text-green-700',
-}
-
 function matches(country: string | null, tab: Tab): boolean {
   if (tab === '전체') return true
   if (!country) return false
@@ -67,42 +59,33 @@ function matches(country: string | null, tab: Tab): boolean {
 
 function ArticleCard({ a }: { a: TabArticle }) {
   const dest = [a.city, a.country].filter(Boolean).join(', ')
-  const catColor = CATEGORY_COLORS[a.category ?? ''] ?? 'bg-gray-100 text-gray-600'
   return (
-    <Link
-      href={`/article/${a.slug}`}
-      className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 hover:-translate-y-1 transition-all duration-200 flex flex-col"
-    >
-      <div className="relative h-48 bg-gradient-to-br from-orange-50 to-red-100 overflow-hidden flex-shrink-0">
+    <Link href={`/article/${a.slug}`} className="group flex flex-col">
+      <div className="img-zoom relative h-48 bg-[var(--bg-secondary)] overflow-hidden flex-shrink-0">
         {a.cover_image_url ? (
           <Image
             src={a.cover_image_url}
             alt={a.title}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            className="object-cover"
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
-            <MapPin className="w-8 h-8 text-orange-300" />
+            <MapPin className="w-7 h-7 text-[color:var(--ink-faint)]" />
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-        {dest && (
-          <span className="absolute top-3 left-3 bg-[var(--primary)] text-white text-xs px-2.5 py-1 rounded-full z-10">
-            {dest}
-          </span>
-        )}
       </div>
-      <div className="p-4 flex flex-col flex-1">
-        <h3 className="font-semibold text-sm leading-snug mb-2 line-clamp-2 group-hover:text-[var(--primary)] transition-colors">
+      <div className="pt-3 flex flex-col flex-1">
+        {dest && <p className="eyebrow mb-1.5">{dest}</p>}
+        <h3
+          className="text-[15px] leading-snug mb-2 line-clamp-2 text-[color:var(--ink)] group-hover:opacity-70 transition-opacity"
+          style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}
+        >
           {a.title}
         </h3>
-        {a.meta_description && (
-          <p className="text-xs text-gray-500 line-clamp-2 mb-3">{a.meta_description}</p>
-        )}
         {a.category && (
-          <span className={`mt-auto self-start text-xs px-2 py-0.5 rounded-full ${catColor}`}>{a.category}</span>
+          <span className="mt-auto text-xs text-[color:var(--ink-faint)]">{a.category}</span>
         )}
       </div>
     </Link>
@@ -113,28 +96,28 @@ function PlanCard({ p }: { p: TabPlan }) {
   return (
     <Link
       href={toPlanUrl({ country: p.country ?? '', city: p.city ?? '', slug: p.slug })}
-      className="group bg-white rounded-[var(--radius)] overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all duration-200 flex flex-col"
+      className="group flex flex-col border-t border-[var(--border)] pt-4"
     >
-      <div className="h-2 bg-gradient-to-r from-[var(--primary)] to-indigo-400 flex-shrink-0" />
-      <div className="p-4 flex flex-col flex-1">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs text-gray-500">{p.city}, {p.country}</span>
-          {p.travel_type && (
-            <span className="text-xs font-medium text-[var(--primary)]">
-              {TRAVEL_TYPE_LABELS[p.travel_type] ?? p.travel_type}
-            </span>
-          )}
-        </div>
-        <h3 className="font-semibold text-sm leading-snug mb-2 line-clamp-2 group-hover:text-[var(--primary)] transition-colors">
-          {p.title}
-        </h3>
-        {p.meta_description && (
-          <p className="text-xs text-gray-500 line-clamp-2 mb-3">{p.meta_description}</p>
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-xs text-[color:var(--ink-faint)]">{p.city}, {p.country}</span>
+        {p.travel_type && (
+          <span className="text-xs text-[color:var(--primary)]">
+            {TRAVEL_TYPE_LABELS[p.travel_type] ?? p.travel_type}
+          </span>
         )}
-        <div className="mt-auto flex items-center gap-1 text-xs text-gray-400">
-          <Clock className="w-3 h-3" />
-          <span>{p.days}일 일정</span>
-        </div>
+      </div>
+      <h3
+        className="text-[15px] leading-snug mb-2 line-clamp-2 text-[color:var(--ink)] group-hover:opacity-70 transition-opacity"
+        style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}
+      >
+        {p.title}
+      </h3>
+      {p.meta_description && (
+        <p className="text-xs text-[color:var(--ink-soft)] line-clamp-2 mb-3 leading-relaxed">{p.meta_description}</p>
+      )}
+      <div className="mt-auto flex items-center gap-1 text-xs text-[color:var(--ink-faint)]">
+        <Clock className="w-3 h-3" />
+        <span>{p.days}일 일정</span>
       </div>
     </Link>
   )
@@ -147,23 +130,22 @@ export default function CountryTabSection({ articles, plans }: Props) {
   const filtPlans = plans.filter(p => matches(p.country, activeTab)).slice(0, 4)
 
   return (
-    <section className="max-w-7xl mx-auto px-4 py-16">
-      <h2 className="text-3xl font-bold mb-8 text-center" style={{ fontFamily: 'var(--font-heading)' }}>
+    <section className="max-w-[var(--measure-wide)] mx-auto px-6 py-24">
+      <h2 className="editorial-heading text-3xl text-center mb-10">
         나라별 여행 모아보기
       </h2>
 
-      {/* Tabs */}
-      <div className="flex gap-2 mb-10 justify-center flex-wrap">
+      {/* Tabs — underline style, no pill fills */}
+      <div className="flex gap-8 mb-14 justify-center flex-wrap border-b border-[var(--border)]">
         {TABS.map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-6 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
+            className={`pb-3 text-sm tracking-wide transition-colors duration-200 border-b -mb-px ${
               activeTab === tab
-                ? 'text-white shadow-sm'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'text-[color:var(--ink)] border-[color:var(--ink)]'
+                : 'text-[color:var(--ink-faint)] border-transparent hover:text-[color:var(--ink-soft)]'
             }`}
-            style={activeTab === tab ? { backgroundColor: '#FF5722' } : undefined}
           >
             {tab}
           </button>
@@ -172,9 +154,9 @@ export default function CountryTabSection({ articles, plans }: Props) {
 
       {/* Articles grid */}
       {filtArticles.length > 0 && (
-        <div className="mb-10">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">여행 가이드</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="mb-14">
+          <p className="eyebrow mb-6">여행 가이드</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {filtArticles.map(a => <ArticleCard key={a.id} a={a} />)}
           </div>
         </div>
@@ -183,15 +165,15 @@ export default function CountryTabSection({ articles, plans }: Props) {
       {/* Plans grid */}
       {filtPlans.length > 0 && (
         <div>
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">여행 일정</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <p className="eyebrow mb-6">여행 일정</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {filtPlans.map(p => <PlanCard key={p.id} p={p} />)}
           </div>
         </div>
       )}
 
       {filtArticles.length === 0 && filtPlans.length === 0 && (
-        <p className="text-center text-gray-400 py-12">해당 지역의 콘텐츠가 준비 중입니다.</p>
+        <p className="text-center text-[color:var(--ink-faint)] py-12">해당 지역의 콘텐츠가 준비 중입니다.</p>
       )}
     </section>
   )

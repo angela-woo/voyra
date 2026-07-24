@@ -64,29 +64,30 @@ export default async function EnDestinationsPage() {
   const countries = await getCountries()
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <div className="mb-10">
-        <h1 className="text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
+    <div className="max-w-[var(--measure-wide)] mx-auto px-6 py-16">
+      <div className="mb-12 pb-6 border-b border-[var(--border)]">
+        <p className="eyebrow mb-3">Kiravoy</p>
+        <h1 className="editorial-heading text-4xl mb-3">
           Explore Travel Itineraries
         </h1>
-        <p className="text-gray-500">Choose a destination to find your perfect travel itinerary.</p>
+        <p className="text-[color:var(--ink-soft)]">Choose a destination to find your perfect travel itinerary.</p>
       </div>
 
       {countries.length === 0 ? (
-        <div className="text-center py-24 text-gray-400">
+        <div className="text-center py-24 text-[color:var(--ink-faint)]">
           <p className="text-lg">No itineraries available yet.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-10">
           {countries.map(({ country, country_en, cities, planCount }) => (
             <Link
               key={country_en}
               href={`/en/destinations/${country_en}`}
-              className="group bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm p-6 hover:border-[var(--primary)] hover:shadow-md transition-all text-center"
+              className="group border-t border-[var(--border)] pt-5 text-center"
             >
-              <div className="text-5xl mb-3">{getCountryFlag(country_en)}</div>
-              <h2 className="font-bold text-gray-800 mb-1">{country}</h2>
-              <p className="text-xs text-gray-400">{cities.length} {cities.length === 1 ? 'city' : 'cities'} · {planCount} {planCount === 1 ? 'itinerary' : 'itineraries'}</p>
+              <div className="text-3xl mb-3">{getCountryFlag(country_en)}</div>
+              <h2 className="text-[color:var(--ink)] mb-1 group-hover:opacity-70 transition-opacity" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>{country}</h2>
+              <p className="text-xs text-[color:var(--ink-faint)]">{cities.length} {cities.length === 1 ? 'city' : 'cities'} · {planCount} {planCount === 1 ? 'itinerary' : 'itineraries'}</p>
             </Link>
           ))}
         </div>

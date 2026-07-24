@@ -11,6 +11,14 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        ink: "var(--ink)",
+        "ink-soft": "var(--ink-soft)",
+        "ink-faint": "var(--ink-faint)",
+        border: "var(--border)",
+      },
+      fontFamily: {
+        serif: ["var(--font-heading)"],
+        sans: ["var(--font-body)"],
       },
     },
   },

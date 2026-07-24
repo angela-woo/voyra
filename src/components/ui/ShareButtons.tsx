@@ -114,8 +114,8 @@ export default function ShareButtons({ url, title, description, locale = 'ko' }:
   }
 
   return (
-    <div className="flex items-center gap-2 my-4">
-      <span className="text-sm text-gray-500 font-medium mr-1">
+    <div className="flex items-center gap-2.5 mt-1">
+      <span className="eyebrow text-[color:var(--ink-faint)] mr-1">
         {locale === 'ko' ? '공유' : 'Share'}
       </span>
 
@@ -169,12 +169,12 @@ export default function ShareButtons({ url, title, description, locale = 'ko' }:
       {/* Copy Link */}
       <button
         onClick={copyLink}
-        className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center transition-opacity hover:opacity-75"
+        className="w-9 h-9 rounded-full border border-[var(--border)] flex items-center justify-center transition-colors hover:border-[color:var(--ink)]"
         aria-label={locale === 'ko' ? '링크 복사' : 'Copy link'}
       >
         {copied
           ? <Check className="w-4 h-4 text-green-600" />
-          : <Link2 className="w-4 h-4 text-gray-600" />}
+          : <Link2 className="w-4 h-4 text-[color:var(--ink-soft)]" />}
       </button>
     </div>
   )

@@ -31,12 +31,12 @@ export default function FilterBar({ countries, categories, currentSort, currentC
   }
 
   const selectClass =
-    'px-3 py-2 text-sm border border-gray-200 rounded-[var(--radius)] bg-white text-gray-700 focus:outline-none focus:border-[var(--primary)] hover:border-gray-300 transition-colors cursor-pointer'
+    'px-2 py-2 text-sm border-b border-[var(--border)] bg-transparent text-[color:var(--ink-soft)] focus:outline-none focus:border-[color:var(--ink)] transition-colors cursor-pointer'
 
   return (
-    <div className="flex flex-wrap items-center gap-3 mb-8 p-4 bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm">
-      <div className="flex items-center gap-2 text-sm font-medium text-gray-500 mr-2">
-        <SlidersHorizontal className="w-4 h-4" />
+    <div className="flex flex-wrap items-center gap-6 mb-10 pb-6 border-b border-[var(--border)]">
+      <div className="flex items-center gap-2 text-[13px] tracking-wide text-[color:var(--ink-faint)]">
+        <SlidersHorizontal className="w-3.5 h-3.5" />
         필터
       </div>
 
@@ -78,7 +78,7 @@ export default function FilterBar({ countries, categories, currentSort, currentC
       {(currentCountry || currentCategory || currentSort !== 'newest') && (
         <button
           onClick={() => router.push('/articles')}
-          className="text-xs text-gray-400 hover:text-[var(--primary)] underline transition-colors ml-auto"
+          className="link-underline text-xs text-[color:var(--ink-faint)] hover:text-[color:var(--ink)] transition-colors ml-auto"
         >
           초기화
         </button>

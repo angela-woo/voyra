@@ -66,33 +66,33 @@ export default function WeatherWidget({ lat, lng, city }: { lat: number | null; 
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-blue-50 to-sky-100 rounded-[var(--radius)] p-4 animate-pulse h-28" />
+      <div className="border border-[var(--border)] p-5 animate-pulse h-28" />
     )
   }
 
   if (error || !weather) {
     return (
-      <div className="bg-gray-50 rounded-[var(--radius)] p-4 text-sm text-gray-400 text-center">
+      <div className="border border-[var(--border)] p-5 text-sm text-[color:var(--ink-faint)] text-center">
         날씨 정보를 불러올 수 없습니다
       </div>
     )
   }
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-sky-100 rounded-[var(--radius)] p-4">
-      <div className="flex items-center justify-between mb-2">
+    <div className="border border-[var(--border)] p-5">
+      <div className="flex items-center justify-between mb-3">
         <div>
-          <p className="text-xs text-blue-500 font-medium">{weather.city} 현재 날씨</p>
-          <p className="text-3xl font-bold text-blue-800">{weather.temperature}°C</p>
-          <p className="text-xs text-blue-600">{getWeatherLabel(weather.weatherCode)}</p>
+          <p className="eyebrow mb-1.5">{weather.city} 현재 날씨</p>
+          <p className="text-3xl text-[color:var(--ink)]" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>{weather.temperature}°C</p>
+          <p className="text-xs text-[color:var(--ink-soft)] mt-1">{getWeatherLabel(weather.weatherCode)}</p>
         </div>
         {getWeatherIcon(weather.weatherCode)}
       </div>
-      <div className="flex gap-4 mt-2">
-        <span className="flex items-center gap-1 text-xs text-blue-500">
+      <div className="flex gap-4 mt-3 pt-3 border-t border-[var(--border)]">
+        <span className="flex items-center gap-1 text-xs text-[color:var(--ink-soft)]">
           <Wind className="w-3 h-3" /> {weather.windSpeed} km/h
         </span>
-        <span className="flex items-center gap-1 text-xs text-blue-500">
+        <span className="flex items-center gap-1 text-xs text-[color:var(--ink-soft)]">
           <Droplets className="w-3 h-3" /> {weather.humidity}%
         </span>
       </div>

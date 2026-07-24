@@ -102,7 +102,7 @@ export default async function TrendingPage() {
       <div className="mb-10 flex items-center gap-3">
         <TrendingUp className="w-8 h-8" style={{ color: '#FF5722' }} />
         <div>
-          <h1 className="text-3xl font-bold text-gray-900" style={{ fontFamily: 'var(--font-heading)' }}>
+          <h1 className="text-3xl font-bold text-gray-900" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>
             트렌딩
           </h1>
           <p className="mt-1 text-gray-500 text-sm">지금 가장 인기 있는 여행 콘텐츠</p>
@@ -166,7 +166,7 @@ export default async function TrendingPage() {
                   </div>
 
                   <div className="p-4">
-                    <h3 className="font-semibold text-sm leading-snug mb-2 line-clamp-2 group-hover:text-[var(--primary)] transition-colors" style={{ fontFamily: 'var(--font-heading)' }}>
+                    <h3 className="font-semibold text-sm leading-snug mb-2 line-clamp-2 group-hover:text-[var(--primary)] transition-colors" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>
                       {plan.title}
                     </h3>
                     <div className="flex items-center gap-3 text-xs text-gray-400">

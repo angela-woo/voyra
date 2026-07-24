@@ -16,13 +16,6 @@ const THEME_LABELS: Record<string, string> = {
   solo: 'Solo',
 }
 
-const THEME_COLORS: Record<string, string> = {
-  couple: 'bg-pink-100 text-pink-700',
-  family: 'bg-green-100 text-green-700',
-  friends: 'bg-blue-100 text-blue-700',
-  solo: 'bg-purple-100 text-purple-700',
-}
-
 interface CityGroup {
   city: string
   city_en: string
@@ -79,40 +72,33 @@ export default async function EnCountryPage({ params }: PageProps) {
   if (cities.length === 0) notFound()
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <div className="mb-2 text-sm text-gray-400">
-        <Link href="/en/destinations" className="hover:text-[var(--primary)]">Destinations</Link>
-        {' › '}
-        <span>{countryName}</span>
-      </div>
-      <div className="mb-10">
-        <h1 className="text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
+    <div className="max-w-[var(--measure-wide)] mx-auto px-6 py-16">
+      <div className="mb-12 pb-6 border-b border-[var(--border)]">
+        <p className="eyebrow mb-3">
+          <Link href="/en/destinations" className="hover:text-[color:var(--ink)] transition-colors">Destinations</Link>
+          {' / '}
+          <span className="text-[color:var(--ink)]">{countryName}</span>
+        </p>
+        <h1 className="editorial-heading text-4xl mb-3">
           {countryName} Travel Itineraries
         </h1>
-        <p className="text-gray-500">Choose a city to find your perfect itinerary.</p>
+        <p className="text-[color:var(--ink-soft)]">Choose a city to find your perfect itinerary.</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
         {cities.map(({ city, city_en, themes, planCount }) => (
           <Link
             key={city_en}
             href={`/en/destinations/${country}/${city_en}`}
-            className="group bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm p-6 hover:border-[var(--primary)] hover:shadow-md transition-all"
+            className="group border-t border-[var(--border)] pt-5"
           >
-            <h2 className="font-bold text-xl text-gray-800 mb-3 group-hover:text-[var(--primary)] transition-colors">
+            <h2 className="text-xl text-[color:var(--ink)] mb-2 group-hover:opacity-70 transition-opacity" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>
               {city}
             </h2>
-            <div className="flex flex-wrap gap-2 mb-3">
-              {themes.map(theme => (
-                <span
-                  key={theme}
-                  className={`text-xs px-2 py-0.5 rounded-full font-medium ${THEME_COLORS[theme] ?? 'bg-gray-100 text-gray-600'}`}
-                >
-                  {THEME_LABELS[theme] ?? theme}
-                </span>
-              ))}
-            </div>
-            <p className="text-xs text-gray-400">{planCount} {planCount === 1 ? 'itinerary' : 'itineraries'}</p>
+            <p className="text-xs text-[color:var(--ink-faint)] mb-2">
+              {themes.map(t => THEME_LABELS[t] ?? t).join(' · ')}
+            </p>
+            <p className="text-xs text-[color:var(--ink-faint)]">{planCount} {planCount === 1 ? 'itinerary' : 'itineraries'}</p>
           </Link>
         ))}
       </div>

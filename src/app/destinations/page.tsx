@@ -85,29 +85,30 @@ export default async function DestinationsPage() {
   const countries = await getCountries()
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <div className="mb-10">
-        <h1 className="text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
+    <div className="max-w-[var(--measure-wide)] mx-auto px-6 py-16">
+      <div className="mb-12 pb-6 border-b border-[var(--border)]">
+        <p className="eyebrow mb-3">Kiravoy</p>
+        <h1 className="editorial-heading text-4xl mb-3">
           여행 일정 탐색
         </h1>
-        <p className="text-gray-500">나라를 선택해서 맞춤 여행 일정을 확인해보세요.</p>
+        <p className="text-[color:var(--ink-soft)]">나라를 선택해서 맞춤 여행 일정을 확인해보세요.</p>
       </div>
 
       {countries.length === 0 ? (
-        <div className="text-center py-24 text-gray-400">
+        <div className="text-center py-24 text-[color:var(--ink-faint)]">
           <p className="text-lg">아직 등록된 여행 일정이 없습니다.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-10">
           {countries.map(({ country, cities, planCount }) => (
             <Link
               key={country}
               href={toCountryUrl(country)}
-              className="group bg-white rounded-[var(--radius)] border border-gray-100 shadow-sm p-6 hover:border-[var(--primary)] hover:shadow-md transition-all text-center"
+              className="group border-t border-[var(--border)] pt-5 text-center"
             >
-              <div className="text-5xl mb-3">{getCountryFlag(country)}</div>
-              <h2 className="font-bold text-gray-800 mb-1">{country}</h2>
-              <p className="text-xs text-gray-400">{cities.length}개 도시 · {planCount}개 일정</p>
+              <div className="text-3xl mb-3">{getCountryFlag(country)}</div>
+              <h2 className="text-[color:var(--ink)] mb-1 group-hover:opacity-70 transition-opacity" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>{country}</h2>
+              <p className="text-xs text-[color:var(--ink-faint)]">{cities.length}개 도시 · {planCount}개 일정</p>
             </Link>
           ))}
         </div>

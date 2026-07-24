@@ -149,18 +149,19 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
   return (
     <div className="min-h-screen bg-[var(--bg)]">
       {/* 페이지 헤더 */}
-      <div className="bg-gradient-to-r from-[var(--primary)] to-indigo-600 text-white py-14 px-4">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
+      <div className="border-b border-[var(--border)] py-16 px-6">
+        <div className="max-w-[var(--measure-wide)] mx-auto">
+          <p className="eyebrow mb-3">Kiravoy</p>
+          <h1 className="editorial-heading text-4xl mb-3">
             여행 가이드
           </h1>
-          <p className="text-blue-100 text-sm">
+          <p className="text-[color:var(--ink-soft)] text-sm">
             엄선한{total > 0 ? ` ${total.toLocaleString()}개의` : ''} 여행 가이드
           </p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-10">
+      <div className="max-w-[var(--measure-wide)] mx-auto px-6 py-14">
         {/* 필터 바 */}
         <FilterBar
           countries={countries}
@@ -172,7 +173,7 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
 
         {/* 결과 수 */}
         {total > 0 && (
-          <p className="text-sm text-gray-400 mb-6">
+          <p className="text-sm text-[color:var(--ink-faint)] mb-8">
             {total.toLocaleString()}개 중 {rangeStart}–{rangeEnd}번째
             {country && ` · ${country}`}
             {category && ` · ${category}`}
@@ -182,7 +183,7 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
         {/* 그리드 */}
         {articles.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 mb-14">
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {articles.slice(0, 6).map((article: any) => (
                 <ArticleCard key={article.id} article={article} />
@@ -202,50 +203,52 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
 
             {/* 페이지네이션 */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-1.5 mt-4">
+              <div className="flex items-center justify-center gap-6 mt-4 pt-10 border-t border-[var(--border)] text-sm">
                 {/* 이전 버튼 */}
                 {page > 1 ? (
                   <Link
                     href={pageUrl(page - 1, sort, country, category)}
-                    className="flex items-center gap-1 px-4 py-2 text-sm border border-gray-200 rounded-[var(--radius)] text-gray-600 hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"
+                    className="flex items-center gap-1 text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] transition-colors"
                   >
                     <ChevronLeft className="w-4 h-4" />이전
                   </Link>
                 ) : (
-                  <span className="flex items-center gap-1 px-4 py-2 text-sm border border-gray-100 rounded-[var(--radius)] text-gray-300 cursor-not-allowed">
+                  <span className="flex items-center gap-1 text-[color:var(--ink-faint)] opacity-40 cursor-not-allowed">
                     <ChevronLeft className="w-4 h-4" />이전
                   </span>
                 )}
 
                 {/* 페이지 번호 */}
-                {pageNumbers.map((p, i) =>
-                  p === 'dot' ? (
-                    <span key={`dot-${i}`} className="px-1.5 text-gray-400 text-sm">…</span>
-                  ) : (
-                    <Link
-                      key={p}
-                      href={pageUrl(p as number, sort, country, category)}
-                      className={`w-9 h-9 flex items-center justify-center text-sm rounded-[var(--radius)] border transition-colors ${
-                        page === p
-                          ? 'bg-[var(--primary)] text-white border-[var(--primary)]'
-                          : 'border-gray-200 text-gray-600 hover:border-[var(--primary)] hover:text-[var(--primary)]'
-                      }`}
-                    >
-                      {p}
-                    </Link>
-                  ),
-                )}
+                <div className="flex items-center gap-4">
+                  {pageNumbers.map((p, i) =>
+                    p === 'dot' ? (
+                      <span key={`dot-${i}`} className="text-[color:var(--ink-faint)]">…</span>
+                    ) : (
+                      <Link
+                        key={p}
+                        href={pageUrl(p as number, sort, country, category)}
+                        className={
+                          page === p
+                            ? 'text-[color:var(--ink)] underline underline-offset-4'
+                            : 'text-[color:var(--ink-faint)] hover:text-[color:var(--ink-soft)] transition-colors'
+                        }
+                      >
+                        {p}
+                      </Link>
+                    ),
+                  )}
+                </div>
 
                 {/* 다음 버튼 */}
                 {page < totalPages ? (
                   <Link
                     href={pageUrl(page + 1, sort, country, category)}
-                    className="flex items-center gap-1 px-4 py-2 text-sm border border-gray-200 rounded-[var(--radius)] text-gray-600 hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"
+                    className="flex items-center gap-1 text-[color:var(--ink-soft)] hover:text-[color:var(--ink)] transition-colors"
                   >
                     다음<ChevronRight className="w-4 h-4" />
                   </Link>
                 ) : (
-                  <span className="flex items-center gap-1 px-4 py-2 text-sm border border-gray-100 rounded-[var(--radius)] text-gray-300 cursor-not-allowed">
+                  <span className="flex items-center gap-1 text-[color:var(--ink-faint)] opacity-40 cursor-not-allowed">
                     다음<ChevronRight className="w-4 h-4" />
                   </span>
                 )}
@@ -253,14 +256,14 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
             )}
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center py-24 text-gray-400">
-            <BookOpen className="w-14 h-14 mb-4 opacity-20" />
-            <p className="text-lg font-medium mb-1">아티클이 없습니다</p>
+          <div className="flex flex-col items-center justify-center py-24 text-[color:var(--ink-faint)]">
+            <BookOpen className="w-12 h-12 mb-4 opacity-30" />
+            <p className="text-lg mb-1" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>아티클이 없습니다</p>
             <p className="text-sm">
               {country || category ? '다른 필터로 검색해보세요.' : '아직 게시된 가이드가 없습니다.'}
             </p>
             {(country || category) && (
-              <Link href="/articles" className="mt-4 text-sm text-[var(--primary)] hover:underline">
+              <Link href="/articles" className="link-underline mt-4 text-sm text-[color:var(--primary)]">
                 전체 보기
               </Link>
             )}

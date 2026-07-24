@@ -81,54 +81,54 @@ export default function PostDetailPage() {
   const timeAgo = formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ko })
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10">
-      <Link href="/community" className="flex items-center gap-1 text-sm text-gray-500 hover:text-[var(--primary)] mb-6">
+    <div className="max-w-[var(--measure)] mx-auto px-6 py-16">
+      <Link href="/community" className="link-underline flex items-center gap-1 text-sm text-[color:var(--ink-soft)] mb-8 w-fit">
         <ArrowLeft className="w-4 h-4" /> 커뮤니티
       </Link>
 
-      <article className="bg-white rounded-[var(--radius)] border border-gray-100 p-6 mb-6">
+      <article className="pb-8 mb-8 border-b border-[var(--border)]">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+          <p className="eyebrow">
             {CATEGORY_LABELS[post.category] ?? post.category ?? '일반'}
-          </span>
+          </p>
           {isOwner && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4">
               <Link
                 href={`/community/${id}/edit`}
-                className="flex items-center gap-1 text-xs text-gray-400 hover:text-[var(--primary)] transition-colors"
+                className="flex items-center gap-1 text-xs text-[color:var(--ink-faint)] hover:text-[color:var(--ink)] transition-colors"
               >
                 <Pencil className="w-3.5 h-3.5" /> 수정
               </Link>
               <button
                 onClick={handleDelete}
                 disabled={deleting}
-                className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-500 transition-colors disabled:opacity-50"
+                className="flex items-center gap-1 text-xs text-[color:var(--ink-faint)] hover:text-red-500 transition-colors disabled:opacity-50"
               >
                 <Trash2 className="w-3.5 h-3.5" /> 삭제
               </button>
             </div>
           )}
         </div>
-        <h1 className="text-xl font-bold mb-3" style={{ fontFamily: 'var(--font-heading)' }}>{post.title}</h1>
-        <div className="flex items-center gap-3 text-xs text-gray-400 mb-6">
-          <span className="font-medium text-gray-600">{post.user_profiles?.username ?? '익명'}</span>
+        <h1 className="text-2xl mb-3" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>{post.title}</h1>
+        <div className="flex items-center gap-3 text-xs text-[color:var(--ink-faint)] mb-6">
+          <span className="text-[color:var(--ink-soft)]">{post.user_profiles?.username ?? '익명'}</span>
           <span>{timeAgo}</span>
         </div>
-        <div className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{post.content}</div>
+        <div className="text-[15px] text-[color:var(--ink-soft)] whitespace-pre-wrap leading-relaxed">{post.content}</div>
 
         {post.image_urls?.length > 0 && (
-          <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-2">
             {post.image_urls.map((url: string) => (
-              <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="relative aspect-square rounded-[var(--radius)] overflow-hidden border border-gray-100 hover:opacity-90 transition-opacity">
+              <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="img-zoom relative aspect-square overflow-hidden border border-[var(--border)]">
                 <Image src={url} alt="" fill className="object-cover" />
               </a>
             ))}
           </div>
         )}
-        <div className="flex items-center gap-4 mt-6 pt-4 border-t border-gray-100">
+        <div className="flex items-center gap-4 mt-6 pt-5 border-t border-[var(--border)]">
           <button
             onClick={handleLike}
-            className={`flex items-center gap-1.5 text-sm transition-colors ${liked ? 'text-[var(--primary)]' : 'text-gray-400 hover:text-[var(--primary)]'}`}
+            className={`flex items-center gap-1.5 text-sm transition-colors ${liked ? 'text-[color:var(--primary)]' : 'text-[color:var(--ink-faint)] hover:text-[color:var(--ink)]'}`}
           >
             <ThumbsUp className={`w-4 h-4 ${liked ? 'fill-current' : ''}`} />
             {likesCount}
