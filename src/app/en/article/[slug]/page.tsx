@@ -4,15 +4,12 @@ import { marked } from 'marked'
 import Image from 'next/image'
 import {
   fetchUnsplashPhoto,
-  fetchItemImages,
-  itemToSearchQuery,
   toEnglishCity,
 } from '@/lib/unsplash'
 import { getSectionImageKeyword } from '@/lib/utils/sectionKeywords'
 import { getSectionImage } from '@/lib/images/sectionImageResolver'
 import { getSectionImageKeywords, fetchUniqueUnsplashImage, getCachedSectionImage, cacheSectionImage } from '@/lib/images/smartImageSearch'
-import ImageCarousel from '@/components/ui/ImageCarousel'
-import PlaceCard from '@/components/article/PlaceCard'
+import PlaceCard, { resolvePlaceImages } from '@/components/article/PlaceCard'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
 import BudgetCalculator from '@/components/widgets/BudgetCalculator'
 import ReadingProgress from '@/components/article/ReadingProgress'
@@ -166,17 +163,12 @@ export default async function EnArticlePage({ params }: PageProps) {
   if (!article) notFound()
 
   const places = await getPlaces(article.id)
+  const placeImages = await resolvePlaceImages(places, article.city)
   const cityEnglish = toEnglishCity(article.city ?? '')
   const { globalIntro, sections } = parseArticle(article.content ?? '')
 
-  const allItemQueries = sections.flatMap(s =>
-    s.items.map(item => ({ heading: item.heading, query: itemToSearchQuery(item.heading, cityEnglish) })),
-  )
-
-  const [heroPhoto, itemImages] = await Promise.all([
-    article.cover_image_url ? Promise.resolve(null) : fetchUnsplashPhoto(getSectionImageKeyword(article.title, cityEnglish)),
-    fetchItemImages(allItemQueries),
-  ])
+  // Hero image only (per-item carousel images removed — duplicate image bug fix, 2026-08)
+  const heroPhoto = article.cover_image_url ? null : await fetchUnsplashPhoto(getSectionImageKeyword(article.title, cityEnglish))
 
   // Item-less sections: title+content analysis for accurate image matching
   const sectionPhotos: Record<string, string> = {}
@@ -325,18 +317,12 @@ export default async function EnArticlePage({ params }: PageProps) {
                   )}
 
                   {section.items.length > 0 ? (
-                    section.items.map(item => {
-                      const photos = itemImages[item.heading] ?? []
-                      return (
-                        <div key={item.heading}>
-                          <h3>{item.heading}</h3>
-                          {photos.length > 0 && (
-                            <ImageCarousel images={photos} height={350} mobileHeight={220} />
-                          )}
-                          <div dangerouslySetInnerHTML={{ __html: item.bodyHtml as string }} />
-                        </div>
-                      )
-                    })
+                    section.items.map(item => (
+                      <div key={item.heading}>
+                        <h3>{item.heading}</h3>
+                        <div dangerouslySetInnerHTML={{ __html: item.bodyHtml as string }} />
+                      </div>
+                    ))
                   ) : (
                     sectionPhotos[section.heading] && (
                       <figure className="not-prose my-6">
@@ -374,7 +360,7 @@ export default async function EnArticlePage({ params }: PageProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {places.map((place: { id: string }) => (
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    <PlaceCard key={place.id} place={place as any} city={article.city} locale="en" />
+                    <PlaceCard key={place.id} place={place as any} imageUrl={placeImages[place.id]} />
                   ))}
                 </div>
               </div>

@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { MapPin, Star, Map } from 'lucide-react'
-import { fetchUnsplashPhoto, toEnglishCity } from '@/lib/unsplash'
+import { fetchUnsplashPhotos, toEnglishCity } from '@/lib/unsplash'
 
 const CATEGORY_QUERIES: Record<string, string> = {
   hotel: 'luxury hotel lobby room',
@@ -25,18 +25,51 @@ interface Place {
   image_attribution?: string | null
 }
 
-export default async function PlaceCard({ place, city, locale = 'ko' }: { place: Place; city?: string | null; locale?: 'ko' | 'en' }) {
-  const cat = place.category?.toLowerCase() ?? ''
+/**
+ * Resolves a unique image per place for a single article page in one batch.
+ * Places already carrying a stored image_url are trusted as-is. For the rest,
+ * candidates are fetched and the first one NOT already used elsewhere on this
+ * page is picked — this is what prevents different places (especially ones
+ * with sparse Unsplash coverage, e.g. small local night markets) from
+ * collapsing onto the same single top search result. A place that truly has
+ * no unique candidate left gets `null` (renders as a placeholder icon)
+ * rather than reusing another place's photo.
+ */
+export async function resolvePlaceImages(
+  places: Place[],
+  city?: string | null,
+): Promise<Record<string, string | null>> {
+  const usedUrls = new Set<string>()
+  const result: Record<string, string | null> = {}
+  const cityEn = city ? toEnglishCity(city) : ''
 
-  let imageUrl = place.image_url ?? null
-  if (!imageUrl) {
-    const cityEn = city ? toEnglishCity(city) : ''
-    const catKeyword = CATEGORY_QUERIES[cat] ?? 'travel destination'
-    const query = [place.name, cityEn, catKeyword].filter(Boolean).join(' ')
-    const photo = await fetchUnsplashPhoto(query)
-    imageUrl = photo?.url ?? null
+  for (const place of places) {
+    if (place.image_url) {
+      result[place.id] = place.image_url
+      usedUrls.add(place.image_url)
+    }
   }
 
+  await Promise.all(
+    places.filter(p => !p.image_url).map(async place => {
+      const cat = place.category?.toLowerCase() ?? ''
+      const catKeyword = CATEGORY_QUERIES[cat] ?? 'travel destination'
+      const query = [place.name, cityEn, catKeyword].filter(Boolean).join(' ')
+      const photos = await fetchUnsplashPhotos(query, 5)
+      const unique = photos.find(p => !usedUrls.has(p.url))
+      if (unique) {
+        usedUrls.add(unique.url)
+        result[place.id] = unique.url
+      } else {
+        result[place.id] = null
+      }
+    }),
+  )
+
+  return result
+}
+
+export default function PlaceCard({ place, imageUrl }: { place: Place; imageUrl?: string | null }) {
   return (
     <div className="border border-[var(--border)] overflow-hidden flex">
       {/* Image - left side */}

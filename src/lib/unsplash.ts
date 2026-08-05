@@ -168,64 +168,6 @@ export function categoryFallbackQuery(category: string | null): string {
   return CATEGORY_FALLBACK[category?.toLowerCase() ?? ''] ?? 'travel destination'
 }
 
-export function itemToSearchQuery(heading: string, cityEnglish: string): string {
-  const city = cityEnglish || 'travel'
-  const h = heading.toLowerCase()
-
-  // 괄호 안 영어명 최우선: "센소지 사원 (Senso-ji Temple)" → "Senso-ji Temple Tokyo"
-  const parenMatch = heading.match(/\(([A-Za-z][^)]*)\)/)
-  if (parenMatch) return `${parenMatch[1].trim()} ${city}`
-  // 대시 이후 영어: "우붓 - Ubud" → "Ubud Tokyo"
-  const dashMatch = heading.match(/-\s*([A-Za-z][A-Za-z\s]{2,})/)
-  if (dashMatch) return `${dashMatch[1].trim()} ${city}`
-
-  // Korean semantic patterns
-  if (/비자|입국|immigration|passport|무비자|visa/.test(h)) return 'passport visa airport travel'
-  if (/날씨|기후|계절|여행 시기|weather|climate|best time/.test(h)) return `${city} weather season`
-  if (/화폐|환전|물가|cost|budget|currency|money|exchange/.test(h)) return `${city} local market`
-  if (/안전|safety|safe/.test(h)) return `${city} city street`
-  if (/해변|바다|해수욕|서핑|beach|ocean|sea|surf/.test(h)) return `${city} beach ocean`
-  if (/길거리 음식|street food/.test(h)) return `${city} street food`
-  if (/맛집|레스토랑|restaurant|dining/.test(h)) return `${city} restaurant`
-  if (/음식|먹거리|food|cuisine|요리/.test(h)) return `${city} food cuisine`
-  if (/카페|커피|cafe|coffee/.test(h)) return `${city} cafe coffee`
-  if (/공항|airport/.test(h)) return `${city} airport`
-  if (/지하철|버스|metro|subway/.test(h)) return `${city} metro subway`
-  if (/교통|이동|transport|getting around/.test(h)) return `${city} transportation`
-  if (/리조트|resort/.test(h)) return `${city} resort pool`
-  if (/호텔|숙박|숙소|hotel|accommodation/.test(h)) return `${city} hotel`
-  if (/쇼핑|시장|shopping|market/.test(h)) return `${city} shopping market`
-  if (/등산|하이킹|hiking|trail/.test(h)) return `${city} hiking nature`
-  if (/자연|공원|park|nature|outdoor|산/.test(h)) return `${city} nature park`
-  if (/야경|night view/.test(h)) return `${city} night skyline`
-  if (/밤|nightlife|bar|클럽/.test(h)) return `${city} nightlife`
-  if (/사원|사찰|절|temple|shrine|신사/.test(h)) return `${city} temple shrine`
-  if (/성당|교회|cathedral|church/.test(h)) return `${city} cathedral`
-  if (/박물관|museum/.test(h)) return `${city} museum`
-  if (/역사|유적|historical|heritage/.test(h)) return `${city} historical architecture`
-  if (/문화|culture|tradition|전통/.test(h)) return `${city} culture tradition`
-  if (/예술|갤러리|art|gallery/.test(h)) return `${city} art gallery`
-  if (/랜드마크|landmark|명소|관광|sightseeing/.test(h)) return `${city} landmark`
-  if (/액티비티|체험|activity|experience|adventure/.test(h)) return `${city} adventure`
-  if (/팁|tip|advice|guide|준비/.test(h)) return `${city} travel`
-
-  // 영문 단어가 포함된 제목 → 직접 활용
-  const englishPart = heading.match(/[A-Za-z][A-Za-z\s-]{2,}/g)?.find(w => w.trim().length > 3)
-  if (englishPart) return `${englishPart.trim()} ${city}`
-
-  // 이모지·특수문자 제거 후 핵심 단어 + 도시
-  const cleaned = heading.replace(/[^\w\sㄱ-힣]/g, '').trim().slice(0, 20)
-  return `${city} ${cleaned || 'scenic place'}`.trim()
-}
-
-export async function fetchItemImages(
-  items: { heading: string; query: string }[],
-): Promise<Record<string, UnsplashPhoto[]>> {
-  const results = await Promise.all(
-    items.map(async ({ heading, query }) => [heading, await fetchUnsplashPhotos(query, 3)] as [string, UnsplashPhoto[]]),
-  )
-  return Object.fromEntries(results)
-}
 
 export function sectionToSearchQuery(heading: string, cityEnglish: string): string {
   const h = heading.toLowerCase()
