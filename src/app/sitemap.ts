@@ -15,6 +15,10 @@ const REDIRECT_SOURCE_SLUGS = new Set([
   'cebu-complete-guide-ko',
   'hanoi-complete-guide-ko',
   'ho-chi-minh-complete-guide-ko',
+  // Group C: EN duplicate content consolidation (2026-08)
+  'da-nang-beach-guide-en',
+  'phuket-travel-guide-en',
+  'ho-chi-minh-city-travel-guide-en',
 ])
 
 export const revalidate = 3600

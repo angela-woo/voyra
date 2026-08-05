@@ -32,6 +32,28 @@ const nextConfig = {
       { source: '/en/article/hanoi-complete-guide-ko', destination: '/article/hanoi-vietnam-travel-guide', permanent: true },
       { source: '/article/ho-chi-minh-complete-guide-ko', destination: '/article/ho-chi-minh-city-complete-travel-guide', permanent: true },
       { source: '/en/article/ho-chi-minh-complete-guide-ko', destination: '/article/ho-chi-minh-city-complete-travel-guide', permanent: true },
+      // Group C: EN duplicate content 301 consolidation (AdSense manual action remediation, 2026-08)
+      { source: '/article/da-nang-beach-guide-en', destination: '/en/article/da-nang-travel-guide-en', permanent: true },
+      { source: '/en/article/da-nang-beach-guide-en', destination: '/en/article/da-nang-travel-guide-en', permanent: true },
+      { source: '/article/phuket-travel-guide-en', destination: '/en/article/phuket-beach-guide-en', permanent: true },
+      { source: '/en/article/phuket-travel-guide-en', destination: '/en/article/phuket-beach-guide-en', permanent: true },
+      { source: '/article/ho-chi-minh-city-travel-guide-en', destination: '/en/article/ho-chi-minh-city-travel-tips-en', permanent: true },
+      { source: '/en/article/ho-chi-minh-city-travel-guide-en', destination: '/en/article/ho-chi-minh-city-travel-tips-en', permanent: true },
+      // Doorway page consolidation: city travel-style variants → single enriched itinerary (AdSense manual action remediation, 2026-08)
+      { source: '/destinations/spain/barcelona/barcelona-friends-3days', destination: '/destinations/spain/barcelona/barcelona-solo-3days', permanent: true },
+      { source: '/destinations/spain/barcelona/barcelona-couple-3days', destination: '/destinations/spain/barcelona/barcelona-solo-3days', permanent: true },
+      { source: '/destinations/spain/barcelona/barcelona-family-4days', destination: '/destinations/spain/barcelona/barcelona-solo-3days', permanent: true },
+      { source: '/destinations/japan/kyoto/kyoto-family-4days', destination: '/destinations/japan/kyoto/kyoto-solo-3days', permanent: true },
+      { source: '/destinations/japan/kyoto/kyoto-couple-3days', destination: '/destinations/japan/kyoto/kyoto-solo-3days', permanent: true },
+      { source: '/destinations/japan/kyoto/kyoto-friends-3days', destination: '/destinations/japan/kyoto/kyoto-solo-3days', permanent: true },
+      { source: '/destinations/vietnam/hanoi/hanoi-friends-3days', destination: '/destinations/vietnam/hanoi/hanoi-couple-3days', permanent: true },
+      { source: '/destinations/vietnam/hanoi/hanoi-solo-2days', destination: '/destinations/vietnam/hanoi/hanoi-couple-3days', permanent: true },
+      { source: '/destinations/singapore/singapore/singapore-couple-3days', destination: '/destinations/singapore/singapore/singapore-solo-3days', permanent: true },
+      { source: '/destinations/singapore/singapore/singapore-family-4days', destination: '/destinations/singapore/singapore/singapore-solo-3days', permanent: true },
+      { source: '/destinations/singapore/singapore/singapore-friends-3days', destination: '/destinations/singapore/singapore/singapore-solo-3days', permanent: true },
+      { source: '/destinations/indonesia/bali/bali-family-4days', destination: '/destinations/indonesia/bali/bali-solo-3days', permanent: true },
+      { source: '/destinations/indonesia/bali/bali-friends-3days', destination: '/destinations/indonesia/bali/bali-solo-3days', permanent: true },
+      { source: '/destinations/indonesia/bali/bali-couple-3days', destination: '/destinations/indonesia/bali/bali-solo-3days', permanent: true },
     ]
   },
   async headers() {

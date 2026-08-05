@@ -69,6 +69,7 @@ interface TravelPlan {
     transport?: string
     tips?: string[]
     best_season?: string
+    other_styles?: { type: string; label: string; tip: string }[]
   } | null
   days_data: DayData[] | DaysDataObject | null
   cover_image_url: string | null
@@ -330,6 +331,24 @@ export default async function TravelPlanPage({ params }: PageProps) {
                     </ul>
                   </div>
                 )}
+              </section>
+            )}
+
+            {/* 다른 여행 스타일 추천 */}
+            {plan.overview?.other_styles && plan.overview.other_styles.length > 0 && (
+              <section className="pb-10 border-b border-[var(--border)]">
+                <h2 className="editorial-heading text-xl mb-2">이런 분께도 추천해요</h2>
+                <p className="text-sm text-[color:var(--ink-faint)] mb-6">
+                  이 일정은 {TRAVEL_TYPE_LABELS[plan.travel_type] ?? plan.travel_type} 여행 기준으로 구성했지만, 다른 여행 스타일이라면 이런 장소도 함께 즐겨보세요.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  {plan.overview.other_styles.map(s => (
+                    <div key={s.type} className="flex gap-3">
+                      <span className="eyebrow shrink-0 text-[color:var(--primary)]">{s.label}</span>
+                      <p className="text-sm text-[color:var(--ink-soft)] leading-relaxed">{s.tip}</p>
+                    </div>
+                  ))}
+                </div>
               </section>
             )}
 

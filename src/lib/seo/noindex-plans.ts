@@ -1,6 +1,8 @@
 // 도시별 views_count 하위 travel_type 페이지 — 도시당 top 2만 인덱스 유지
 // 기준: DB views_count 기준 정렬, 3위 이하 noindex
-// 업데이트: 2026-06-20
+// 업데이트: 2026-08-04 — 바르셀로나/교토/하노이/싱가포르/발리는 도어웨이 페이지 진단 후
+//   noindex 대신 대표 일정 1개로 실제 통합(published:false + 301 리다이렉트)했으므로 제거.
+//   상세: logs/cleanup_20260804.md, next.config.mjs 참조
 export const NOINDEX_PLAN_SLUGS: ReadonlySet<string> = new Set([
   // 파리 (solo:112✓, friends:96✓, noindex: family:92, couple:52)
   'paris-family-4days',
@@ -11,24 +13,12 @@ export const NOINDEX_PLAN_SLUGS: ReadonlySet<string> = new Set([
   // 도쿄 (solo:88✓, couple:80✓, noindex: friends:44, family:32)
   'tokyo-friends-3days',
   'tokyo-family-4days',
-  // 발리 (solo:35✓, family:32✓, noindex: friends:32, couple:29)
-  'bali-friends-3days',
-  'bali-couple-3days',
   // 런던 (solo:33✓, couple:31✓, noindex: friends:28, family:25)
   'london-friends-3days',
   'london-family-4days',
   // 방콕 (solo:30✓, couple:27✓, noindex: family:27, friends:26)
   'bangkok-family-4days',
   'bangkok-friends-3days',
-  // 교토 (solo:30✓, family:29✓, noindex: friends:27, couple:26)
-  'kyoto-friends-3days',
-  'kyoto-couple-3days',
-  // 싱가포르 (solo:26✓, couple:19✓, noindex: friends:17, family:16)
-  'singapore-friends-3days',
-  'singapore-family-4days',
-  // 바르셀로나 (solo:25✓, friends:23✓, noindex: family:22, couple:20)
-  'barcelona-family-4days',
-  'barcelona-couple-3days',
   // 치앙마이 (couple:23✓, friends:23✓, noindex: family:21, solo:19)
   'chiang-mai-family-4days',
   'chiang-mai-solo-3days',
@@ -50,8 +40,6 @@ export const NOINDEX_PLAN_SLUGS: ReadonlySet<string> = new Set([
   'okinawa-solo-2days',
   // 나고야 (solo:18✓, couple:14✓, noindex: friends:14)
   'nagoya-friends-3days',
-  // 하노이 (friends:18✓, couple:16✓, noindex: solo:15)
-  'hanoi-solo-2days',
   // 호치민 (couple:15✓, friends:13✓, noindex: solo:12)
   'ho-chi-minh-solo-2days',
   // 마닐라 (couple:16✓, friends:16✓, noindex: solo:15)
