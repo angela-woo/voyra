@@ -187,14 +187,18 @@ export default async function ArticlePage({ params }: PageProps) {
   const sectionPhotos: Record<string, string> = {}
   const usedSectionUrls = new Set<string>(article.cover_image_url ? [article.cover_image_url] : [])
   for (const s of sections.filter(sec => sec.items.length === 0)) {
-    const cacheKey = `section-v4-${article.slug}-${s.heading.slice(0, 30)}`
+    const cacheKey = `section-v5-${article.slug}-${s.heading.slice(0, 30)}`
     const cached = await getCachedSectionImage(cacheKey, usedSectionUrls)
     if (cached) {
       usedSectionUrls.add(cached)
       sectionPhotos[s.heading] = cached
       continue
     }
-    const queries = getSectionImageKeywords(s.heading, s.intro, cityEnglish)
+    // 관리자가 section_images 컬럼에 직접 지정한 검색어를 최우선으로 사용
+    const manualKeyword = article.section_images?.[s.heading]
+    const queries = manualKeyword
+      ? [manualKeyword, ...getSectionImageKeywords(s.heading, s.intro, cityEnglish)]
+      : getSectionImageKeywords(s.heading, s.intro, cityEnglish)
     const url = await fetchUniqueUnsplashImage(queries, usedSectionUrls)
     if (url) {
       sectionPhotos[s.heading] = url
