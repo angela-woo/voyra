@@ -7,8 +7,6 @@ import {
   toEnglishCity,
 } from '@/lib/unsplash'
 import { getSectionImageKeyword } from '@/lib/utils/sectionKeywords'
-import { getSectionImage } from '@/lib/images/sectionImageResolver'
-import { getSectionImageKeywords, fetchUniqueUnsplashImage, getCachedSectionImage, cacheSectionImage } from '@/lib/images/smartImageSearch'
 import PlaceCard, { resolvePlaceImages } from '@/components/article/PlaceCard'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
 import BudgetCalculator from '@/components/widgets/BudgetCalculator'
@@ -180,35 +178,8 @@ export default async function ArticlePage({ params }: PageProps) {
   const cityEnglish = toEnglishCity(article.city ?? '')
   const { globalIntro, sections } = parseArticle(article.content ?? '')
 
-  // 히어로 이미지 (아이템별 캐러셀 이미지는 중복 삽입 문제로 제거됨 — 2026-08 이미지 버그 수정)
+  // 히어로 이미지 (대표 이미지 한 장만 사용 — 섹션별 이미지는 신뢰도 문제로 완전 제거됨, 2026-08)
   const heroPhoto = article.cover_image_url ? null : await fetchUnsplashPhoto(getSectionImageKeyword(article.title, cityEnglish))
-
-  // 아이템 없는 섹션: 타이틀+본문 분석 기반 이미지 (슬러그별 캐시 + 중복 방지)
-  const sectionPhotos: Record<string, string> = {}
-  const usedSectionUrls = new Set<string>(article.cover_image_url ? [article.cover_image_url] : [])
-  for (const s of sections.filter(sec => sec.items.length === 0)) {
-    const cacheKey = `section-v5-${article.slug}-${s.heading.slice(0, 30)}`
-    const cached = await getCachedSectionImage(cacheKey, usedSectionUrls)
-    if (cached) {
-      usedSectionUrls.add(cached)
-      sectionPhotos[s.heading] = cached
-      continue
-    }
-    // 관리자가 section_images 컬럼에 직접 지정한 검색어를 최우선으로 사용
-    const manualKeyword = article.section_images?.[s.heading]
-    const queries = manualKeyword
-      ? [manualKeyword, ...getSectionImageKeywords(s.heading, s.intro, cityEnglish)]
-      : getSectionImageKeywords(s.heading, s.intro, cityEnglish)
-    const url = await fetchUniqueUnsplashImage(queries, usedSectionUrls)
-    if (url) {
-      sectionPhotos[s.heading] = url
-      cacheSectionImage(cacheKey, url).catch(() => {})
-    } else {
-      // fallback: 기존 엔티티 기반 검색
-      const photo = await getSectionImage(s.heading, cityEnglish, usedSectionUrls)
-      if (photo) sectionPhotos[s.heading] = photo.url
-    }
-  }
 
   // 마크다운 → HTML (모두 병렬)
   const allMarkdown = [
@@ -349,30 +320,14 @@ export default async function ArticlePage({ params }: PageProps) {
                     <div dangerouslySetInnerHTML={{ __html: section.introHtml as string }} />
                   )}
 
-                  {/* ### 아이템별 본문 (이미지 캐러셀은 중복 삽입 문제로 제거됨) */}
-                  {section.items.length > 0 ? (
+                  {/* ### 아이템별 본문 (섹션별 이미지는 신뢰도 문제로 완전 제거됨 — 대표 이미지 한 장만 사용) */}
+                  {section.items.length > 0 && (
                     section.items.map(item => (
                       <div key={item.heading}>
                         <h3>{item.heading}</h3>
                         <div dangerouslySetInnerHTML={{ __html: item.bodyHtml as string }} />
                       </div>
                     ))
-                  ) : (
-                    /* 아이템 없는 섹션: 타이틀+내용 분석 기반 이미지 */
-                    sectionPhotos[section.heading] && (
-                      <figure className="not-prose my-6">
-                        <div className="relative w-full h-[220px] md:h-[380px] overflow-hidden">
-                          <Image
-                            src={sectionPhotos[section.heading]!}
-                            alt={section.heading}
-                            fill
-                            sizes="(max-width: 1024px) 100vw, 700px"
-                            className="object-cover"
-                          />
-                        </div>
-                        <figcaption className="eyebrow mt-2 text-[color:var(--ink-faint)]">{section.heading}</figcaption>
-                      </figure>
-                    )
                   )}
                 </div>
               ))}

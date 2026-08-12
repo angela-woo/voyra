@@ -7,8 +7,6 @@ import {
   toEnglishCity,
 } from '@/lib/unsplash'
 import { getSectionImageKeyword } from '@/lib/utils/sectionKeywords'
-import { getSectionImage } from '@/lib/images/sectionImageResolver'
-import { getSectionImageKeywords, fetchUniqueUnsplashImage, getCachedSectionImage, cacheSectionImage } from '@/lib/images/smartImageSearch'
 import PlaceCard, { resolvePlaceImages } from '@/components/article/PlaceCard'
 import WeatherWidget from '@/components/widgets/WeatherWidget'
 import BudgetCalculator from '@/components/widgets/BudgetCalculator'
@@ -167,34 +165,8 @@ export default async function EnArticlePage({ params }: PageProps) {
   const cityEnglish = toEnglishCity(article.city ?? '')
   const { globalIntro, sections } = parseArticle(article.content ?? '')
 
-  // Hero image only (per-item carousel images removed — duplicate image bug fix, 2026-08)
+  // Hero image only (single cover image — per-section images removed for reliability, 2026-08)
   const heroPhoto = article.cover_image_url ? null : await fetchUnsplashPhoto(getSectionImageKeyword(article.title, cityEnglish))
-
-  // Item-less sections: title+content analysis for accurate image matching
-  const sectionPhotos: Record<string, string> = {}
-  const usedSectionUrls = new Set<string>(article.cover_image_url ? [article.cover_image_url] : [])
-  for (const s of sections.filter(sec => sec.items.length === 0)) {
-    const cacheKey = `section-v5-${article.slug}-${s.heading.slice(0, 30)}`
-    const cached = await getCachedSectionImage(cacheKey, usedSectionUrls)
-    if (cached) {
-      usedSectionUrls.add(cached)
-      sectionPhotos[s.heading] = cached
-      continue
-    }
-    // Prefer the admin-specified search query stored in the section_images column
-    const manualKeyword = article.section_images?.[s.heading]
-    const queries = manualKeyword
-      ? [manualKeyword, ...getSectionImageKeywords(s.heading, s.intro, cityEnglish)]
-      : getSectionImageKeywords(s.heading, s.intro, cityEnglish)
-    const url = await fetchUniqueUnsplashImage(queries, usedSectionUrls)
-    if (url) {
-      sectionPhotos[s.heading] = url
-      cacheSectionImage(cacheKey, url).catch(() => {})
-    } else {
-      const photo = await getSectionImage(s.heading, cityEnglish, usedSectionUrls)
-      if (photo) sectionPhotos[s.heading] = photo.url
-    }
-  }
 
   const allMarkdown = [
     globalIntro,
@@ -320,28 +292,13 @@ export default async function EnArticlePage({ params }: PageProps) {
                     <div dangerouslySetInnerHTML={{ __html: section.introHtml as string }} />
                   )}
 
-                  {section.items.length > 0 ? (
+                  {section.items.length > 0 && (
                     section.items.map(item => (
                       <div key={item.heading}>
                         <h3>{item.heading}</h3>
                         <div dangerouslySetInnerHTML={{ __html: item.bodyHtml as string }} />
                       </div>
                     ))
-                  ) : (
-                    sectionPhotos[section.heading] && (
-                      <figure className="not-prose my-6">
-                        <div className="relative w-full h-[220px] md:h-[380px] overflow-hidden">
-                          <Image
-                            src={sectionPhotos[section.heading]!}
-                            alt={section.heading}
-                            fill
-                            sizes="(max-width: 1024px) 100vw, 700px"
-                            className="object-cover"
-                          />
-                        </div>
-                        <figcaption className="eyebrow mt-2 text-[color:var(--ink-faint)]">{section.heading}</figcaption>
-                      </figure>
-                    )
                   )}
                 </div>
               ))}
