@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { MapPin, Star, Map } from 'lucide-react'
-import { fetchUnsplashPhotos, toEnglishCity } from '@/lib/unsplash'
+import { fetchUnsplashPhotos, toEnglishCity, triggerUnsplashDownload } from '@/lib/unsplash'
 
 const CATEGORY_QUERIES: Record<string, string> = {
   hotel: 'luxury hotel lobby room',
@@ -60,6 +60,7 @@ export async function resolvePlaceImages(
       if (unique) {
         usedUrls.add(unique.url)
         result[place.id] = unique.url
+        if (unique.downloadLocation) triggerUnsplashDownload(unique.downloadLocation).catch(() => {})
       } else {
         result[place.id] = null
       }

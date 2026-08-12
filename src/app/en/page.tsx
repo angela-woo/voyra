@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import ArticleCard from '@/components/article/ArticleCard'
-import { fetchUnsplashPhoto, fetchUnsplashPhotos } from '@/lib/unsplash'
+import { fetchUnsplashPhoto, fetchUnsplashPhotos, triggerUnsplashDownload } from '@/lib/unsplash'
 import type { UnsplashPhoto } from '@/lib/unsplash'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -112,7 +112,11 @@ export default async function EnHomePage() {
     getTravelPlans(6),
     getCountryCounts(),
     fetchUnsplashPhoto('luxury travel destination landscape adventure'),
-    Promise.all(COUNTRIES.map(c => fetchUnsplashPhotos(c.query, 1).then(r => r[0] ?? null))),
+    Promise.all(COUNTRIES.map(c => fetchUnsplashPhotos(c.query, 1).then(r => {
+      const photo = r[0] ?? null
+      if (photo?.downloadLocation) triggerUnsplashDownload(photo.downloadLocation).catch(() => {})
+      return photo
+    }))),
   ])
 
   const countryPhotos = countryPhotoList as (UnsplashPhoto | null)[]

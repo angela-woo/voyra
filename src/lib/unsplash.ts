@@ -58,6 +58,20 @@ export interface UnsplashPhoto {
   url: string
   authorName: string
   authorUrl: string
+  downloadLocation?: string
+}
+
+// Unsplash API Guidelines require pinging this endpoint whenever a photo
+// obtained via the API is actually displayed/used, not merely searched.
+// https://help.unsplash.com/en/articles/2511245
+export async function triggerUnsplashDownload(downloadLocation: string): Promise<void> {
+  const key = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY
+  if (!key) return
+  try {
+    await fetch(downloadLocation, { headers: { Authorization: `Client-ID ${key}` } })
+  } catch {
+    // best-effort — a failed tracking ping should never block image display
+  }
 }
 
 const CATEGORY_FALLBACK: Record<string, string> = {
@@ -80,10 +94,11 @@ export async function fetchUnsplashPhotos(query: string, count: number, page = 1
     )
     if (!res.ok) return []
     const data = await res.json()
-    return (data.results ?? []).map((photo: { urls: { regular: string }; user: { name: string; links: { html: string } } }) => ({
+    return (data.results ?? []).map((photo: { urls: { regular: string }; user: { name: string; links: { html: string } }; links: { download_location: string } }) => ({
       url: photo.urls.regular,
       authorName: photo.user.name,
       authorUrl: `${photo.user.links.html}?utm_source=kiravoy&utm_medium=referral`,
+      downloadLocation: photo.links.download_location,
     }))
   } catch {
     return []
@@ -105,6 +120,9 @@ export async function fetchUnsplashPhoto(query: string): Promise<UnsplashPhoto |
     const data = await res.json()
     const photo = data.results?.[0]
     if (!photo) return null
+    if (photo.links?.download_location) {
+      triggerUnsplashDownload(photo.links.download_location).catch(() => {})
+    }
     return {
       url: photo.urls.regular,
       authorName: photo.user.name,
