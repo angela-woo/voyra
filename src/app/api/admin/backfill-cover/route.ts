@@ -36,10 +36,21 @@ export async function POST(req: Request) {
     const keyword = getSectionImageKeyword(article.title, cityEn)
     // fetchUnsplashPhoto triggers the required Unsplash download-tracking
     // ping internally before returning (src/lib/unsplash.ts)
-    const photo = await fetchUnsplashPhoto(keyword)
+    let photo = await fetchUnsplashPhoto(keyword)
+    let usedKeyword = keyword
 
+    // The generated keyword can occasionally yield zero Unsplash matches
+    // (over-specific phrase). Fall back to a broad city query rather than
+    // leaving the article with no cover image.
+    if (!photo && cityEn) {
+      usedKeyword = `${cityEn} travel destination`
+      photo = await fetchUnsplashPhoto(usedKeyword)
+    }
+
+    // Cloudflare replaces any 502 response body from the origin with its own
+    // generic error page, so failures here must use a status it passes through.
     if (!photo) {
-      return NextResponse.json({ error: 'no unsplash result (rate limited or zero matches)', keyword }, { status: 502 })
+      return NextResponse.json({ success: false, error: 'no unsplash result for keyword or fallback', keyword }, { status: 200 })
     }
 
     const { error: updateError } = await supabase
@@ -54,7 +65,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       slug: article.slug,
-      keyword,
+      keyword: usedKeyword,
       cover_image_url: photo.url,
       cover_image_attribution: photo.authorName,
     })
