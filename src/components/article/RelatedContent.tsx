@@ -134,12 +134,13 @@ export default async function RelatedContent({
                   key={p.slug}
                   href={`${planPrefix}${toPlanUrl(p)}`}
                   className="group block"
-                  eventName="related_content_click"
+                  eventName="itinerary_start"
                   eventParams={{
                     source_content: currentSlug,
                     target_content: p.slug,
-                    content_type: 'plan',
                     destination: [p.city, p.country].filter(Boolean).join(', '),
+                    days: p.days,
+                    travel_type: p.travel_type,
                   }}
                 >
                   <div className="img-zoom relative h-44 bg-[var(--bg-secondary)] overflow-hidden">
