@@ -1,8 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
-import Link from 'next/link'
 import Image from 'next/image'
 import { toPlanUrl } from '@/lib/location'
 import { NOINDEX_ARTICLE_SLUGS } from '@/lib/seo/noindex-articles'
+import TrackedLink from '@/components/analytics/TrackedLink'
 
 interface RelatedContentProps {
   city: string | null
@@ -86,10 +86,17 @@ export default async function RelatedContent({
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {articles.map(a => (
-                <Link
+                <TrackedLink
                   key={a.slug}
                   href={`${articlePath}/${a.slug}`}
                   className="group block"
+                  eventName="related_content_click"
+                  eventParams={{
+                    source_content: currentSlug,
+                    target_content: a.slug,
+                    content_type: 'article',
+                    destination: [a.city, a.country].filter(Boolean).join(', '),
+                  }}
                 >
                   <div className="img-zoom relative h-44 bg-[var(--bg-secondary)] overflow-hidden">
                     {a.cover_image_url && (
@@ -110,7 +117,7 @@ export default async function RelatedContent({
                       {a.title}
                     </h3>
                   </div>
-                </Link>
+                </TrackedLink>
               ))}
             </div>
           </section>
@@ -123,10 +130,17 @@ export default async function RelatedContent({
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {plans.map(p => (
-                <Link
+                <TrackedLink
                   key={p.slug}
                   href={`${planPrefix}${toPlanUrl(p)}`}
                   className="group block"
+                  eventName="related_content_click"
+                  eventParams={{
+                    source_content: currentSlug,
+                    target_content: p.slug,
+                    content_type: 'plan',
+                    destination: [p.city, p.country].filter(Boolean).join(', '),
+                  }}
                 >
                   <div className="img-zoom relative h-44 bg-[var(--bg-secondary)] overflow-hidden">
                     {p.cover_image_url && (
@@ -147,7 +161,7 @@ export default async function RelatedContent({
                       {p.title}
                     </h3>
                   </div>
-                </Link>
+                </TrackedLink>
               ))}
             </div>
           </section>
